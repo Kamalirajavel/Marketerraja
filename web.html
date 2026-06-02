@@ -433,7 +433,7 @@ p.section-subtext{font-size:19px;color:rgba(232,244,255,0.7);max-width:750px;lin
 .pricing-cta.pk:hover{background:rgba(255,0,128,0.08);box-shadow:var(--glow-p);}
 
 /* ── FOOTER ── */
-footer{
+/*footer{
   background:rgba(0,12,36,0.95);backdrop-filter:blur(20px);
   border-top:1px solid var(--border);padding:60px 5vw 30px;position:relative;z-index:10;
 }
@@ -453,7 +453,88 @@ footer{
 .footer-box ul li a{font-size:15px;color:var(--muted);text-decoration:none;transition:color .2s;}
 .footer-box ul li a:hover{color:var(--cyan);}
 .footer-box p{font-size:15px;color:var(--muted);line-height:1.6;}
-.footer-bottom{text-align:center;margin-top:50px;padding-top:25px;border-top:1px solid rgba(0,245,255,0.05);font-family:var(--font-m);font-size:13px;letter-spacing:2px;color:var(--muted);}
+.footer-bottom{text-align:center;margin-top:50px;padding-top:25px;border-top:1px solid rgba(0,245,255,0.05);font-family:var(--font-m);font-size:13px;letter-spacing:2px;color:var(--muted);}*/
+
+  /* ── FOOTER ── */
+footer{
+  background:rgba(0,12,36,0.95);backdrop-filter:blur(20px);
+  border-top:1px solid var(--border);padding:clamp(40px,6vw,60px) 5vw 28px;
+  position:relative;z-index:10;
+}
+.footer-container{
+  display:flex;flex-wrap:wrap;justify-content:space-between;
+  gap:36px;max-width:1200px;margin:0 auto;
+}
+.footer-brand{flex:1;min-width:220px;}
+.footer-logo{
+  font-family:var(--font-d);font-size:20px;font-weight:900;
+  letter-spacing:3px;color:var(--cyan);text-shadow:var(--glow-c);
+  text-decoration:none;margin-bottom:14px;display:inline-block;
+}
+.footer-logo span{color:var(--pink);text-shadow:var(--glow-p);}
+.footer-brand p{font-size:14px;color:var(--muted);line-height:1.6;max-width:300px;}
+.footer-links{display:flex;gap:clamp(24px,4vw,56px);flex-wrap:wrap;}
+.footer-box h4{font-family:var(--font-d);font-size:13px;letter-spacing:2px;color:var(--white);margin-bottom:18px;text-transform:uppercase;}
+.footer-box ul{list-style:none;}
+.footer-box ul li{margin-bottom:10px;}
+.footer-box ul li a{font-size:14px;color:var(--muted);text-decoration:none;transition:color .2s;}
+.footer-box ul li a:hover{color:var(--cyan);}
+.footer-box p{font-size:14px;color:var(--muted);line-height:1.6;}
+.footer-bottom{
+  text-align:center;margin-top:44px;padding-top:22px;
+  border-top:1px solid rgba(0,245,255,0.05);
+  font-family:var(--font-m);font-size:11px;letter-spacing:2px;color:var(--muted);
+}
+
+@media(max-width:600px){
+  .footer-container{flex-direction:column;}
+  .footer-brand p{max-width:100%;}
+  .footer-links{flex-direction:column;gap:24px;}
+}
+
+/* ── POLICY POPUPS ── */
+.policy-link-wrap{position:relative;display:inline-block;}
+.policy-link{cursor:pointer;color:var(--cyan);font-weight:600;letter-spacing:1px;border-bottom:1px dashed rgba(0,245,255,0.4);transition:color .2s;}
+.policy-link:hover{color:#fff;}
+.privacy-popup{
+  position:absolute;bottom:calc(100% + 14px);left:50%;transform:translateX(-50%) translateY(6px);
+  width:340px;background:rgba(10,10,30,0.97);border:1px solid rgba(0,245,255,0.2);
+  border-radius:16px;padding:0;box-shadow:0 20px 60px rgba(0,0,0,0.7),0 0 30px rgba(0,245,255,0.08);
+  opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;z-index:9999;
+  backdrop-filter:blur(20px);
+}
+.privacy-popup::after{
+  content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);
+  border:8px solid transparent;border-top-color:rgba(0,245,255,0.2);
+}
+.privacy-popup.active{opacity:1;pointer-events:auto;transform:translateX(-50%) translateY(0);}
+.privacy-popup-header{
+  display:flex;align-items:center;gap:10px;padding:16px 20px 14px;
+  border-bottom:1px solid rgba(255,255,255,0.06);
+  font-family:var(--font-d,monospace);font-size:13px;font-weight:700;
+  letter-spacing:2px;color:var(--cyan);text-transform:uppercase;
+}
+.privacy-popup-header i{font-size:15px;color:var(--cyan);}
+.privacy-popup-close{
+  margin-left:auto;background:rgba(255,255,255,0.05);border:none;color:rgba(232,244,255,0.5);
+  width:24px;height:24px;border-radius:6px;cursor:pointer;font-size:13px;
+  display:flex;align-items:center;justify-content:center;transition:all .2s;
+}
+.privacy-popup-close:hover{background:rgba(255,0,128,0.15);color:#ff0080;}
+.privacy-popup-body{padding:16px 20px 20px;display:flex;flex-direction:column;gap:14px;}
+.pp-section strong{
+  display:flex;align-items:center;gap:8px;font-family:var(--font-d,monospace);
+  font-size:11px;letter-spacing:1.5px;color:rgba(232,244,255,0.9);
+  text-transform:uppercase;margin-bottom:5px;
+}
+.pp-section strong i{color:var(--cyan);font-size:11px;}
+.pp-section p{font-family:var(--font-m,sans-serif);font-size:12px;line-height:1.7;color:rgba(232,244,255,0.55);margin:0;}
+.dot{opacity:0.3;}
+@media(max-width:480px){
+  .privacy-popup{width:290px;left:0;transform:translateX(-10%) translateY(6px);}
+  .privacy-popup.active{transform:translateX(-10%) translateY(0);}
+}
+
 
 /* ── RESPONSIVE ── */
 @media(max-width:900px){
@@ -965,7 +1046,84 @@ const API = 'https://api.marketerraja.com';   SELECT * FROM leads WHERE status='
   </div>
   
   <div class="footer-bottom">
-    &copy; 2026 Marketer Raja. All rights reserved. &nbsp;&bull;&nbsp; Privacy Policy &nbsp;&bull;&nbsp; Terms &amp; Conditions &nbsp;&bull;&nbsp; Disclaimer &nbsp;&bull;&nbsp; Cookie Policy &nbsp;&bull;&nbsp; Refund Policy
+    &copy; 2026 Marketer Raja. All rights reserved. 
+
+    <span style="display:inline-flex;flex-wrap:wrap;gap:6px;align-items:center;justify-content:center;margin-top:8px;">
+
+    <!-- PRIVACY POLICY -->
+    <span class="policy-link-wrap">
+      <span class="policy-link" data-popup="privacyPopup">Privacy Policy</span>
+      <div class="privacy-popup" id="privacyPopup">
+        <div class="privacy-popup-header"><i class="fa-solid fa-shield-halved"></i><span>Privacy Policy</span><button class="privacy-popup-close" data-close="privacyPopup">✕</button></div>
+        <div class="privacy-popup-body">
+          <div class="pp-section"><strong><i class="fa-solid fa-circle-info"></i> What We Collect</strong><p>Name, email, contact info, credentials &amp; usage logs — only what's needed to serve you.</p></div>
+          <div class="pp-section"><strong><i class="fa-solid fa-gears"></i> How We Use It</strong><p>To run our platform, handle support, and protect security. Never sold to third parties.</p></div>
+          <div class="pp-section"><strong><i class="fa-solid fa-eye-slash"></i> Data Protection</strong><p>End-to-end encryption on all data. We do not share your info with advertisers.</p></div>
+          <div class="pp-section"><strong><i class="fa-solid fa-cookie-bite"></i> Cookies</strong><p>Minimal cookies to save preferences. Disable anytime in browser settings.</p></div>
+        </div>
+      </div>
+    </span>
+
+    <span class="dot">·</span>
+
+    <!-- TERMS & CONDITIONS -->
+    <span class="policy-link-wrap">
+      <span class="policy-link" data-popup="termsPopup">Terms &amp; Conditions</span>
+      <div class="privacy-popup" id="termsPopup">
+        <div class="privacy-popup-header"><i class="fa-solid fa-file-contract"></i><span>Terms &amp; Conditions</span><button class="privacy-popup-close" data-close="termsPopup">✕</button></div>
+        <div class="privacy-popup-body">
+          <div class="pp-section"><strong><i class="fa-solid fa-handshake"></i> Agreement</strong><p>By using our services, you agree to these terms. We reserve the right to update them at any time.</p></div>
+          <div class="pp-section"><strong><i class="fa-solid fa-ban"></i> Prohibited Use</strong><p>You may not misuse our services, attempt unauthorized access, or use them for illegal activities.</p></div>
+          <div class="pp-section"><strong><i class="fa-solid fa-circle-dollar-to-slot"></i> Payments</strong><p>All fees are due as per the agreed service plan. Late payments may result in service suspension.</p></div>
+          <div class="pp-section"><strong><i class="fa-solid fa-scale-balanced"></i> Liability</strong><p>We are not liable for indirect losses. Our liability is limited to the amount paid for the service.</p></div>
+        </div>
+      </div>
+    </span>
+
+    <span class="dot">·</span>
+
+    <!-- DISCLAIMER -->
+    <span class="policy-link-wrap">
+      <span class="policy-link" data-popup="disclaimerPopup">Disclaimer</span>
+      <div class="privacy-popup" id="disclaimerPopup">
+        <div class="privacy-popup-header"><i class="fa-solid fa-triangle-exclamation"></i><span>Disclaimer</span><button class="privacy-popup-close" data-close="disclaimerPopup">✕</button></div>
+        <div class="privacy-popup-body">
+          <div class="pp-section"><strong><i class="fa-solid fa-chart-line"></i> Results</strong><p>Marketing results vary by business, industry &amp; market conditions. Past performance is not a guarantee of future results.</p></div>
+          <div class="pp-section"><strong><i class="fa-solid fa-link-slash"></i> Third-Party Links</strong><p>We are not responsible for the content or practices of any third-party websites linked from our platform.</p></div>
+          <div class="pp-section"><strong><i class="fa-solid fa-circle-exclamation"></i> Accuracy</strong><p>Information on our site is provided in good faith. We do not warrant completeness or absolute accuracy.</p></div>
+        </div>
+      </div>
+    </span>
+
+    <span class="dot">·</span>
+
+    <!-- COOKIE POLICY -->
+    <span class="policy-link-wrap">
+      <span class="policy-link" data-popup="cookiePopup">Cookie Policy</span>
+      <div class="privacy-popup" id="cookiePopup">
+        <div class="privacy-popup-header"><i class="fa-solid fa-cookie-bite"></i><span>Cookie Policy</span><button class="privacy-popup-close" data-close="cookiePopup">✕</button></div>
+        <div class="privacy-popup-body">
+          <div class="pp-section"><strong><i class="fa-solid fa-circle-info"></i> What Are Cookies</strong><p>Cookies are small text files stored in your browser to remember your preferences and improve your experience.</p></div>
+          <div class="pp-section"><strong><i class="fa-solid fa-sliders"></i> Types We Use</strong><p>Essential cookies (site function), preference cookies (settings), and analytics cookies (usage patterns — anonymised).</p></div>
+          <div class="pp-section"><strong><i class="fa-solid fa-toggle-on"></i> Your Control</strong><p>You can accept, reject, or manage cookies via your browser settings at any time. Blocking essential cookies may affect site features.</p></div>
+        </div>
+      </div>
+    </span>
+
+    <span class="dot">·</span>
+
+    <!-- REFUND POLICY -->
+    <span class="policy-link-wrap">
+      <span class="policy-link" data-popup="refundPopup">Refund Policy</span>
+      <div class="privacy-popup" id="refundPopup">
+        <div class="privacy-popup-header"><i class="fa-solid fa-rotate-left"></i><span>Refund Policy</span><button class="privacy-popup-close" data-close="refundPopup">✕</button></div>
+        <div class="privacy-popup-body">
+          <div class="pp-section"><strong><i class="fa-solid fa-calendar-check"></i> Eligibility</strong><p>Refund requests must be submitted within 7 days of the service start date, before campaign work has commenced.</p></div>
+          <div class="pp-section"><strong><i class="fa-solid fa-xmark-circle"></i> Non-Refundable</strong><p>Once ad campaigns are launched or creative work is delivered, fees are non-refundable due to platform costs incurred.</p></div>
+          <div class="pp-section"><strong><i class="fa-solid fa-headset"></i> Disputes</strong><p>For payment disputes or concerns, contact us via WhatsApp or email within 14 days. We resolve all issues fairly.</p></div>
+        </div>
+      </div>
+    </span>
   </div>
 </footer>
 
@@ -1094,5 +1252,36 @@ updateEstimate();
     <i class="fab fa-whatsapp"></i>
   </a>
 </div>
+
+  <script>
+/* ── POLICY POPUPS ── */
+document.querySelectorAll('.policy-link-wrap').forEach(wrap => {
+  const trigger = wrap.querySelector('.policy-link');
+  const popup   = wrap.querySelector('.privacy-popup');
+  if (!trigger || !popup) return;
+
+  trigger.addEventListener('mouseenter', () => {
+    document.querySelectorAll('.privacy-popup.active').forEach(p => p.classList.remove('active'));
+    popup.classList.add('active');
+  });
+  trigger.addEventListener('mouseleave', e => {
+    if (!popup.contains(e.relatedTarget)) popup.classList.remove('active');
+  });
+  popup.addEventListener('mouseleave', e => {
+    if (e.relatedTarget !== trigger) popup.classList.remove('active');
+  });
+});
+
+document.querySelectorAll('.privacy-popup-close').forEach(btn => {
+  btn.addEventListener('click', () => {
+    btn.closest('.privacy-popup').classList.remove('active');
+  });
+});
+
+document.addEventListener('click', e => {
+  if (!e.target.closest('.policy-link-wrap'))
+    document.querySelectorAll('.privacy-popup.active').forEach(p => p.classList.remove('active'));
+});
+</script>
 </body>
 </html>
