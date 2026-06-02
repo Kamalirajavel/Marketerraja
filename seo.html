@@ -1654,7 +1654,6 @@ document.querySelectorAll('.privacy-popup-close').forEach(btn => {
   btn.addEventListener('click', () => {
     btn.closest('.privacy-popup').classList.remove('active');
   });
-});
 
 document.addEventListener('click', e => {
   if (!e.target.closest('.policy-link-wrap'))
