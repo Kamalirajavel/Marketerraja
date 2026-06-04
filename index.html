@@ -819,11 +819,25 @@ footer::before{
 }
 .pp-section strong i{color:var(--cyan);font-size:11px;}
 .pp-section p{font-family:var(--font-m,sans-serif);font-size:12px;line-height:1.7;color:rgba(232,244,255,0.55);margin:0;}
-.dot{opacity:0.3;}
+/*.dot{opacity:0.3;}
 @media(max-width:600px){
   .privacy-popup{
     width: calc(100vw - 32px);
     max-width: 100%;
+    left: 50%;
+    transform: translateX(-50%) translateY(6px);
+    right: auto;
+  }
+  .privacy-popup.active{
+    transform: translateX(-50%) translateY(0);
+  }
+}*/
+
+  .dot{opacity:0.3;}
+@media(max-width:600px){
+  .privacy-popup{
+    width: 340px;
+    max-width: calc(100vw - 16px);
     left: 50%;
     transform: translateX(-50%) translateY(6px);
     right: auto;
