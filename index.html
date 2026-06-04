@@ -847,6 +847,35 @@ footer::before{
   }
 }
 
+  /* Prevent horizontal scrolling on mobile */
+html,
+body{
+    overflow-x:hidden !important;
+    width:100%;
+    max-width:100%;
+}
+
+/* Keep floating buttons fully visible */
+@media (max-width: 768px){
+
+    .whatsapp-float{
+        right:12px !important;
+        bottom:20px !important;
+        width:54px;
+        height:54px;
+        z-index:999999;
+    }
+
+    .call-float{
+        right:12px !important;
+        bottom:84px !important;
+        width:54px;
+        height:54px;
+        z-index:999999;
+    }
+}
+
+
 /* ── REVEAL ── */
 .reveal{opacity:0;transform:translateY(28px);transition:opacity .7s,transform .7s;}
 .reveal.visible{opacity:1;transform:translateY(0);}
