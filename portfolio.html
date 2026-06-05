@@ -1272,5 +1272,62 @@ document.addEventListener('click', e => {
     document.querySelectorAll('.privacy-popup.active').forEach(p => p.classList.remove('active'));
 });
 </script>
+  
+  <!-- DYNAMIC PORTFOLIO SCRIPT START -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+  import { getFirestore, collection, getDocs, orderBy, query } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyA0JCQDUZ9slUeA3REIPN0poCuMWy55uFc",
+    authDomain: "marketerraja-d4054.firebaseapp.com",
+    projectId: "marketerraja-d4054",
+    storageBucket: "marketerraja-d4054.firebasestorage.app",
+    messagingSenderId: "1089812986562",
+    appId: "1:1089812986562:web:964fbb3cda2b0ee4aad95b"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  async function loadPortfolio() {
+    const grid = document.querySelector('.port-clients-grid');
+    if (!grid) return;
+
+    try {
+      const q = query(collection(db, "portfolio"), orderBy("timestamp", "desc"));
+      const snapshot = await getDocs(q);
+      
+      snapshot.forEach((doc) => {
+        const data = doc.data();
+        
+        // Generate the exact HTML format of your current cards
+        const cardHTML = `
+          <div class="port-client-card" style="border-color: #ff0080;">
+            <div class="port-card-header">
+              <div class="port-card-icon">${data.icon}</div>
+              <div class="port-card-name">${data.name}</div>
+              <div class="port-card-industry">${data.industry}</div>
+            </div>
+            <div class="port-card-body">
+              <div class="port-metric-row"><span class="port-metric-label">${data.m1Label}</span><span class="port-metric-value cyan">${data.m1Value}</span></div>
+              <div class="port-metric-row"><span class="port-metric-label">${data.m2Label}</span><span class="port-metric-value gold">${data.m2Value}</span></div>
+              <div class="port-metric-row"><span class="port-metric-label">STATUS</span><span class="port-metric-value"><span class="port-badge port-badge-active">${data.status}</span></span></div>
+            </div>
+          </div>
+        `;
+        
+        // This injects your new card at the very top of the grid!
+        grid.insertAdjacentHTML('afterbegin', cardHTML);
+      });
+    } catch (err) {
+      console.error("Error loading dynamic portfolio: ", err);
+    }
+  }
+
+  loadPortfolio();
+</script>
+<!-- DYNAMIC PORTFOLIO SCRIPT END -->
+  
 </body>
 </html>
