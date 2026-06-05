@@ -6,164 +6,239 @@
   <title>Admin Dashboard | Marketer Raja</title>
   <style>
     body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #000c24; color: #fff; margin: 0; display: flex; justify-content: center; min-height: 100vh; }
-    .login-box { background: #021233; padding: 40px; border-radius: 8px; border: 1px solid #00f5ff; box-shadow: 0 0 20px rgba(0,245,255,0.2); width: 100%; max-width: 320px; text-align: center; margin: auto; }
-    input { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid rgba(0,245,255,0.3); border-radius: 4px; box-sizing: border-box; background: rgba(0,0,0,0.5); color: white; outline: none; }
+    .login-box { background: #021233; padding: 40px; border-radius: 8px; border: 1px solid #00f5ff; box-shadow: 0 0 20px rgba(0,245,255,0.2); width: 100%; max-width: 350px; text-align: center; margin: auto; }
     button { width: 100%; padding: 12px; background: #00f5ff; color: #000; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 16px; margin-top: 10px; transition: 0.3s; }
     button:hover { background: #00c2cc; }
     .hidden { display: none; }
-    
-    /* Dashboard Styles */
-    .dashboard-box { background: #021233; padding: 30px; border-radius: 8px; border: 1px solid #00f5ff; width: 95%; max-width: 1000px; margin: 40px auto; }
+    .dashboard-box { background: #021233; padding: 30px; border-radius: 8px; border: 1px solid #00f5ff; width: 95%; max-width: 1100px; margin: 40px auto; }
     .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(0,245,255,0.2); padding-bottom: 15px; margin-bottom: 20px; }
-    table { width: 100%; border-collapse: collapse; margin-top: 20px; background: rgba(0,0,0,0.3); }
-    th, td { padding: 15px; text-align: left; border-bottom: 1px solid rgba(0,245,255,0.1); }
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; background: rgba(0,0,0,0.3); }
+    th, td { padding: 12px; text-align: left; border-bottom: 1px solid rgba(0,245,255,0.1); color: #e8f4ff; }
     th { background: rgba(0,245,255,0.1); color: #00f5ff; }
-    td { color: #e8f4ff; }
-    .badge { padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; background: #25D366; color: #000; }
+    input { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid rgba(0,245,255,0.3); border-radius: 4px; box-sizing: border-box; background: rgba(0,0,0,0.5); color: white; outline: none; }
+    .metric-row { display: flex; gap: 10px; margin-bottom: 5px; }
+    .action-btn { padding: 6px 12px; font-size: 12px; margin: 2px; width: auto;}
+    .del-btn { background: #ff0080; color: white; }
+    .edit-btn { background: #ffd700; color: black; }
   </style>
 </head>
 <body>
 
-  <!-- Login Form -->
+  <!-- Google Auth Login -->
   <div id="login-section" class="login-box">
     <h2 style="color: #00f5ff; margin-bottom: 20px;">SYSTEM LOGIN</h2>
-    <input type="email" id="email" placeholder="Admin Email">
-    <input type="password" id="password" placeholder="Password">
-    <button id="login-btn">ACCESS TERMINAL</button>
+    <p style="color: #ccc; font-size: 14px; margin-bottom: 20px;">Secured by Google Auth</p>
+    <button id="google-login-btn" style="background: white; color: black;">
+      <img src="https://developers.google.com/identity/images/g-logo.png" style="width: 18px; vertical-align: middle; margin-right: 8px;"> 
+      Sign in with Google
+    </button>
     <p id="error-msg" style="color: #ff0080; font-size: 14px; margin-top: 15px;"></p>
   </div>
 
-  <!-- Admin Dashboard -->
+  <!-- Dashboard -->
   <div id="admin-dashboard" class="dashboard-box hidden">
     <div class="header">
       <h2 style="color: #00f5ff; margin: 0;">MARKETER RAJA // ADMIN CONSOLE</h2>
       <button id="logout-btn" style="width: auto; background: #ff0080; color: white;">LOG OUT</button>
     </div>
     
-    <!-- Enquiries Section -->
+    <!-- Enquiries -->
     <h3 style="color: #ffd700;">Recent Client Enquiries</h3>
-    <div style="overflow-x: auto;">
+    <div style="overflow-x: auto; margin-bottom: 40px;">
       <table>
-        <thead><tr><th>Date</th><th>Name</th><th>Contact</th><th>Service</th><th>Budget</th><th>Status</th></tr></thead>
-        <tbody id="enquiry-list"><tr><td colspan="6" style="text-align: center;">Loading data...</td></tr></tbody>
+        <thead><tr><th>Date</th><th>Name</th><th>Contact</th><th>Service</th><th>Budget</th></tr></thead>
+        <tbody id="enquiry-list"><tr><td colspan="5" style="text-align: center;">Loading data...</td></tr></tbody>
       </table>
     </div>
 
-    <hr style="border: 1px solid rgba(0,245,255,0.2); margin: 40px 0;">
-
-    <!-- Add Portfolio Section -->
-    <h3 style="color: #ff0080;">+ Add New Portfolio Project</h3>
-    <form id="portfolio-form" style="background: rgba(0,0,0,0.3); padding: 20px; border-radius: 8px; border: 1px solid rgba(255,0,128,0.3);">
-      <div style="display: flex; gap: 10px;">
-        <input type="text" id="pf-name" placeholder="Client Name (e.g. Elite Builders)" required style="flex: 2;">
-        <input type="text" id="pf-icon" placeholder="Icon Emoji (e.g. 🏢)" required style="flex: 1;">
-      </div>
-      <input type="text" id="pf-industry" placeholder="Industry (e.g. Real Estate · B2B)" required>
+    <!-- Manage Portfolio -->
+    <div style="display: flex; gap: 30px; flex-wrap: wrap;">
       
-      <div style="display: flex; gap: 10px;">
-        <input type="text" id="pf-m1-label" placeholder="Metric 1 Label (e.g. AGGREGATE LEADS)" required style="flex: 1;">
-        <input type="text" id="pf-m1-value" placeholder="Metric 1 Value (e.g. 450)" required style="flex: 1;">
-      </div>
-      <div style="display: flex; gap: 10px;">
-        <input type="text" id="pf-m2-label" placeholder="Metric 2 Label (e.g. CONVERSION RATE)" required style="flex: 1;">
-        <input type="text" id="pf-m2-value" placeholder="Metric 2 Value (e.g. 7.2%)" required style="flex: 1;">
-      </div>
-      
-      <input type="text" id="pf-status" placeholder="Status Badge (e.g. ACTIVE or SCALING)" required>
-      <button type="submit" style="background: #ff0080; color: white;">PUBLISH TO LIVE PORTFOLIO</button>
-      <p id="pf-msg" style="color: #00ff88; font-size: 14px; display: none; text-align: center;">Portfolio item published to live site!</p>
-    </form>
+      <!-- Portfolio Form -->
+      <div style="flex: 1; min-width: 300px; background: rgba(0,0,0,0.3); padding: 20px; border-radius: 8px; border: 1px solid rgba(255,0,128,0.3);">
+        <h3 id="form-title" style="color: #ff0080; margin-top: 0;">+ Add New Portfolio Item</h3>
+        <form id="portfolio-form">
+          <input type="hidden" id="pf-id"> <!-- Hidden ID for Editing -->
+          
+          <div style="display: flex; gap: 10px;">
+            <input type="text" id="pf-name" placeholder="Client Name" required style="flex: 2;">
+            <input type="text" id="pf-icon" placeholder="Icon (e.g. 🏢)" required style="flex: 1;">
+          </div>
+          <input type="text" id="pf-industry" placeholder="Industry (e.g. B2B)" required>
+          <input type="number" id="pf-graph" placeholder="Graph Volume (Number for Donut Chart)" required>
+          <input type="text" id="pf-status" placeholder="Status Badge (e.g. ACTIVE)" required>
+          
+          <h4 style="color: #00f5ff; margin-bottom: 5px;">Metrics</h4>
+          <div id="metrics-container">
+            <div class="metric-row">
+              <input type="text" class="m-label" placeholder="Metric Label" required>
+              <input type="text" class="m-value" placeholder="Metric Value" required>
+            </div>
+          </div>
+          <button type="button" id="add-metric-btn" style="background: transparent; border: 1px dashed #00f5ff; color: #00f5ff; padding: 8px;">+ Add Another Metric</button>
 
+          <button type="submit" id="save-pf-btn" style="background: #ff0080; color: white; margin-top: 20px;">SAVE PORTFOLIO</button>
+        </form>
+      </div>
+
+      <!-- Portfolio List -->
+      <div style="flex: 1; min-width: 300px;">
+        <h3 style="color: #00ff88; margin-top: 0;">Manage Portfolio Elements</h3>
+        <div style="overflow-x: auto;">
+          <table>
+            <thead><tr><th>Client</th><th>Volume</th><th>Actions</th></tr></thead>
+            <tbody id="portfolio-list"><tr><td colspan="3">Loading...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <!-- Firebase Script -->
+  <!-- Script -->
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
-    import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
-    import { getFirestore, collection, getDocs, orderBy, query, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+    import { auth, provider, db } from "./firebase-config.js";
+    import { signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
+    import { collection, getDocs, orderBy, query, addDoc, updateDoc, deleteDoc, doc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyA0JCQDUZ9slUeA3REIPN0poCuMWy55uFc",
-      authDomain: "marketerraja-d4054.firebaseapp.com",
-      projectId: "marketerraja-d4054",
-      storageBucket: "marketerraja-d4054.firebasestorage.app",
-      messagingSenderId: "1089812986562",
-      appId: "1:1089812986562:web:964fbb3cda2b0ee4aad95b"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
-
-    // --- Login / Logout Logic ---
-    document.getElementById('login-btn').addEventListener('click', () => {
-      const email = document.getElementById('email').value;
-      const password = document.getElementById('password').value;
+    // Auth Logic
+    document.getElementById('google-login-btn').addEventListener('click', () => {
       document.getElementById('error-msg').textContent = "Authenticating...";
-      signInWithEmailAndPassword(auth, email, password).catch(() => {
-        document.getElementById('error-msg').textContent = "Access Denied. Invalid credentials.";
+      signInWithPopup(auth, provider).catch(err => {
+        document.getElementById('error-msg').textContent = "Google Sign-In failed.";
+        console.error(err);
       });
     });
 
-    document.getElementById('logout-btn').addEventListener('click', () => {
-      signOut(auth).then(() => {
-        document.getElementById('email').value = '';
-        document.getElementById('password').value = '';
-        document.getElementById('error-msg').textContent = '';
-      });
-    });
-
-    // --- Fetch Enquiries ---
-    const fetchEnquiries = async () => {
-      try {
-        const q = query(collection(db, "enquiries"), orderBy("timestamp", "desc"));
-        const querySnapshot = await getDocs(q);
-        const list = document.getElementById('enquiry-list');
-        list.innerHTML = ''; 
-        if (querySnapshot.empty) { list.innerHTML = '<tr><td colspan="6" style="text-align: center;">No enquiries yet.</td></tr>'; return; }
-        querySnapshot.forEach((doc) => {
-          const data = doc.data();
-          const date = data.timestamp ? new Date(data.timestamp.toDate()).toLocaleDateString() : 'Just now';
-          list.innerHTML += `<tr><td>${date}</td><td style="font-weight: bold;">${data.name}</td><td>${data.contact}</td><td style="color: #00f5ff;">${data.service}</td><td style="color: #00ff88;">${data.budget}</td><td><span class="badge">${data.status}</span></td></tr>`;
-        });
-      } catch (err) { console.error(err); }
-    };
-
-    // --- Add Portfolio Logic ---
-    document.getElementById('portfolio-form').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const btn = e.target.querySelector('button');
-      btn.textContent = "PUBLISHING...";
-      try {
-        await addDoc(collection(db, "portfolio"), {
-          name: document.getElementById('pf-name').value,
-          icon: document.getElementById('pf-icon').value,
-          industry: document.getElementById('pf-industry').value,
-          m1Label: document.getElementById('pf-m1-label').value,
-          m1Value: document.getElementById('pf-m1-value').value,
-          m2Label: document.getElementById('pf-m2-label').value,
-          m2Value: document.getElementById('pf-m2-value').value,
-          status: document.getElementById('pf-status').value.toUpperCase(),
-          timestamp: serverTimestamp()
-        });
-        document.getElementById('pf-msg').style.display = 'block';
-        e.target.reset();
-        btn.textContent = "PUBLISH TO LIVE PORTFOLIO";
-        setTimeout(() => { document.getElementById('pf-msg').style.display = 'none'; }, 3000);
-      } catch (error) {
-        alert("Error publishing portfolio: " + error.message);
-        btn.textContent = "PUBLISH TO LIVE PORTFOLIO";
-      }
-    });
+    document.getElementById('logout-btn').addEventListener('click', () => signOut(auth));
 
     onAuthStateChanged(auth, (user) => {
       if (user) {
         document.getElementById('login-section').classList.add('hidden');
         document.getElementById('admin-dashboard').classList.remove('hidden');
-        fetchEnquiries();
+        fetchData();
       } else {
         document.getElementById('login-section').classList.remove('hidden');
         document.getElementById('admin-dashboard').classList.add('hidden');
+      }
+    });
+
+    // Dynamic Metrics UI
+    document.getElementById('add-metric-btn').addEventListener('click', () => {
+      const container = document.getElementById('metrics-container');
+      const row = document.createElement('div');
+      row.className = 'metric-row';
+      row.innerHTML = `<input type="text" class="m-label" placeholder="Metric Label" required> <input type="text" class="m-value" placeholder="Metric Value" required> <button type="button" class="action-btn del-btn" onclick="this.parentElement.remove()">X</button>`;
+      container.appendChild(row);
+    });
+
+    // Data Fetching
+    async function fetchData() {
+      // 1. Fetch Enquiries
+      const qE = query(collection(db, "enquiries"), orderBy("timestamp", "desc"));
+      const snapE = await getDocs(qE);
+      const listE = document.getElementById('enquiry-list');
+      listE.innerHTML = '';
+      snapE.forEach(d => {
+        const data = d.data();
+        listE.innerHTML += `<tr><td>${data.timestamp ? new Date(data.timestamp.toDate()).toLocaleDateString() : 'New'}</td><td>${data.name}</td><td>${data.contact}</td><td>${data.service}</td><td>${data.budget}</td></tr>`;
+      });
+
+      // 2. Fetch Portfolio List
+      const qP = query(collection(db, "portfolio"), orderBy("timestamp", "desc"));
+      const snapP = await getDocs(qP);
+      const listP = document.getElementById('portfolio-list');
+      listP.innerHTML = '';
+      snapP.forEach(d => {
+        const data = d.data();
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${data.name}</td>
+          <td>${data.graphVolume}</td>
+          <td>
+            <button class="action-btn edit-btn" data-id="${d.id}">Edit</button>
+            <button class="action-btn del-btn" data-id="${d.id}">Del</button>
+          </td>
+        `;
+        listP.appendChild(tr);
+
+        // Edit Button Logic
+        tr.querySelector('.edit-btn').addEventListener('click', () => {
+          document.getElementById('pf-id').value = d.id;
+          document.getElementById('pf-name').value = data.name;
+          document.getElementById('pf-icon').value = data.icon;
+          document.getElementById('pf-industry').value = data.industry;
+          document.getElementById('pf-graph').value = data.graphVolume;
+          document.getElementById('pf-status').value = data.status;
+          document.getElementById('form-title').textContent = "✏️ Edit Portfolio Item";
+          document.getElementById('save-pf-btn').textContent = "UPDATE PORTFOLIO";
+          
+          // Load Metrics into form
+          const container = document.getElementById('metrics-container');
+          container.innerHTML = '';
+          data.metrics.forEach(m => {
+            const row = document.createElement('div');
+            row.className = 'metric-row';
+            row.innerHTML = `<input type="text" class="m-label" value="${m.label}" required> <input type="text" class="m-value" value="${m.value}" required> <button type="button" class="action-btn del-btn" onclick="this.parentElement.remove()">X</button>`;
+            container.appendChild(row);
+          });
+        });
+
+        // Delete Button Logic
+        tr.querySelector('.del-btn').addEventListener('click', async () => {
+          if(confirm("Are you sure you want to delete this project?")) {
+            await deleteDoc(doc(db, "portfolio", d.id));
+            fetchData();
+          }
+        });
+      });
+    }
+
+    // Save/Update Portfolio Logic
+    document.getElementById('portfolio-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById('save-pf-btn');
+      btn.textContent = "SAVING...";
+
+      // Gather dynamic metrics
+      const metrics = [];
+      document.querySelectorAll('.metric-row').forEach(row => {
+        const label = row.querySelector('.m-label').value;
+        const value = row.querySelector('.m-value').value;
+        if (label && value) metrics.push({ label, value });
+      });
+
+      const portfolioData = {
+        name: document.getElementById('pf-name').value,
+        icon: document.getElementById('pf-icon').value,
+        industry: document.getElementById('pf-industry').value,
+        graphVolume: document.getElementById('pf-graph').value,
+        status: document.getElementById('pf-status').value.toUpperCase(),
+        metrics: metrics,
+        timestamp: serverTimestamp()
+      };
+
+      const editId = document.getElementById('pf-id').value;
+
+      try {
+        if (editId) {
+          // Update existing
+          delete portfolioData.timestamp; // Don't overwrite original creation time
+          await updateDoc(doc(db, "portfolio", editId), portfolioData);
+        } else {
+          // Add new
+          await addDoc(collection(db, "portfolio"), portfolioData);
+        }
+        
+        e.target.reset();
+        document.getElementById('pf-id').value = '';
+        document.getElementById('form-title').textContent = "+ Add New Portfolio Item";
+        btn.textContent = "SAVE PORTFOLIO";
+        document.getElementById('metrics-container').innerHTML = `<div class="metric-row"><input type="text" class="m-label" placeholder="Metric Label" required> <input type="text" class="m-value" placeholder="Metric Value" required></div>`;
+        
+        fetchData(); // Refresh list
+      } catch (err) {
+        alert("Error: " + err.message);
+        btn.textContent = "SAVE PORTFOLIO";
       }
     });
   </script>
