@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Login | Marketer Raja</title>
+  <style>
+    body { font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; background: #f4f4f4; }
+    .login-box { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); width: 300px; }
+    input { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+    button { width: 100%; padding: 10px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; }
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+
+  <div id="login-section" class="login-box">
+    <h2>Admin Login</h2>
+    <input type="email" id="email" placeholder="Admin Email">
+    <input type="password" id="password" placeholder="Password">
+    <button id="login-btn">Log In</button>
+    <p id="error-msg" style="color: red; font-size: 14px;"></p>
+  </div>
+
+  <div id="admin-dashboard" class="hidden">
+    <h2>Welcome to the Admin Panel</h2>
+    <button id="logout-btn">Log Out</button>
+    </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
+
+    // 1. Paste your config from Firebase here
+    const firebaseConfig = {
+      apiKey: "AIzaSyA0JCQDUZ9slUeA3REIPN0poCuMWy55uFc",
+  authDomain: "marketerraja-d4054.firebaseapp.com",
+  projectId: "marketerraja-d4054",
+  storageBucket: "marketerraja-d4054.firebasestorage.app",
+  messagingSenderId: "1089812986562",
+  appId: "1:1089812986562:web:964fbb3cda2b0ee4aad95b"
+    };
+
+    // 2. Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    // 3. UI Elements
+    const loginSection = document.getElementById('login-section');
+    const adminDashboard = document.getElementById('admin-dashboard');
+    const loginBtn = document.getElementById('login-btn');
+    const logoutBtn = document.getElementById('logout-btn');
+    const errorMsg = document.getElementById('error-msg');
+
+    // 4. Handle Login
+    loginBtn.addEventListener('click', () => {
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      
+      signInWithEmailAndPassword(auth, email, password)
+        .catch((error) => {
+          errorMsg.textContent = "Invalid credentials.";
+          console.error(error);
+        });
+    });
+
+    // 5. Handle Logout
+    logoutBtn.addEventListener('click', () => {
+      signOut(auth);
+    });
+
+    // 6. Monitor Auth State (Show/Hide dashboard based on login status)
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        // User is signed in
+        loginSection.classList.add('hidden');
+        adminDashboard.classList.remove('hidden');
+      } else {
+        // User is signed out
+        loginSection.classList.remove('hidden');
+        adminDashboard.classList.add('hidden');
+      }
+    });
+  </script>
+</body>
+</html>
