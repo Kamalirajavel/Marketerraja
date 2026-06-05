@@ -2,13 +2,16 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin Login | Marketer Raja</title>
   <style>
-    body { font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; background: #f4f4f4; }
-    .login-box { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); width: 300px; }
+    body { font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; background: #f4f4f4; margin: 0; }
+    .login-box { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); width: 100%; max-width: 300px; }
     input { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
-    button { width: 100%; padding: 10px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; }
+    button { width: 100%; padding: 10px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; }
+    button:hover { background: #0056b3; }
     .hidden { display: none; }
+    .dashboard-box { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); width: 90%; max-width: 800px; margin: 20px; }
   </style>
 </head>
 <body>
@@ -18,64 +21,76 @@
     <input type="email" id="email" placeholder="Admin Email">
     <input type="password" id="password" placeholder="Password">
     <button id="login-btn">Log In</button>
-    <p id="error-msg" style="color: red; font-size: 14px;"></p>
+    <p id="error-msg" style="color: red; font-size: 14px; text-align: center;"></p>
   </div>
 
-  <div id="admin-dashboard" class="hidden">
-    <h2>Welcome to the Admin Panel</h2>
-    <button id="logout-btn">Log Out</button>
+  <div id="admin-dashboard" class="dashboard-box hidden">
+    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 20px;">
+      <h2>Admin Panel - Marketer Raja</h2>
+      <button id="logout-btn" style="width: auto; background: #dc3545;">Log Out</button>
+    </div>
+    
+    <p>Welcome! You are securely logged in to your Firebase backend.</p>
     </div>
 
   <script type="module">
+    // Import essential Firebase functions
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
     import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
 
-    // 1. Paste your config from Firebase here
+    // Your specific Firebase configuration
     const firebaseConfig = {
       apiKey: "AIzaSyA0JCQDUZ9slUeA3REIPN0poCuMWy55uFc",
-  authDomain: "marketerraja-d4054.firebaseapp.com",
-  projectId: "marketerraja-d4054",
-  storageBucket: "marketerraja-d4054.firebasestorage.app",
-  messagingSenderId: "1089812986562",
-  appId: "1:1089812986562:web:964fbb3cda2b0ee4aad95b"
+      authDomain: "marketerraja-d4054.firebaseapp.com",
+      projectId: "marketerraja-d4054",
+      storageBucket: "marketerraja-d4054.firebasestorage.app",
+      messagingSenderId: "1089812986562",
+      appId: "1:1089812986562:web:964fbb3cda2b0ee4aad95b"
     };
 
-    // 2. Initialize Firebase
+    // Initialize Firebase and Authentication
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
 
-    // 3. UI Elements
+    // UI Elements
     const loginSection = document.getElementById('login-section');
     const adminDashboard = document.getElementById('admin-dashboard');
     const loginBtn = document.getElementById('login-btn');
     const logoutBtn = document.getElementById('logout-btn');
     const errorMsg = document.getElementById('error-msg');
 
-    // 4. Handle Login
+    // Handle Login
     loginBtn.addEventListener('click', () => {
       const email = document.getElementById('email').value;
       const password = document.getElementById('password').value;
       
+      errorMsg.textContent = "Logging in..."; // Loading state
+      
       signInWithEmailAndPassword(auth, email, password)
         .catch((error) => {
-          errorMsg.textContent = "Invalid credentials.";
-          console.error(error);
+          errorMsg.textContent = "Invalid email or password.";
+          console.error("Login Error:", error.code, error.message);
         });
     });
 
-    // 5. Handle Logout
+    // Handle Logout
     logoutBtn.addEventListener('click', () => {
-      signOut(auth);
+      signOut(auth).then(() => {
+        // Clear inputs on logout
+        document.getElementById('email').value = '';
+        document.getElementById('password').value = '';
+        errorMsg.textContent = '';
+      });
     });
 
-    // 6. Monitor Auth State (Show/Hide dashboard based on login status)
+    // Monitor Auth State (Show/Hide dashboard)
     onAuthStateChanged(auth, (user) => {
       if (user) {
-        // User is signed in
+        // User is logged in
         loginSection.classList.add('hidden');
         adminDashboard.classList.remove('hidden');
       } else {
-        // User is signed out
+        // User is logged out
         loginSection.classList.remove('hidden');
         adminDashboard.classList.add('hidden');
       }
