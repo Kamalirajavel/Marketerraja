@@ -1850,56 +1850,117 @@ document.addEventListener('click', e => {
 });
 </script>
 
-  <!-- ENQUIRY DATABASE SCRIPT START -->
+  <!-- DYNAMIC PORTFOLIO & CHARTS SCRIPT -->
 <script type="module">
   import { db } from "./firebase-config.js";
-  import { collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+  import { collection, getDocs, orderBy, query } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
-  const serviceSelect = document.getElementById('eq-service');
-  const otherServiceInput = document.getElementById('eq-other-service');
-  
-  serviceSelect.addEventListener('change', (e) => {
-    if (e.target.value === 'Other') {
-      otherServiceInput.style.display = 'block';
-      otherServiceInput.required = true;
-    } else {
-      otherServiceInput.style.display = 'none';
-      otherServiceInput.required = false;
-    }
-  });
-
-  document.getElementById('enquiry-form').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const submitBtn = e.target.querySelector('button');
-    submitBtn.textContent = "SENDING...";
-    
-    let selectedService = serviceSelect.value;
-    if (selectedService === 'Other') selectedService = otherServiceInput.value;
+  async function loadPortfolioAndCharts() {
+    // FIXED: Now we look for the 'class' instead of the 'id'
+    const grid = document.querySelector('.port-clients-grid');
+    const chartLabels = [];
+    const chartData = [];
 
     try {
-      await addDoc(collection(db, "enquiries"), {
-        name: document.getElementById('eq-name').value,
-        contact: document.getElementById('eq-contact').value,
-        service: selectedService,
-        budget: document.getElementById('eq-budget').value,
-        timestamp: serverTimestamp(),
-        status: "New"
+      // Fetch data from Firebase
+      const q = query(collection(db, "portfolio"), orderBy("timestamp", "desc"));
+      const snapshot = await getDocs(q);
+      
+      if (grid) grid.innerHTML = ''; // Clear out the loading state
+
+      // IF DATABASE IS EMPTY, SHOW THIS MESSAGE
+      if (snapshot.empty) {
+        if (grid) grid.innerHTML = '<p style="text-align:center; width:100%; color:#00f5ff; font-family: \'Share Tech Mono\', monospace; padding: 40px; border: 1px dashed #00f5ff;">No portfolio items found. Please log into the Admin Panel to add your first client.</p>';
+        return; 
+      }
+
+      // IF DATABASE HAS ITEMS, BUILD THE CARDS
+      snapshot.forEach((doc) => {
+        const data = doc.data();
+        
+        // Build the dynamic metrics HTML safely
+        let metricsHTML = '';
+        if(data.metrics && Array.isArray(data.metrics)) {
+          data.metrics.forEach(m => {
+            metricsHTML += `<div class="port-metric-row"><span class="port-metric-label">${m.label}</span><span class="port-metric-value cyan">${m.value}</span></div>`;
+          });
+        }
+
+        // Build the Card HTML
+        if (grid) {
+          const cardHTML = `
+            <div class="port-client-card" style="border-color: #00f5ff;">
+              <div class="port-card-header">
+                <div class="port-card-icon">${data.icon || '🚀'}</div>
+                <div class="port-card-name">${data.name || 'Unknown Client'}</div>
+                <div class="port-card-industry">${data.industry || ''}</div>
+              </div>
+              <div class="port-card-body">
+                ${metricsHTML}
+                <div class="port-metric-row"><span class="port-metric-label">STATUS</span><span class="port-metric-value"><span class="port-badge port-badge-active">${data.status || 'ACTIVE'}</span></span></div>
+              </div>
+            </div>
+          `;
+          grid.insertAdjacentHTML('beforeend', cardHTML);
+        }
+
+        // Save data for the Donut Chart
+        chartLabels.push(data.name || 'Unnamed');
+        chartData.push(Number(data.graphVolume) || 1); 
       });
 
-      document.getElementById('eq-status').style.display = 'block';
-      document.getElementById('enquiry-form').reset();
-      otherServiceInput.style.display = 'none';
-      submitBtn.textContent = "SUBMIT ENQUIRY";
-      
-      setTimeout(() => { document.getElementById('eq-status').style.display = 'none'; }, 4000);
-    } catch (error) {
-      console.error("Error adding document: ", error);
-      submitBtn.textContent = "SUBMIT ENQUIRY";
-      alert("Error sending enquiry. Please try again.");
+      // Draw the Charts
+      initCharts(chartLabels, chartData);
+
+    } catch (err) {
+      console.error("Error loading portfolio: ", err);
+      if (grid) grid.innerHTML = '<p style="color:#ff0080; text-align:center; width:100%;">Error loading database. Please check console.</p>';
     }
-  });
+  }
+
+  function initCharts(dynamicLabels, dynamicData) {
+    const gridColor='rgba(0,245,255,0.05)';
+    const tickColor='rgba(232,244,255,0.45)';
+    const chartFont={family:"'Share Tech Mono', monospace",size:10};
+
+    // Chart 2: Volumetric Funnel Scale (DYNAMIC DATA FROM FIREBASE!)
+    const ctx2 = document.getElementById('compareChart');
+    if(ctx2) {
+      const bgColors = dynamicLabels.map((_, i) => ['#00f5ff33','#ff008033','#00ff8833','#ffd70033'][i % 4]);
+      const borderColors = dynamicLabels.map((_, i) => ['#00f5ff','#ff0080','#00ff88','#ffd700'][i % 4]);
+
+      let chartStatus = Chart.getChart("compareChart");
+      if (chartStatus != undefined) { chartStatus.destroy(); }
+
+      new Chart(ctx2,{
+        type:'doughnut',
+        data:{
+          labels: dynamicLabels,
+          datasets:[{ data: dynamicData, backgroundColor: bgColors, borderColor: borderColors, borderWidth:2, hoverOffset:12 }]
+        },
+        options:{ responsive:true, maintainAspectRatio:false, cutout:'60%', plugins:{ legend:{ display:true, position:'bottom', labels:{color:tickColor, font:chartFont, usePointStyle:true} } } }
+      });
+    }
+
+    // Static Demo Charts
+    const ctx1 = document.getElementById('covaiChart');
+    if(ctx1) {
+      let chartStatus1 = Chart.getChart("covaiChart");
+      if (chartStatus1 != undefined) { chartStatus1.destroy(); }
+      new Chart(ctx1,{ type:'line', data:{ labels:['Sep','Oct','Nov','Dec','Jan','Feb','Mar'], datasets:[{ label:'Cost Per Lead (₹)', data:[12.65,15.96,14.01,26.50,16.16,12.20,5.35], borderColor:'#00f5ff', borderWidth:2, pointBackgroundColor:'#ff0080', tension:0.3, fill:true, backgroundColor:'rgba(0,245,255,0.07)' }] }, options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{ y:{ticks:{color:tickColor,font:chartFont},grid:{color:gridColor}}, x:{ticks:{color:tickColor,font:chartFont},grid:{color:gridColor}} } } });
+    }
+    
+    const ctx3 = document.getElementById('cplChart');
+    if(ctx3) {
+      let chartStatus3 = Chart.getChart("cplChart");
+      if (chartStatus3 != undefined) { chartStatus3.destroy(); }
+      new Chart(ctx3,{ type:'bar', data:{ labels:['MyTrip','Colour','DS Elect','TVS','Covai AC','Gluta'], datasets:[{ label:'CPL', data:[32.40,27.13,22.13,21.20,42.50,11.82], backgroundColor:'#ff008022', borderColor:'#ff0080', borderWidth:1 }] }, options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{ y:{ticks:{color:tickColor,font:chartFont},grid:{color:gridColor}}, x:{ticks:{color:tickColor,font:chartFont},grid:{display:false}} } } });
+    }
+  }
+
+  loadPortfolioAndCharts();
 </script>
-<!-- ENQUIRY DATABASE SCRIPT END -->
+<!-- DYNAMIC PORTFOLIO SCRIPT END -->
 
 </body>
 </html>
