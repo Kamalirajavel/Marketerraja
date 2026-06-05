@@ -1145,50 +1145,59 @@ document.addEventListener('click', e => {
     const chartData = [];
 
     try {
+      // Fetch data from Firebase
       const q = query(collection(db, "portfolio"), orderBy("timestamp", "desc"));
       const snapshot = await getDocs(q);
       
-      if (grid) grid.innerHTML = ''; // Clear loading state
+      if (grid) grid.innerHTML = ''; // Clear out the loading state
 
+      // IF DATABASE IS EMPTY, SHOW THIS MESSAGE
+      if (snapshot.empty) {
+        if (grid) grid.innerHTML = '<p style="text-align:center; width:100%; color:#00f5ff; font-family: \'Share Tech Mono\', monospace; padding: 40px; border: 1px dashed #00f5ff;">No portfolio items found. Please log into the Admin Panel to add your first client.</p>';
+        return; // Stop running the rest of the code
+      }
+
+      // IF DATABASE HAS ITEMS, BUILD THE CARDS
       snapshot.forEach((doc) => {
         const data = doc.data();
         
-        // 1. Build the dynamic metrics HTML
+        // Build the dynamic metrics HTML safely
         let metricsHTML = '';
-        if(data.metrics && data.metrics.length > 0) {
+        if(data.metrics && Array.isArray(data.metrics)) {
           data.metrics.forEach(m => {
             metricsHTML += `<div class="port-metric-row"><span class="port-metric-label">${m.label}</span><span class="port-metric-value cyan">${m.value}</span></div>`;
           });
         }
 
-        // 2. Build the Card
+        // Build the Card HTML
         if (grid) {
           const cardHTML = `
             <div class="port-client-card" style="border-color: #00f5ff;">
               <div class="port-card-header">
-                <div class="port-card-icon">${data.icon}</div>
-                <div class="port-card-name">${data.name}</div>
-                <div class="port-card-industry">${data.industry}</div>
+                <div class="port-card-icon">${data.icon || '🚀'}</div>
+                <div class="port-card-name">${data.name || 'Unknown Client'}</div>
+                <div class="port-card-industry">${data.industry || ''}</div>
               </div>
               <div class="port-card-body">
                 ${metricsHTML}
-                <div class="port-metric-row"><span class="port-metric-label">STATUS</span><span class="port-metric-value"><span class="port-badge port-badge-active">${data.status}</span></span></div>
+                <div class="port-metric-row"><span class="port-metric-label">STATUS</span><span class="port-metric-value"><span class="port-badge port-badge-active">${data.status || 'ACTIVE'}</span></span></div>
               </div>
             </div>
           `;
           grid.insertAdjacentHTML('beforeend', cardHTML);
         }
 
-        // 3. Save data for the Donut Chart
-        chartLabels.push(data.name);
-        chartData.push(Number(data.graphVolume) || 0); 
+        // Save data for the Donut Chart (Fallback to 1 if empty to prevent chart crashing)
+        chartLabels.push(data.name || 'Unnamed');
+        chartData.push(Number(data.graphVolume) || 1); 
       });
 
-      // 4. Draw the Charts!
+      // Draw the Charts
       initCharts(chartLabels, chartData);
 
     } catch (err) {
       console.error("Error loading portfolio: ", err);
+      if (grid) grid.innerHTML = '<p style="color:#ff0080; text-align:center; width:100%;">Error loading database. Please check console.</p>';
     }
   }
 
@@ -1196,48 +1205,46 @@ document.addEventListener('click', e => {
     const gridColor='rgba(0,245,255,0.05)';
     const tickColor='rgba(232,244,255,0.45)';
     const chartFont={family:"'Share Tech Mono', monospace",size:10};
-    const isMobile=window.innerWidth<600;
 
-    // Chart 1: Covai CPL Trend (Static Demo)
-    const ctx1 = document.getElementById('covaiChart');
-    if(ctx1) {
-      new Chart(ctx1,{
-        type:'line',
-        data:{ labels:['Sep 25','Oct 25','Nov-A','Nov-B','Nov-C','Dec-A','Dec-B','Jan-A','Jan-B','Feb-A','Feb-B','Mar-A','Mar-B'], datasets:[{ label:'Cost Per Lead (₹)', data:[12.65,15.96,12.56,14.01,19.04,26.50,24.24,16.16,18.76,12.20,5.60,5.35,8.04], borderColor:'#00f5ff',borderWidth:2, pointBackgroundColor:'#ff0080',pointRadius:isMobile?3:4, tension:0.3,fill:true, backgroundColor:'rgba(0,245,255,0.07)' }] },
-        options:{ responsive:true,maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{ y:{ticks:{color:tickColor,font:chartFont},grid:{color:gridColor}}, x:{ticks:{color:tickColor,font:chartFont,maxRotation:isMobile?45:30},grid:{color:gridColor}} } }
-      });
-    }
-
-    // Chart 2: Volumetric Funnel Scale (DYNAMIC!)
+    // Chart 2: Volumetric Funnel Scale (DYNAMIC DATA FROM FIREBASE!)
     const ctx2 = document.getElementById('compareChart');
     if(ctx2) {
-      // Create random colors based on how many items there are
       const bgColors = dynamicLabels.map((_, i) => ['#00f5ff33','#ff008033','#00ff8833','#ffd70033'][i % 4]);
       const borderColors = dynamicLabels.map((_, i) => ['#00f5ff','#ff0080','#00ff88','#ffd700'][i % 4]);
+
+      // Destroy previous chart if it exists so they don't overlap
+      let chartStatus = Chart.getChart("compareChart");
+      if (chartStatus != undefined) { chartStatus.destroy(); }
 
       new Chart(ctx2,{
         type:'doughnut',
         data:{
-          labels: dynamicLabels.length > 0 ? dynamicLabels : ['No Data Yet'],
-          datasets:[{ data: dynamicData.length > 0 ? dynamicData : [1], backgroundColor: bgColors, borderColor: borderColors, borderWidth:2,hoverOffset:12 }]
+          labels: dynamicLabels,
+          datasets:[{ data: dynamicData, backgroundColor: bgColors, borderColor: borderColors, borderWidth:2, hoverOffset:12 }]
         },
-        options:{ responsive:true,maintainAspectRatio:false,cutout:'60%', layout:{padding:{bottom:10,top:10}}, plugins:{ legend:{ display:true,position:'bottom', labels:{color:tickColor,font:chartFont,boxWidth:10,padding:10,usePointStyle:true,pointStyle:'rectRounded'} } } }
+        options:{ responsive:true, maintainAspectRatio:false, cutout:'60%', plugins:{ legend:{ display:true, position:'bottom', labels:{color:tickColor, font:chartFont, usePointStyle:true} } } }
       });
     }
 
-    // Chart 3: CPL Bar (Static Demo)
+    // (The other static charts for Covai CPL Trend and Bar chart stay here)
+    const ctx1 = document.getElementById('covaiChart');
+    if(ctx1) {
+      let chartStatus1 = Chart.getChart("covaiChart");
+      if (chartStatus1 != undefined) { chartStatus1.destroy(); }
+      new Chart(ctx1,{ type:'line', data:{ labels:['Sep','Oct','Nov','Dec','Jan','Feb','Mar'], datasets:[{ label:'Cost Per Lead (₹)', data:[12.65,15.96,14.01,26.50,16.16,12.20,5.35], borderColor:'#00f5ff', borderWidth:2, pointBackgroundColor:'#ff0080', tension:0.3, fill:true, backgroundColor:'rgba(0,245,255,0.07)' }] }, options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{ y:{ticks:{color:tickColor,font:chartFont},grid:{color:gridColor}}, x:{ticks:{color:tickColor,font:chartFont},grid:{color:gridColor}} } } });
+    }
+    
     const ctx3 = document.getElementById('cplChart');
     if(ctx3) {
-      new Chart(ctx3,{
-        type:'bar',
-        data:{ labels:['MyTrip','PureBreeze','Colour','Raja DM','Ganapathi','M.A Fashion','RDS','DS Elect','TVS','RS Readymates','Covai AC','Gluta'], datasets:[{ label:'Cost Per Lead (₹)', data:[32.40,28.40,27.13,24.16,24.20,24.00,25.00,22.13,21.20,18.00,42.50,11.82], backgroundColor:['#ff008022','#00f5ff22','#ffd70022','#00ff8822','#9b00ff22','#ff000022','#00f5ff22','#ff008022','#00ff8822','#ffd70022','#00f5ff22','#ff008022'], borderColor:['#ff0080','#00f5ff','#ffd700','#00ff88','#9b00ff','#ff0000','#00f5ff','#ff0080','#00ff88','#ffd700','#00f5ff','#ff0080'], borderWidth:1.5,borderRadius:2,maxBarThickness:28 }] },
-        options:{ responsive:true,maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{ y:{ticks:{color:tickColor,font:chartFont},grid:{color:gridColor}}, x:{ticks:{color:tickColor,font:chartFont,maxRotation:45,minRotation:45},grid:{display:false}} } }
-      });
+      let chartStatus3 = Chart.getChart("cplChart");
+      if (chartStatus3 != undefined) { chartStatus3.destroy(); }
+      new Chart(ctx3,{ type:'bar', data:{ labels:['MyTrip','Colour','DS Elect','TVS','Covai AC','Gluta'], datasets:[{ label:'CPL', data:[32.40,27.13,22.13,21.20,42.50,11.82], backgroundColor:'#ff008022', borderColor:'#ff0080', borderWidth:1 }] }, options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{ y:{ticks:{color:tickColor,font:chartFont},grid:{color:gridColor}}, x:{ticks:{color:tickColor,font:chartFont},grid:{display:false}} } } });
     }
   }
 
   loadPortfolioAndCharts();
 </script>
+<!-- DYNAMIC PORTFOLIO SCRIPT END -->
   
 </body>
 </html>
