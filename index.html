@@ -1852,20 +1852,8 @@ document.addEventListener('click', e => {
 
   <!-- ENQUIRY DATABASE SCRIPT START -->
 <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
-  import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyA0JCQDUZ9slUeA3REIPN0poCuMWy55uFc",
-    authDomain: "marketerraja-d4054.firebaseapp.com",
-    projectId: "marketerraja-d4054",
-    storageBucket: "marketerraja-d4054.firebasestorage.app",
-    messagingSenderId: "1089812986562",
-    appId: "1:1089812986562:web:964fbb3cda2b0ee4aad95b"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
+  import { db } from "./firebase-config.js";
+  import { collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
   const serviceSelect = document.getElementById('eq-service');
   const otherServiceInput = document.getElementById('eq-other-service');
