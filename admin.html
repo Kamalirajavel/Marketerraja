@@ -5,15 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin Dashboard | Marketer Raja</title>
   <style>
-    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #000c24; color: #fff; margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
-    .login-box { background: #021233; padding: 40px; border-radius: 8px; border: 1px solid #00f5ff; box-shadow: 0 0 20px rgba(0,245,255,0.2); width: 100%; max-width: 320px; text-align: center; }
-    input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid rgba(0,245,255,0.3); border-radius: 4px; box-sizing: border-box; background: rgba(0,0,0,0.5); color: white; outline: none; }
-    button { width: 100%; padding: 12px; background: #00f5ff; color: #000; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 16px; margin-top: 10px; }
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #000c24; color: #fff; margin: 0; display: flex; justify-content: center; min-height: 100vh; }
+    .login-box { background: #021233; padding: 40px; border-radius: 8px; border: 1px solid #00f5ff; box-shadow: 0 0 20px rgba(0,245,255,0.2); width: 100%; max-width: 320px; text-align: center; margin: auto; }
+    input { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid rgba(0,245,255,0.3); border-radius: 4px; box-sizing: border-box; background: rgba(0,0,0,0.5); color: white; outline: none; }
+    button { width: 100%; padding: 12px; background: #00f5ff; color: #000; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 16px; margin-top: 10px; transition: 0.3s; }
     button:hover { background: #00c2cc; }
     .hidden { display: none; }
     
     /* Dashboard Styles */
-    .dashboard-box { background: #021233; padding: 30px; border-radius: 8px; border: 1px solid #00f5ff; width: 95%; max-width: 1000px; margin: 40px auto; align-self: flex-start; }
+    .dashboard-box { background: #021233; padding: 30px; border-radius: 8px; border: 1px solid #00f5ff; width: 95%; max-width: 1000px; margin: 40px auto; }
     .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(0,245,255,0.2); padding-bottom: 15px; margin-bottom: 20px; }
     table { width: 100%; border-collapse: collapse; margin-top: 20px; background: rgba(0,0,0,0.3); }
     th, td { padding: 15px; text-align: left; border-bottom: 1px solid rgba(0,245,255,0.1); }
@@ -40,29 +40,47 @@
       <button id="logout-btn" style="width: auto; background: #ff0080; color: white;">LOG OUT</button>
     </div>
     
+    <!-- Enquiries Section -->
     <h3 style="color: #ffd700;">Recent Client Enquiries</h3>
-    <table>
-      <thead>
-        <tr>
-          <th>Date</th>
-          <th>Name</th>
-          <th>Contact</th>
-          <th>Service Requested</th>
-          <th>Budget</th>
-          <th>Status</th>
-        </tr>
-      </thead>
-      <tbody id="enquiry-list">
-        <tr><td colspan="6" style="text-align: center;">Loading data...</td></tr>
-      </tbody>
-    </table>
+    <div style="overflow-x: auto;">
+      <table>
+        <thead><tr><th>Date</th><th>Name</th><th>Contact</th><th>Service</th><th>Budget</th><th>Status</th></tr></thead>
+        <tbody id="enquiry-list"><tr><td colspan="6" style="text-align: center;">Loading data...</td></tr></tbody>
+      </table>
+    </div>
+
+    <hr style="border: 1px solid rgba(0,245,255,0.2); margin: 40px 0;">
+
+    <!-- Add Portfolio Section -->
+    <h3 style="color: #ff0080;">+ Add New Portfolio Project</h3>
+    <form id="portfolio-form" style="background: rgba(0,0,0,0.3); padding: 20px; border-radius: 8px; border: 1px solid rgba(255,0,128,0.3);">
+      <div style="display: flex; gap: 10px;">
+        <input type="text" id="pf-name" placeholder="Client Name (e.g. Elite Builders)" required style="flex: 2;">
+        <input type="text" id="pf-icon" placeholder="Icon Emoji (e.g. 🏢)" required style="flex: 1;">
+      </div>
+      <input type="text" id="pf-industry" placeholder="Industry (e.g. Real Estate · B2B)" required>
+      
+      <div style="display: flex; gap: 10px;">
+        <input type="text" id="pf-m1-label" placeholder="Metric 1 Label (e.g. AGGREGATE LEADS)" required style="flex: 1;">
+        <input type="text" id="pf-m1-value" placeholder="Metric 1 Value (e.g. 450)" required style="flex: 1;">
+      </div>
+      <div style="display: flex; gap: 10px;">
+        <input type="text" id="pf-m2-label" placeholder="Metric 2 Label (e.g. CONVERSION RATE)" required style="flex: 1;">
+        <input type="text" id="pf-m2-value" placeholder="Metric 2 Value (e.g. 7.2%)" required style="flex: 1;">
+      </div>
+      
+      <input type="text" id="pf-status" placeholder="Status Badge (e.g. ACTIVE or SCALING)" required>
+      <button type="submit" style="background: #ff0080; color: white;">PUBLISH TO LIVE PORTFOLIO</button>
+      <p id="pf-msg" style="color: #00ff88; font-size: 14px; display: none; text-align: center;">Portfolio item published to live site!</p>
+    </form>
+
   </div>
 
   <!-- Firebase Script -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
     import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
-    import { getFirestore, collection, getDocs, orderBy, query } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+    import { getFirestore, collection, getDocs, orderBy, query, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyA0JCQDUZ9slUeA3REIPN0poCuMWy55uFc",
@@ -77,73 +95,75 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    const loginSection = document.getElementById('login-section');
-    const adminDashboard = document.getElementById('admin-dashboard');
-    const errorMsg = document.getElementById('error-msg');
-
-    // Login Logic
+    // --- Login / Logout Logic ---
     document.getElementById('login-btn').addEventListener('click', () => {
       const email = document.getElementById('email').value;
       const password = document.getElementById('password').value;
-      errorMsg.textContent = "Authenticating...";
-      
-      signInWithEmailAndPassword(auth, email, password).catch((error) => {
-        errorMsg.textContent = "Access Denied. Invalid credentials.";
+      document.getElementById('error-msg').textContent = "Authenticating...";
+      signInWithEmailAndPassword(auth, email, password).catch(() => {
+        document.getElementById('error-msg').textContent = "Access Denied. Invalid credentials.";
       });
     });
 
-    // Logout Logic
     document.getElementById('logout-btn').addEventListener('click', () => {
       signOut(auth).then(() => {
         document.getElementById('email').value = '';
         document.getElementById('password').value = '';
-        errorMsg.textContent = '';
+        document.getElementById('error-msg').textContent = '';
       });
     });
 
-    // Fetch Database Data
+    // --- Fetch Enquiries ---
     const fetchEnquiries = async () => {
       try {
         const q = query(collection(db, "enquiries"), orderBy("timestamp", "desc"));
         const querySnapshot = await getDocs(q);
         const list = document.getElementById('enquiry-list');
         list.innerHTML = ''; 
-        
-        if (querySnapshot.empty) {
-          list.innerHTML = '<tr><td colspan="6" style="text-align: center;">No enquiries yet.</td></tr>';
-          return;
-        }
-
+        if (querySnapshot.empty) { list.innerHTML = '<tr><td colspan="6" style="text-align: center;">No enquiries yet.</td></tr>'; return; }
         querySnapshot.forEach((doc) => {
           const data = doc.data();
           const date = data.timestamp ? new Date(data.timestamp.toDate()).toLocaleDateString() : 'Just now';
-          
-          list.innerHTML += `
-            <tr>
-              <td>${date}</td>
-              <td style="font-weight: bold;">${data.name}</td>
-              <td>${data.contact}</td>
-              <td style="color: #00f5ff;">${data.service}</td>
-              <td style="color: #00ff88;">${data.budget}</td>
-              <td><span class="badge">${data.status}</span></td>
-            </tr>
-          `;
+          list.innerHTML += `<tr><td>${date}</td><td style="font-weight: bold;">${data.name}</td><td>${data.contact}</td><td style="color: #00f5ff;">${data.service}</td><td style="color: #00ff88;">${data.budget}</td><td><span class="badge">${data.status}</span></td></tr>`;
         });
-      } catch (err) {
-        console.error(err);
-        document.getElementById('enquiry-list').innerHTML = '<tr><td colspan="6" style="text-align: center; color: #ff0080;">Error loading data. Check Firestore rules.</td></tr>';
-      }
+      } catch (err) { console.error(err); }
     };
 
-    // Monitor Auth State
+    // --- Add Portfolio Logic ---
+    document.getElementById('portfolio-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = e.target.querySelector('button');
+      btn.textContent = "PUBLISHING...";
+      try {
+        await addDoc(collection(db, "portfolio"), {
+          name: document.getElementById('pf-name').value,
+          icon: document.getElementById('pf-icon').value,
+          industry: document.getElementById('pf-industry').value,
+          m1Label: document.getElementById('pf-m1-label').value,
+          m1Value: document.getElementById('pf-m1-value').value,
+          m2Label: document.getElementById('pf-m2-label').value,
+          m2Value: document.getElementById('pf-m2-value').value,
+          status: document.getElementById('pf-status').value.toUpperCase(),
+          timestamp: serverTimestamp()
+        });
+        document.getElementById('pf-msg').style.display = 'block';
+        e.target.reset();
+        btn.textContent = "PUBLISH TO LIVE PORTFOLIO";
+        setTimeout(() => { document.getElementById('pf-msg').style.display = 'none'; }, 3000);
+      } catch (error) {
+        alert("Error publishing portfolio: " + error.message);
+        btn.textContent = "PUBLISH TO LIVE PORTFOLIO";
+      }
+    });
+
     onAuthStateChanged(auth, (user) => {
       if (user) {
-        loginSection.classList.add('hidden');
-        adminDashboard.classList.remove('hidden');
-        fetchEnquiries(); // Load the table when logged in
+        document.getElementById('login-section').classList.add('hidden');
+        document.getElementById('admin-dashboard').classList.remove('hidden');
+        fetchEnquiries();
       } else {
-        loginSection.classList.remove('hidden');
-        adminDashboard.classList.add('hidden');
+        document.getElementById('login-section').classList.remove('hidden');
+        document.getElementById('admin-dashboard').classList.add('hidden');
       }
     });
   </script>
