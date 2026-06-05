@@ -3,42 +3,67 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin Login | Marketer Raja</title>
+  <title>Admin Dashboard | Marketer Raja</title>
   <style>
-    body { font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; background: #f4f4f4; margin: 0; }
-    .login-box { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); width: 100%; max-width: 300px; }
-    input { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
-    button { width: 100%; padding: 10px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; }
-    button:hover { background: #0056b3; }
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #000c24; color: #fff; margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+    .login-box { background: #021233; padding: 40px; border-radius: 8px; border: 1px solid #00f5ff; box-shadow: 0 0 20px rgba(0,245,255,0.2); width: 100%; max-width: 320px; text-align: center; }
+    input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid rgba(0,245,255,0.3); border-radius: 4px; box-sizing: border-box; background: rgba(0,0,0,0.5); color: white; outline: none; }
+    button { width: 100%; padding: 12px; background: #00f5ff; color: #000; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 16px; margin-top: 10px; }
+    button:hover { background: #00c2cc; }
     .hidden { display: none; }
-    .dashboard-box { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); width: 90%; max-width: 800px; margin: 20px; }
+    
+    /* Dashboard Styles */
+    .dashboard-box { background: #021233; padding: 30px; border-radius: 8px; border: 1px solid #00f5ff; width: 95%; max-width: 1000px; margin: 40px auto; align-self: flex-start; }
+    .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(0,245,255,0.2); padding-bottom: 15px; margin-bottom: 20px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; background: rgba(0,0,0,0.3); }
+    th, td { padding: 15px; text-align: left; border-bottom: 1px solid rgba(0,245,255,0.1); }
+    th { background: rgba(0,245,255,0.1); color: #00f5ff; }
+    td { color: #e8f4ff; }
+    .badge { padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; background: #25D366; color: #000; }
   </style>
 </head>
 <body>
 
+  <!-- Login Form -->
   <div id="login-section" class="login-box">
-    <h2>Admin Login</h2>
+    <h2 style="color: #00f5ff; margin-bottom: 20px;">SYSTEM LOGIN</h2>
     <input type="email" id="email" placeholder="Admin Email">
     <input type="password" id="password" placeholder="Password">
-    <button id="login-btn">Log In</button>
-    <p id="error-msg" style="color: red; font-size: 14px; text-align: center;"></p>
+    <button id="login-btn">ACCESS TERMINAL</button>
+    <p id="error-msg" style="color: #ff0080; font-size: 14px; margin-top: 15px;"></p>
   </div>
 
+  <!-- Admin Dashboard -->
   <div id="admin-dashboard" class="dashboard-box hidden">
-    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 20px;">
-      <h2>Admin Panel - Marketer Raja</h2>
-      <button id="logout-btn" style="width: auto; background: #dc3545;">Log Out</button>
+    <div class="header">
+      <h2 style="color: #00f5ff; margin: 0;">MARKETER RAJA // ADMIN CONSOLE</h2>
+      <button id="logout-btn" style="width: auto; background: #ff0080; color: white;">LOG OUT</button>
     </div>
     
-    <p>Welcome! You are securely logged in to your Firebase backend.</p>
-    </div>
+    <h3 style="color: #ffd700;">Recent Client Enquiries</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Name</th>
+          <th>Contact</th>
+          <th>Service Requested</th>
+          <th>Budget</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody id="enquiry-list">
+        <tr><td colspan="6" style="text-align: center;">Loading data...</td></tr>
+      </tbody>
+    </table>
+  </div>
 
+  <!-- Firebase Script -->
   <script type="module">
-    // Import essential Firebase functions
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
     import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
+    import { getFirestore, collection, getDocs, orderBy, query } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
-    // Your specific Firebase configuration
     const firebaseConfig = {
       apiKey: "AIzaSyA0JCQDUZ9slUeA3REIPN0poCuMWy55uFc",
       authDomain: "marketerraja-d4054.firebaseapp.com",
@@ -48,49 +73,75 @@
       appId: "1:1089812986562:web:964fbb3cda2b0ee4aad95b"
     };
 
-    // Initialize Firebase and Authentication
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
+    const db = getFirestore(app);
 
-    // UI Elements
     const loginSection = document.getElementById('login-section');
     const adminDashboard = document.getElementById('admin-dashboard');
-    const loginBtn = document.getElementById('login-btn');
-    const logoutBtn = document.getElementById('logout-btn');
     const errorMsg = document.getElementById('error-msg');
 
-    // Handle Login
-    loginBtn.addEventListener('click', () => {
+    // Login Logic
+    document.getElementById('login-btn').addEventListener('click', () => {
       const email = document.getElementById('email').value;
       const password = document.getElementById('password').value;
+      errorMsg.textContent = "Authenticating...";
       
-      errorMsg.textContent = "Logging in..."; // Loading state
-      
-      signInWithEmailAndPassword(auth, email, password)
-        .catch((error) => {
-          errorMsg.textContent = "Invalid email or password.";
-          console.error("Login Error:", error.code, error.message);
-        });
+      signInWithEmailAndPassword(auth, email, password).catch((error) => {
+        errorMsg.textContent = "Access Denied. Invalid credentials.";
+      });
     });
 
-    // Handle Logout
-    logoutBtn.addEventListener('click', () => {
+    // Logout Logic
+    document.getElementById('logout-btn').addEventListener('click', () => {
       signOut(auth).then(() => {
-        // Clear inputs on logout
         document.getElementById('email').value = '';
         document.getElementById('password').value = '';
         errorMsg.textContent = '';
       });
     });
 
-    // Monitor Auth State (Show/Hide dashboard)
+    // Fetch Database Data
+    const fetchEnquiries = async () => {
+      try {
+        const q = query(collection(db, "enquiries"), orderBy("timestamp", "desc"));
+        const querySnapshot = await getDocs(q);
+        const list = document.getElementById('enquiry-list');
+        list.innerHTML = ''; 
+        
+        if (querySnapshot.empty) {
+          list.innerHTML = '<tr><td colspan="6" style="text-align: center;">No enquiries yet.</td></tr>';
+          return;
+        }
+
+        querySnapshot.forEach((doc) => {
+          const data = doc.data();
+          const date = data.timestamp ? new Date(data.timestamp.toDate()).toLocaleDateString() : 'Just now';
+          
+          list.innerHTML += `
+            <tr>
+              <td>${date}</td>
+              <td style="font-weight: bold;">${data.name}</td>
+              <td>${data.contact}</td>
+              <td style="color: #00f5ff;">${data.service}</td>
+              <td style="color: #00ff88;">${data.budget}</td>
+              <td><span class="badge">${data.status}</span></td>
+            </tr>
+          `;
+        });
+      } catch (err) {
+        console.error(err);
+        document.getElementById('enquiry-list').innerHTML = '<tr><td colspan="6" style="text-align: center; color: #ff0080;">Error loading data. Check Firestore rules.</td></tr>';
+      }
+    };
+
+    // Monitor Auth State
     onAuthStateChanged(auth, (user) => {
       if (user) {
-        // User is logged in
         loginSection.classList.add('hidden');
         adminDashboard.classList.remove('hidden');
+        fetchEnquiries(); // Load the table when logged in
       } else {
-        // User is logged out
         loginSection.classList.remove('hidden');
         adminDashboard.classList.add('hidden');
       }
