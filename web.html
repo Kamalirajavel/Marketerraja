@@ -541,18 +541,18 @@ footer{
 .pp-section strong i{color:var(--cyan);font-size:11px;}
 .pp-section p{font-family:var(--font-m,sans-serif);font-size:12px;line-height:1.7;color:rgba(232,244,255,0.55);margin:0;}
 .dot{opacity:0.3;}
-@media(max-width:600px){
+@media(max-width:480px){
   .privacy-popup{
     position:fixed;
     bottom:0;left:0;right:0;
-    width:100vw !important;
+    width:290px !important;
     max-width:100vw;
     border-radius:16px 16px 0 0;
-    transform:translateY(100%) !important;
+    transform:translateX(-10%) translateY(6px) !important;
     top:auto !important;
   }
   .privacy-popup.active{
-    transform:translateY(0) !important;
+    transform:translateX(-10%) translateY(0) !important;
     opacity:1;pointer-events:auto;
   }
   .privacy-popup::after{display:none;}
