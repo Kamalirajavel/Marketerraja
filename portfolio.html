@@ -653,12 +653,53 @@ section.sec-visible{opacity:1;transform:translateY(0);}
 /* Smooth scroll padding for fixed nav */
 html{scroll-padding-top:var(--nav-h);}
 
-/* Reduce blank space in hero section on mobile */
+/* --- MOBILE OVERRIDES: TIGHT HERO SPACING & CENTERED FOOTER --- */
 @media (max-width: 768px) {
+  /* 1. Ultra-tight Hero Section */
   #port-hero {
     min-height: auto !important;
-    padding-top: calc(var(--nav-h) + 20px) !important;
-    padding-bottom: 20px !important;
+    padding-top: calc(var(--nav-h) + 10px) !important;
+    padding-bottom: 5px !important;
+  }
+  .port-hero-tag {
+    margin-bottom: 12px !important;
+  }
+  .port-hero-sub {
+    margin-top: 15px !important;
+  }
+  .hero-rate-badge {
+    margin-top: 15px !important;
+  }
+  .port-stats-strip {
+    margin-top: 10px !important; 
+    margin-bottom: 30px !important;
+  }
+
+  /* 2. Perfectly Centered Footer */
+  .footer-container {
+    flex-direction: column !important;
+    align-items: center !important;
+    text-align: center !important;
+  }
+  .footer-brand {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .footer-brand p {
+    text-align: center !important;
+    max-width: 100% !important;
+  }
+  .footer-links {
+    flex-direction: column !important;
+    align-items: center !important;
+    gap: 30px !important;
+  }
+  .footer-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
   }
 }
 </style>
