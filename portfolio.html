@@ -1161,6 +1161,7 @@ document.addEventListener('click', e => {
         return; 
       }
 
+
       // IF DATABASE HAS ITEMS, BUILD THE CARDS
       snapshot.forEach((doc) => {
         const data = doc.data();
@@ -1168,9 +1169,7 @@ document.addEventListener('click', e => {
         // Build the dynamic metrics HTML safely with alternating colors
         let metricsHTML = '';
         if(data.metrics && Array.isArray(data.metrics)) {
-          // Array of colors: Cyan, Gold, Pink, Green
           const valueColors = ['#00f5ff', '#ffd700', '#ff0080', '#00ff88'];
-          
           data.metrics.forEach((m, index) => {
             const color = valueColors[index % valueColors.length];
             metricsHTML += `
@@ -1179,6 +1178,18 @@ document.addEventListener('click', e => {
                 <span class="port-metric-value" style="color: ${color}; text-shadow: 0 0 10px ${color}60;">${m.value}</span>
               </div>`;
           });
+        }
+
+        // --- NEW: DYNAMIC STATUS BADGE COLORS ---
+        let statusText = (data.status || 'ACTIVE').toUpperCase();
+        let statusColor = '#00ff88'; // Default Green (ACTIVE)
+        
+        if (statusText.includes('SCALING')) {
+          statusColor = '#00f5ff'; // Cyan/Blue
+        } else if (statusText.includes('STABLE')) {
+          statusColor = '#ffd700'; // Gold/Yellow
+        } else if (statusText.includes('RETIRED')) {
+          statusColor = '#ff0080'; // Pink/Red
         }
 
         // Build the Card HTML
@@ -1192,7 +1203,14 @@ document.addEventListener('click', e => {
               </div>
               <div class="port-card-body">
                 ${metricsHTML}
-                <div class="port-metric-row"><span class="port-metric-label">STATUS</span><span class="port-metric-value"><span class="port-badge port-badge-active">${data.status || 'ACTIVE'}</span></span></div>
+                <div class="port-metric-row">
+                  <span class="port-metric-label">STATUS</span>
+                  <span class="port-metric-value">
+                    <span class="port-badge" style="background: ${statusColor}22; color: ${statusColor}; border: 1px solid ${statusColor}; padding: 4px 8px; border-radius: 4px; font-size: 10px; font-weight: bold; text-shadow: 0 0 8px ${statusColor}60;">
+                      ${statusText}
+                    </span>
+                  </span>
+                </div>
               </div>
             </div>
           `;
@@ -1204,6 +1222,7 @@ document.addEventListener('click', e => {
         chartData.push(Number(data.graphVolume) || 1); 
       });
 
+      
       // Draw the Charts
       initCharts(chartLabels, chartData);
 
