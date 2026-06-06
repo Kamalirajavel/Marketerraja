@@ -653,33 +653,52 @@ section.sec-visible{opacity:1;transform:translateY(0);}
 /* Smooth scroll padding for fixed nav */
 html{scroll-padding-top:var(--nav-h);}
 
-/* --- MOBILE OVERRIDES: TIGHT HERO SPACING & CENTERED FOOTER --- */
+ /* --- MOBILE OVERRIDES: TIGHT HERO, COMPACT FOOTER & FIX BLANK PAGE --- */
+
+/* 1. Fix the "Blank Page" at the bottom of the website */
+@media (max-width: 900px) {
+  body {
+    /* Overrides the 150px blank space at the end of the page */
+    padding-bottom: 70px !important; 
+  }
+}
+
 @media (max-width: 768px) {
-  /* 1. Ultra-tight Hero Section */
+  /* 2. Ultra-tight Hero Section */
   #port-hero {
     min-height: auto !important;
     padding-top: calc(var(--nav-h) + 10px) !important;
-    padding-bottom: 5px !important;
+    padding-bottom: 0px !important;
   }
   .port-hero-tag {
-    margin-bottom: 12px !important;
+    margin-bottom: 8px !important;
+  }
+  h1.port-h1 {
+    font-size: 28px !important; /* Slightly scales down title to fit tighter */
+    margin-bottom: 5px !important;
   }
   .port-hero-sub {
-    margin-top: 15px !important;
+    margin-top: 10px !important;
+    margin-bottom: 5px !important;
   }
   .hero-rate-badge {
-    margin-top: 15px !important;
+    margin-top: 10px !important;
   }
   .port-stats-strip {
-    margin-top: 10px !important; 
+    margin-top: 15px !important; 
     margin-bottom: 30px !important;
   }
 
-  /* 2. Perfectly Centered Footer */
+  /* 3. Centered Footer & Remove End-of-Footer Blank Space */
+  footer {
+    padding-top: 30px !important;
+    padding-bottom: 15px !important; /* Removes blank space at end of footer */
+  }
   .footer-container {
     flex-direction: column !important;
     align-items: center !important;
     text-align: center !important;
+    gap: 20px !important; /* Reduces gap between footer columns */
   }
   .footer-brand {
     display: flex;
@@ -689,21 +708,25 @@ html{scroll-padding-top:var(--nav-h);}
   .footer-brand p {
     text-align: center !important;
     max-width: 100% !important;
+    margin-bottom: 0 !important;
   }
   .footer-links {
     flex-direction: column !important;
     align-items: center !important;
-    gap: 30px !important;
+    gap: 15px !important;
   }
   .footer-box {
     display: flex;
     flex-direction: column;
     align-items: center;
     text-align: center;
+    margin-bottom: 0 !important;
+  }
+  .footer-bottom {
+    margin-top: 20px !important;
+    padding-top: 15px !important;
   }
 }
-</style>
-</style>
 </head>
 <body>
 
