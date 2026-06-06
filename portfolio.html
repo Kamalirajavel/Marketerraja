@@ -1136,37 +1136,33 @@ document.addEventListener('click', e => {
     document.querySelectorAll('.privacy-popup.active').forEach(p => p.classList.remove('active'));
 });
 </script>
-  
- <!-- DYNAMIC PORTFOLIO & CHARTS SCRIPT -->
-<script type="module">
+
+
+  <script type="module">
   import { db } from "./firebase-config.js";
   import { collection, getDocs, orderBy, query } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
   async function loadPortfolioAndCharts() {
-    // FIXED: Now we look for the 'class' instead of the 'id'
     const grid = document.querySelector('.port-clients-grid');
     const chartLabels = [];
-    const chartData = [];
+    const chartVolumeData = [];
+    const chartCplData = []; // NEW: Array for the Bar Chart
 
     try {
-      // Fetch data from Firebase
       const q = query(collection(db, "portfolio"), orderBy("timestamp", "desc"));
       const snapshot = await getDocs(q);
       
-      if (grid) grid.innerHTML = ''; // Clear out the loading state
+      if (grid) grid.innerHTML = ''; 
 
-      // IF DATABASE IS EMPTY, SHOW THIS MESSAGE
       if (snapshot.empty) {
         if (grid) grid.innerHTML = '<p style="text-align:center; width:100%; color:#00f5ff; font-family: \'Share Tech Mono\', monospace; padding: 40px; border: 1px dashed #00f5ff;">No portfolio items found. Please log into the Admin Panel to add your first client.</p>';
         return; 
       }
 
-
-      // IF DATABASE HAS ITEMS, BUILD THE CARDS
       snapshot.forEach((doc) => {
         const data = doc.data();
+        let cplValue = 0; // Default CPL to 0
         
-        // Build the dynamic metrics HTML safely with alternating colors
         let metricsHTML = '';
         if(data.metrics && Array.isArray(data.metrics)) {
           const valueColors = ['#00f5ff', '#ffd700', '#ff0080', '#00ff88'];
@@ -1177,22 +1173,21 @@ document.addEventListener('click', e => {
                 <span class="port-metric-label">${m.label}</span>
                 <span class="port-metric-value" style="color: ${color}; text-shadow: 0 0 10px ${color}60;">${m.value}</span>
               </div>`;
+
+            // NEW: Look for "CPL" or "COST" in the label to feed the Bar Chart
+            if (m.label.toUpperCase().includes('CPL') || m.label.toUpperCase().includes('COST')) {
+              // Extract just the numbers (e.g. "₹42.50" becomes 42.50)
+              cplValue = parseFloat(m.value.replace(/[^0-9.]/g, '')) || 0;
+            }
           });
         }
 
-        // --- NEW: DYNAMIC STATUS BADGE COLORS ---
         let statusText = (data.status || 'ACTIVE').toUpperCase();
-        let statusColor = '#00ff88'; // Default Green (ACTIVE)
-        
-        if (statusText.includes('SCALING')) {
-          statusColor = '#00f5ff'; // Cyan/Blue
-        } else if (statusText.includes('STABLE')) {
-          statusColor = '#ffd700'; // Gold/Yellow
-        } else if (statusText.includes('RETIRED')) {
-          statusColor = '#ff0080'; // Pink/Red
-        }
+        let statusColor = '#00ff88'; 
+        if (statusText.includes('SCALING')) statusColor = '#00f5ff'; 
+        else if (statusText.includes('STABLE')) statusColor = '#ffd700'; 
+        else if (statusText.includes('RETIRED')) statusColor = '#ff0080'; 
 
-        // Build the Card HTML
         if (grid) {
           const cardHTML = `
             <div class="port-client-card" style="border-color: #00f5ff;">
@@ -1217,14 +1212,14 @@ document.addEventListener('click', e => {
           grid.insertAdjacentHTML('beforeend', cardHTML);
         }
 
-        // Save data for the Donut Chart
+        // Save data for the Charts
         chartLabels.push(data.name || 'Unnamed');
-        chartData.push(Number(data.graphVolume) || 1); 
+        chartVolumeData.push(Number(data.graphVolume) || 1); 
+        chartCplData.push(cplValue); // Push the extracted CPL value
       });
 
-      
-      // Draw the Charts
-      initCharts(chartLabels, chartData);
+      // Send the data to the charts!
+      initCharts(chartLabels, chartVolumeData, chartCplData);
 
     } catch (err) {
       console.error("Error loading portfolio: ", err);
@@ -1232,12 +1227,12 @@ document.addEventListener('click', e => {
     }
   }
 
-  function initCharts(dynamicLabels, dynamicData) {
+  function initCharts(dynamicLabels, dynamicVolumeData, dynamicCplData) {
     const gridColor='rgba(0,245,255,0.05)';
     const tickColor='rgba(232,244,255,0.45)';
     const chartFont={family:"'Share Tech Mono', monospace",size:10};
 
-    // Chart 2: Volumetric Funnel Scale (DYNAMIC DATA FROM FIREBASE!)
+    // 1. Volumetric Funnel Scale (Doughnut Chart)
     const ctx2 = document.getElementById('compareChart');
     if(ctx2) {
       const bgColors = dynamicLabels.map((_, i) => ['#00f5ff33','#ff008033','#00ff8833','#ffd70033'][i % 4]);
@@ -1250,31 +1245,43 @@ document.addEventListener('click', e => {
         type:'doughnut',
         data:{
           labels: dynamicLabels,
-          datasets:[{ data: dynamicData, backgroundColor: bgColors, borderColor: borderColors, borderWidth:2, hoverOffset:12 }]
+          datasets:[{ data: dynamicVolumeData, backgroundColor: bgColors, borderColor: borderColors, borderWidth:2, hoverOffset:12 }]
         },
         options:{ responsive:true, maintainAspectRatio:false, cutout:'60%', plugins:{ legend:{ display:true, position:'bottom', labels:{color:tickColor, font:chartFont, usePointStyle:true} } } }
       });
     }
 
-    // Static Demo Charts
+    // 2. Cost Per Lead Analysis (Bar Chart) - NOW DYNAMIC!
+    const ctx3 = document.getElementById('cplChart');
+    if(ctx3) {
+      const barBgColors = dynamicLabels.map((_, i) => ['#00f5ff22','#ff008022','#00ff8822','#ffd70022'][i % 4]);
+      const barBorderColors = dynamicLabels.map((_, i) => ['#00f5ff','#ff0080','#00ff88','#ffd700'][i % 4]);
+
+      let chartStatus3 = Chart.getChart("cplChart");
+      if (chartStatus3 != undefined) { chartStatus3.destroy(); }
+      
+      new Chart(ctx3,{ 
+        type:'bar', 
+        data:{ 
+          labels: dynamicLabels, 
+          datasets:[{ label:'CPL (₹)', data: dynamicCplData, backgroundColor: barBgColors, borderColor: barBorderColors, borderWidth:1 }] 
+        }, 
+        options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{ y:{ticks:{color:tickColor,font:chartFont},grid:{color:gridColor}}, x:{ticks:{color:tickColor,font:chartFont},grid:{display:false}} } } 
+      });
+    }
+
+    // 3. Covai CPL Trend (Line Chart)
+    // *Note: This requires historical data over multiple months, so it remains a static demo*
     const ctx1 = document.getElementById('covaiChart');
     if(ctx1) {
       let chartStatus1 = Chart.getChart("covaiChart");
       if (chartStatus1 != undefined) { chartStatus1.destroy(); }
       new Chart(ctx1,{ type:'line', data:{ labels:['Sep','Oct','Nov','Dec','Jan','Feb','Mar'], datasets:[{ label:'Cost Per Lead (₹)', data:[12.65,15.96,14.01,26.50,16.16,12.20,5.35], borderColor:'#00f5ff', borderWidth:2, pointBackgroundColor:'#ff0080', tension:0.3, fill:true, backgroundColor:'rgba(0,245,255,0.07)' }] }, options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{ y:{ticks:{color:tickColor,font:chartFont},grid:{color:gridColor}}, x:{ticks:{color:tickColor,font:chartFont},grid:{color:gridColor}} } } });
     }
-    
-    const ctx3 = document.getElementById('cplChart');
-    if(ctx3) {
-      let chartStatus3 = Chart.getChart("cplChart");
-      if (chartStatus3 != undefined) { chartStatus3.destroy(); }
-      new Chart(ctx3,{ type:'bar', data:{ labels:['MyTrip','Colour','DS Elect','TVS','Covai AC','Gluta'], datasets:[{ label:'CPL', data:[32.40,27.13,22.13,21.20,42.50,11.82], backgroundColor:'#ff008022', borderColor:'#ff0080', borderWidth:1 }] }, options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{ y:{ticks:{color:tickColor,font:chartFont},grid:{color:gridColor}}, x:{ticks:{color:tickColor,font:chartFont},grid:{display:false}} } } });
-    }
   }
 
   loadPortfolioAndCharts();
 </script>
-<!-- DYNAMIC PORTFOLIO SCRIPT END -->
-  
-</body>
+
+</body>  
 </html>
