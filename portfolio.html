@@ -1165,11 +1165,19 @@ document.addEventListener('click', e => {
       snapshot.forEach((doc) => {
         const data = doc.data();
         
-        // Build the dynamic metrics HTML safely
+        // Build the dynamic metrics HTML safely with alternating colors
         let metricsHTML = '';
         if(data.metrics && Array.isArray(data.metrics)) {
-          data.metrics.forEach(m => {
-            metricsHTML += `<div class="port-metric-row"><span class="port-metric-label">${m.label}</span><span class="port-metric-value cyan">${m.value}</span></div>`;
+          // Array of colors: Cyan, Gold, Pink, Green
+          const valueColors = ['#00f5ff', '#ffd700', '#ff0080', '#00ff88'];
+          
+          data.metrics.forEach((m, index) => {
+            const color = valueColors[index % valueColors.length];
+            metricsHTML += `
+              <div class="port-metric-row">
+                <span class="port-metric-label">${m.label}</span>
+                <span class="port-metric-value" style="color: ${color}; text-shadow: 0 0 10px ${color}60;">${m.value}</span>
+              </div>`;
           });
         }
 
