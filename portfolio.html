@@ -652,6 +652,16 @@ section.sec-visible{opacity:1;transform:translateY(0);}
 
 /* Smooth scroll padding for fixed nav */
 html{scroll-padding-top:var(--nav-h);}
+
+/* Reduce blank space in hero section on mobile */
+@media (max-width: 768px) {
+  #port-hero {
+    min-height: auto !important;
+    padding-top: calc(var(--nav-h) + 20px) !important;
+    padding-bottom: 20px !important;
+  }
+}
+</style>
 </style>
 </head>
 <body>
