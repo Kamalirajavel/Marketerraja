@@ -1939,5 +1939,51 @@ if(toggleBtn && navLinks){
   loadPortfolioAndCharts();
 </script>
 
+  <script>
+/* ── POLICY POPUPS (universal) ── */
+document.querySelectorAll('.policy-link-wrap').forEach(wrap => {
+  const trigger = wrap.querySelector('.policy-link');
+  const popup   = wrap.querySelector('.privacy-popup');
+  if (!trigger || !popup) return;
+
+  // Desktop: hover behaviour
+  trigger.addEventListener('mouseenter', () => {
+    if (window.innerWidth > 600) {
+      document.querySelectorAll('.privacy-popup.active').forEach(p => p.classList.remove('active'));
+      popup.classList.add('active');
+    }
+  });
+  trigger.addEventListener('mouseleave', e => {
+    if (window.innerWidth > 600 && !popup.contains(e.relatedTarget)) popup.classList.remove('active');
+  });
+  popup.addEventListener('mouseleave', e => {
+    if (window.innerWidth > 600 && e.relatedTarget !== trigger) popup.classList.remove('active');
+  });
+
+  // Mobile: click/tap behaviour
+  trigger.addEventListener('click', e => {
+    if (window.innerWidth <= 600) {
+      e.stopPropagation();
+      const isOpen = popup.classList.contains('active');
+      document.querySelectorAll('.privacy-popup.active').forEach(p => p.classList.remove('active'));
+      if (!isOpen) popup.classList.add('active');
+    }
+  });
+});
+
+// Close buttons
+document.querySelectorAll('.privacy-popup-close').forEach(btn => {
+  btn.addEventListener('click', () => {
+    btn.closest('.privacy-popup').classList.remove('active');
+  });
+});
+
+// Click outside closes all
+document.addEventListener('click', e => {
+  if (!e.target.closest('.policy-link-wrap'))
+    document.querySelectorAll('.privacy-popup.active').forEach(p => p.classList.remove('active'));
+});
+</script>
+
 </body>
 </html>
