@@ -98,7 +98,7 @@
   <script type="module">
     import { auth, provider, db } from "./firebase-config.js";
     import { signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
-   import { collection, getDocs, orderBy, query, addDoc, updateDoc, deleteDoc, doc, serverTimestamp, onSnapshot } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+    import { collection, getDocs, orderBy, query, addDoc, updateDoc, deleteDoc, doc, serverTimestamp, onSnapshot } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
     document.getElementById('google-login-btn').addEventListener('click', () => {
       document.getElementById('error-msg').textContent = "Authenticating...";
       signInWithPopup(auth, provider).catch(err => {
@@ -243,6 +243,48 @@
         btn.textContent = "SAVE PORTFOLIO";
       }
     });
+
+     // ---  SCRIPT TAG ---
+
+async function fetchData() {
+  // 1. Real-time Enquiries Listener
+  const qE = query(collection(db, "enquiries"), orderBy("timestamp", "desc"));
+  onSnapshot(qE, (snapE) => {
+    const listE = document.getElementById('enquiry-list');
+    if(listE) {
+      listE.innerHTML = '';
+      snapE.forEach(d => {
+        const data = d.data();
+        listE.innerHTML += `<tr>
+          <td>${data.timestamp ? new Date(data.timestamp.toDate()).toLocaleDateString() : 'New'}</td>
+          <td>${data.name}</td>
+          <td>${data.contact}</td>
+          <td>${data.service}</td>
+          <td>${data.budget}</td>
+        </tr>`;
+      });
+    }
+  });
+
+  // 2. Fetch Portfolio List
+  const qP = query(collection(db, "portfolio"), orderBy("timestamp", "desc"));
+  const snapP = await getDocs(qP);
+  const listP = document.getElementById('portfolio-list');
+  if(listP) {
+    listP.innerHTML = '';
+    snapP.forEach(d => {
+      const data = d.data();
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td>${data.name}</td><td>${data.graphVolume}</td>
+        <td>
+          <button class="action-btn edit-btn" data-id="${d.id}">Edit</button>
+          <button class="action-btn del-btn" data-id="${d.id}">Del</button>
+        </td>`;
+      listP.appendChild(tr);
+    });
+  }
+}
+    
   </script>
 </body>
 </html>
