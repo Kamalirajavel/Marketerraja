@@ -98,9 +98,7 @@
   <script type="module">
     import { auth, provider, db } from "./firebase-config.js";
     import { signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
-    import { collection, getDocs, orderBy, query, addDoc, updateDoc, deleteDoc, doc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
-
-    // Auth Logic
+   import { collection, getDocs, orderBy, query, addDoc, updateDoc, deleteDoc, doc, serverTimestamp, onSnapshot } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
     document.getElementById('google-login-btn').addEventListener('click', () => {
       document.getElementById('error-msg').textContent = "Authenticating...";
       signInWithPopup(auth, provider).catch(err => {
@@ -131,16 +129,20 @@
       container.appendChild(row);
     });
 
-    // Data Fetching
-    async function fetchData() {
-      // 1. Fetch Enquiries
-      const qE = query(collection(db, "enquiries"), orderBy("timestamp", "desc"));
-      const snapE = await getDocs(qE);
-      const listE = document.getElementById('enquiry-list');
-      listE.innerHTML = '';
-      snapE.forEach(d => {
-        const data = d.data();
-        listE.innerHTML += `<tr><td>${data.timestamp ? new Date(data.timestamp.toDate()).toLocaleDateString() : 'New'}</td><td>${data.name}</td><td>${data.contact}</td><td>${data.service}</td><td>${data.budget}</td></tr>`;
+    // 1. Real-time Enquiries Listener
+      onSnapshot(query(collection(db, "enquiries"), orderBy("timestamp", "desc")), (snapE) => {
+        const listE = document.getElementById('enquiry-list');
+        listE.innerHTML = '';
+        snapE.forEach(d => {
+          const data = d.data();
+          listE.innerHTML += `<tr>
+            <td>${data.timestamp ? new Date(data.timestamp.toDate()).toLocaleDateString() : 'New'}</td>
+            <td>${data.name}</td>
+            <td>${data.contact}</td>
+            <td>${data.service}</td>
+            <td>${data.budget}</td>
+          </tr>`;
+        });
       });
 
       // 2. Fetch Portfolio List
@@ -220,9 +222,9 @@
       const editId = document.getElementById('pf-id').value;
 
       try {
-        if (editId) {
-          // Update existing
-          delete portfolioData.timestamp; // Don't overwrite original creation time
+       if (editId) {
+          // Update existing: DO NOT delete the timestamp, 
+          // just update the fields provided.
           await updateDoc(doc(db, "portfolio", editId), portfolioData);
         } else {
           // Add new
