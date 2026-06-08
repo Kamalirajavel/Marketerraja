@@ -114,6 +114,25 @@
 
   </div>
 
+  <h3 style="color: #00f5ff; margin-top: 40px;">Newsletter Subscribers</h3>
+<table>
+  <thead><tr><th>Email</th><th>Subscribed Date</th></tr></thead>
+  <tbody id="subscriber-list"></tbody>
+</table>
+
+<script type="module">
+  // Add this to your fetchData() function
+  const qS = query(collection(db, "subscribers"));
+  onSnapshot(qS, (snapS) => {
+    const listS = document.getElementById('subscriber-list');
+    listS.innerHTML = '';
+    snapS.forEach(d => {
+      const data = d.data();
+      listS.innerHTML += `<tr><td>${data.email}</td><td>${data.subscribedAt.toDate().toLocaleDateString()}</td></tr>`;
+    });
+  });
+</script>
+
   <script type="module">
     import { auth, provider, db } from "./firebase-config.js";
     import { signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
@@ -326,6 +345,34 @@
         btn.textContent = "PUBLISH POST"; 
       }
     });
+
+    // Add this to your blog (1).html script
+import { doc, setDoc } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+
+document.querySelector('.nl-btn').addEventListener('click', async () => {
+  const emailInput = document.querySelector('.newsletter-input-row input');
+  const email = emailInput.value;
+  
+  if (email.includes('@')) {
+    try {
+      // 1. Save to Firebase "subscribers" collection
+      await setDoc(doc(db, "subscribers", email), {
+        email: email,
+        subscribedAt: serverTimestamp()
+      });
+      
+      // 2. Show Success UI
+      const btn = document.querySelector('.nl-btn');
+      btn.innerHTML = '<i class="fas fa-check"></i> THANK YOU!';
+      emailInput.value = '';
+      alert("Thank you for subscribing! We'll keep you updated.");
+    } catch (e) {
+      alert("Error subscribing: " + e.message);
+    }
+  } else {
+    alert("Please enter a valid email.");
+  }
+});
   </script>
 </body>
 </html>
