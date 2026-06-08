@@ -4,6 +4,7 @@
 <head>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet"/>
 <meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <link rel="icon" type="image/jpeg" href="logo.jpeg">
 <!-- Google tag (gtag.js) -->
 <script async="" src="https://www.googletagmanager.com/gtag/js?id=G-WQCG40Z40M"></script>
@@ -215,19 +216,27 @@ nav::after{
 .nav-logo{display:flex;align-items:center;gap:10px;
   font-family:var(--font-d);font-size:24px;font-weight:900;
   letter-spacing:4px;color:var(--cyan);text-shadow:var(--glow-c);
+  flex-shrink:0;
 }
 .nav-logo span{color:var(--pink);text-shadow:var(--glow-p);}
 
-.nav-links{display:flex;gap:28px;}
+/* Desktop nav links */
+.nav-links{display:flex;gap:28px;align-items:center;}
 .nav-links a{
   font-family:var(--font-m);font-size:14px;letter-spacing:2px;
   color:var(--muted);text-decoration:none;text-transform:uppercase;
-  transition:color .2s, text-shadow .2s;
+  transition:color .2s, text-shadow .2s;position:relative;padding:4px 0;
 }
-.nav-links a:hover{
-  color:#87CEEB;
-  text-shadow:0 0 12px rgba(135,206,235,0.9), 0 0 30px rgba(135,206,235,0.5);
+.nav-links a::after{
+  content:'';position:absolute;bottom:-2px;left:0;right:0;height:1px;
+  background:var(--cyan);transform:scaleX(0);transform-origin:left;
+  transition:transform .25s ease;
 }
+.nav-links a:hover{color:#87CEEB;text-shadow:0 0 12px rgba(135,206,235,0.9), 0 0 30px rgba(135,206,235,0.5);}
+.nav-links a:hover::after{transform:scaleX(1);}
+
+/* Nav right wrapper */
+.nav-right{display:flex;align-items:center;gap:16px;}
 
 .nav-wa{
   display:flex;align-items:center;gap:8px;
@@ -238,9 +247,39 @@ nav::after{
   padding:10px 20px;
   text-decoration:none;
   clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);
-  transition:all .2s;
+  transition:all .2s;white-space:nowrap;
 }
 .nav-wa:hover{background:rgba(37,211,102,0.2);box-shadow:0 0 20px rgba(37,211,102,0.3);}
+
+/* ── HAMBURGER TOGGLE ── */
+.menu-toggle{
+  display:none;
+  flex-direction:column;justify-content:center;align-items:center;
+  width:44px;height:44px;
+  background:rgba(0,245,255,0.05);
+  border:1px solid rgba(0,245,255,0.3);
+  border-radius:6px;cursor:pointer;
+  position:relative;z-index:200;
+  transition:background .2s,box-shadow .2s,border-color .2s;
+  flex-shrink:0;
+}
+.menu-toggle:hover{
+  background:rgba(0,245,255,0.12);
+  border-color:var(--cyan);
+  box-shadow:0 0 14px rgba(0,245,255,0.35);
+}
+.hamburger-icon{display:flex;flex-direction:column;gap:5px;width:20px;}
+.hamburger-icon span{
+  display:block;height:2px;width:100%;
+  background:var(--cyan);border-radius:2px;
+  transition:transform .35s cubic-bezier(.77,0,.175,1),opacity .25s ease,width .3s ease;
+  transform-origin:center;
+}
+/* X animation when open */
+.menu-toggle.open .hamburger-icon span:nth-child(1){transform:translateY(7px) rotate(45deg);}
+.menu-toggle.open .hamburger-icon span:nth-child(2){opacity:0;width:0;}
+.menu-toggle.open .hamburger-icon span:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
+.menu-toggle.open{background:rgba(0,245,255,0.15);border-color:var(--cyan);box-shadow:0 0 20px rgba(0,245,255,0.4);}
 
 /* ═══════════════════════════════════════
    SECTION 2 — HERO
@@ -861,53 +900,175 @@ footer::before{
 .reveal-left.visible{opacity:1;transform:translateX(0);}
 .d1{transition-delay:.05s}.d2{transition-delay:.1s}.d3{transition-delay:.15s}.d4{transition-delay:.2s}
 
-/* ── RESPONSIVE ── */
+/* ═══════════════════════════════════════
+   RESPONSIVE BREAKPOINTS
+═══════════════════════════════════════ */
+
+/* ── TABLET ── */
 @media(max-width:992px){
   .sys-steps{grid-template-columns:repeat(2,1fr);gap:20px;}
   .sys-arrow{display:none;}
   .sys-steps::before{display:none;}
+  .nav-links{gap:18px;}
+  .nav-links a{font-size:12px;letter-spacing:1px;}
 }
+
+/* ── MOBILE ── */
 @media(max-width:768px){
-  .nav-links{display:none;}
-  .nav-wa{display:none;}
-      .nav-logo{
-        font-size:12px !important;
-        letter-spacing:4px !important;
-        gap:4px !important;
-        max-width:60%;
-        overflow:hidden;
-        white-space:nowrap;
-    }
-
-    .nav-logo img{
-        width:28px !important;
-        height:28px !important;
-    }
-
-    .menu-toggle{
-        display:flex !important;
-        align-items:center;
-        justify-content:center;
-        margin-left:6px !important;
-        flex-shrink:0;
-        order:3;
-    }
+  /* Body */
   body{cursor:auto;}
   .cur,.cur-ring{display:none;}
+
+  /* Nav layout */
+  nav{
+    flex-wrap:nowrap;
+    justify-content:space-between;
+    align-items:center;
+    padding:12px 4vw;
+    gap:0;
+  }
+  .nav-logo{
+    font-size:13px;
+    letter-spacing:3px;
+    gap:4px;
+    flex:1;
+    overflow:hidden;
+    white-space:nowrap;
+    min-width:0;
+  }
+  .nav-logo img{width:30px!important;height:30px!important;}
+
+  /* Right side: hide WA button, show toggle */
+  .nav-right{gap:8px;}
+  .nav-wa{display:none;}
+  .menu-toggle{display:flex;}
+
+  /* Dropdown nav-links panel */
+  .nav-links{
+    display:flex!important; /* override any hidden state — controlled by max-height */
+    flex-direction:column;
+    gap:0;
+    position:absolute;
+    top:100%;
+    left:0;
+    right:0;
+    background:rgba(0,8,28,0.97);
+    backdrop-filter:blur(24px);
+    -webkit-backdrop-filter:blur(24px);
+    border-bottom:1px solid rgba(0,245,255,0.2);
+    border-top:1px solid rgba(0,245,255,0.1);
+    overflow:hidden;
+    max-height:0;
+    opacity:0;
+    pointer-events:none;
+    transition:max-height .45s cubic-bezier(.77,0,.175,1), opacity .3s ease;
+    z-index:150;
+  }
+  .nav-links.active{
+    max-height:480px;
+    opacity:1;
+    pointer-events:auto;
+  }
+  .nav-links a{
+    font-size:13px;
+    letter-spacing:2px;
+    padding:16px 6vw;
+    border-bottom:1px solid rgba(0,245,255,0.07);
+    display:flex;align-items:center;gap:10px;
+    color:rgba(232,244,255,0.7);
+    transition:background .2s,color .2s,padding-left .2s;
+  }
+  .nav-links a::before{
+    content:'›';
+    color:var(--cyan);
+    font-size:16px;
+    opacity:0;
+    transform:translateX(-6px);
+    transition:opacity .2s,transform .2s;
+  }
+  .nav-links a::after{display:none;}
+  .nav-links a:hover{
+    background:rgba(0,245,255,0.07);
+    color:#fff;
+    padding-left:8vw;
+    text-shadow:none;
+  }
+  .nav-links a:hover::before{opacity:1;transform:translateX(0);}
+  .nav-links a:last-child{border-bottom:none;}
+
+  /* Hero */
+  .hero-title{white-space:normal!important;}
+  .hero-sub{font-size:15px;}
+  .hero-btns{flex-direction:column;align-items:center;}
   .hero-stats{flex-direction:column;}
   .hstat{border-right:none;border-bottom:1px solid var(--border);}
+
+  /* Problem */
   .prob-grid{grid-template-columns:1fr;}
   .prob-card{clip-path:polygon(0 0,100% 0,calc(100% - 14px) 100%,0 100%);}
+
+  /* Solution hexes */
   .sol-hex-grid{gap:16px;}
-  .sol-hex{width:180px;height:207px;}
-  .sol-hex-outer{width:190px;height:218px;}
-  .sol-hex-container{width:180px;height:207px;}
-  .pos-badges{gap:16px;}
-  .pos-badge{width:120px;height:120px;}
-  .guar-icon{width:110px;height:110px;font-size:42px;}
-  .cta-trust{flex-direction:column;align-items:center;gap:20px;}
+  .sol-hex{width:160px;height:184px;padding:28px 20px;}
+  .sol-hex-outer{width:170px;height:196px;}
+  .sol-hex-container{width:160px;height:184px;}
+
+  /* Positioning */
+  .pos-badges{gap:12px;}
+  .pos-badge{width:110px;height:110px;}
+
+  /* Guarantee */
+  .guar-icon{width:100px;height:100px;font-size:40px;}
+
+  /* CTA */
+  .cta-trust{flex-direction:column;align-items:center;gap:16px;}
+  .cta-wa{padding:16px 32px;font-size:12px;}
+
+  /* Footer */
   .footer-top{flex-direction:column;align-items:center;text-align:center;}
   .footer-bottom{justify-content:center;text-align:center;}
+  .footer-col{text-align:center;}
+
+  /* General sections */
+  .sec{padding:60px 5vw;}
+  h1{font-size:clamp(28px,8vw,52px)!important;line-height:1.1;}
+  h2{font-size:clamp(22px,6vw,36px)!important;}
+}
+
+/* ── SMALL MOBILE ── */
+@media(max-width:480px){
+  .nav-logo{font-size:11px;letter-spacing:2px;}
+  .nav-logo img{width:26px!important;height:26px!important;}
+  .sol-hex-grid{flex-direction:column;align-items:center;}
+  .pos-badges{justify-content:center;}
+  .pos-badge{width:100px;height:100px;}
+  .pos-badge-icon{font-size:26px;}
+  #enquiry-container{padding:20px 16px!important;}
+  .hero-btns .btn-primary,
+  .hero-btns .btn-outline{width:100%;justify-content:center;font-size:9px;}
+}
+
+/* ── MOBILE WA BUTTON IN DROPDOWN ── */
+.nav-mobile-wa{
+  display:none;
+  align-items:center;gap:10px;
+  background:rgba(37,211,102,0.1)!important;
+  color:var(--wa)!important;
+  border-top:1px solid rgba(37,211,102,0.2)!important;
+  padding:18px 6vw!important;
+  font-family:var(--font-d);font-size:11px!important;letter-spacing:2px!important;
+  margin:0;
+}
+.nav-mobile-wa:hover{background:rgba(37,211,102,0.2)!important;color:#fff!important;}
+.nav-mobile-wa::before{content:''!important;opacity:0!important;}
+@media(max-width:768px){
+  .nav-mobile-wa{display:flex!important;}
+}
+
+/* ── FLOATING BUTTONS ── */
+@media(max-width:768px){
+  .whatsapp-float{right:12px!important;bottom:20px!important;width:52px;height:52px;font-size:26px;z-index:999999;}
+  .call-float{right:12px!important;bottom:82px!important;width:48px;height:48px;font-size:20px;z-index:999999;}
 }
 
 /* ═══════════════════════════════════════
@@ -1106,69 +1267,7 @@ section.sec-visible { opacity: 1; transform: translateY(0); }
   }
 }
 
-/* Mobile Navigation Toggle */
-.menu-toggle {
-    display: none;
-    background: none;
-    border: 1px solid rgba(0,245,255,0.35);
-    font-size: 22px;
-    cursor: pointer;
-    color: #00f5ff;
-    padding: 6px 12px;
-    border-radius: 4px;
-    z-index: 200;
-    position: relative;
-    flex-shrink: 0;
-    transition: background 0.2s, box-shadow 0.2s;
-}
-.menu-toggle:hover {
-    background: rgba(0,245,255,0.1);
-    box-shadow: 0 0 12px rgba(0,245,255,0.4);
-}
 
-@media (max-width: 768px) {
-
-    nav {
-        flex-wrap: nowrap;
-        justify-content: space-between;
-        align-items: center;
-        padding: 12px 4vw;
-        position: fixed;
-        top: 0; left: 0; right: 0;
-        z-index: 100;
-    }
-
-    .menu-toggle {
-        display: flex !important;
-        align-items: center;
-        justify-content: center;
-        order: 3;
-        margin-left: auto;
-    }
-
-    .nav-links {
-        display: none !important;
-        flex-direction: column;
-        width: 100%;
-        background: rgba(0,12,36,0.97);
-        backdrop-filter: blur(20px);
-        position: absolute;
-        top: 100%;
-        left: 0;
-        padding: 20px 0;
-        text-align: center;
-        z-index: 999;
-        border-bottom: 1px solid rgba(0,245,255,0.2);
-    }
-
-    .nav-links.active {
-        display: flex !important;
-    }
-
-    .nav-links li {
-        margin: 15px 0;
-    }
-}
 
 /* Prevent horizontal scrolling on mobile */
 html,
@@ -1176,26 +1275,6 @@ body{
     overflow-x:hidden !important;
     width:100%;
     max-width:100%;
-}
-
-/* Keep floating buttons fully visible */
-@media (max-width: 768px){
-
-    .whatsapp-float{
-        right:12px !important;
-        bottom:20px !important;
-        width:54px;
-        height:54px;
-        z-index:999999;
-    }
-
-    .call-float{
-        right:12px !important;
-        bottom:84px !important;
-        width:54px;
-        height:54px;
-        z-index:999999;
-    }
 }
 
 
@@ -1207,28 +1286,39 @@ body{
 <!-- ══════════════════════════════════════
      SECTION 1 — NAVIGATION BAR
 ══════════════════════════════════════ -->
-<nav>
-<div class="nav-logo">
-  <img alt="Marketer Raja Logo" src="logo.jpeg" style="height:44px; width:44px; object-fit:contain; border-radius:6px; margin-right: 8px;" />
-  MARKETER <span>RAJA</span>
-</div>
-<button class="menu-toggle" id="menu-toggle">
-    <i class="fas fa-bars"></i>
-</button>
+<nav id="main-nav">
+  <div class="nav-logo">
+    <img alt="Marketer Raja Logo" src="logo.jpeg" style="height:44px; width:44px; object-fit:contain; border-radius:6px; margin-right: 8px;" />
+    MARKETER <span>RAJA</span>
+  </div>
 
-<div class="nav-links">
-<a href="index.html">Home</a>
-<a href="seo.html">SEO Services</a>
-<a href="google_ads.html">Google Ads</a>
-<a href="meta_ads.html">Meta Ads</a>
-<a href="web.html">Web &amp; App</a>
-<a href="portfolio.html">Portfolio</a>
-<a href="blog.html">Blog</a>  
-</div>
-<a class="nav-wa" href="https://wa.me/+918489486025?text=Hi%2C+I+want+a+free+strategy+call" target="_blank">
-<svg fill="currentColor" height="14" viewbox="0 0 24 24" width="14"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"></path></svg>
-    FREE STRATEGY CALL
-  </a>
+  <div class="nav-links" id="nav-links">
+    <a href="index.html">Home</a>
+    <a href="seo.html">SEO Services</a>
+    <a href="google_ads.html">Google Ads</a>
+    <a href="meta_ads.html">Meta Ads</a>
+    <a href="web.html">Web &amp; App</a>
+    <a href="portfolio.html">Portfolio</a>
+    <a href="blog.html">Blog</a>
+    <a class="nav-mobile-wa" href="https://wa.me/+918489486025?text=Hi%2C+I+want+a+free+strategy+call" target="_blank">
+      <svg fill="currentColor" height="14" viewbox="0 0 24 24" width="14"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"></path></svg>
+      FREE STRATEGY CALL
+    </a>
+  </div>
+
+  <div class="nav-right">
+    <a class="nav-wa" href="https://wa.me/+918489486025?text=Hi%2C+I+want+a+free+strategy+call" target="_blank">
+      <svg fill="currentColor" height="14" viewbox="0 0 24 24" width="14"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"></path></svg>
+      FREE STRATEGY CALL
+    </a>
+    <button class="menu-toggle" id="menu-toggle" aria-label="Toggle navigation" aria-expanded="false">
+      <span class="hamburger-icon">
+        <span></span>
+        <span></span>
+        <span></span>
+      </span>
+    </button>
+  </div>
 </nav>
 <!-- ══════════════════════════════════════
      SECTION 2 — HERO
@@ -1792,11 +1882,31 @@ document.querySelectorAll('section').forEach((sec, i) => {
 
 /* ── MOBILE MENU TOGGLE ── */
 const toggleBtn = document.getElementById("menu-toggle");
-const navLinks = document.querySelector(".nav-links");
+const navLinks = document.getElementById("nav-links");
 if(toggleBtn && navLinks){
-    toggleBtn.addEventListener("click", () => {
-        navLinks.classList.toggle("active");
+  toggleBtn.addEventListener("click", () => {
+    const isOpen = navLinks.classList.toggle("active");
+    toggleBtn.classList.toggle("open", isOpen);
+    toggleBtn.setAttribute("aria-expanded", isOpen);
+  });
+
+  // Close when a nav link is clicked
+  navLinks.querySelectorAll("a").forEach(link => {
+    link.addEventListener("click", () => {
+      navLinks.classList.remove("active");
+      toggleBtn.classList.remove("open");
+      toggleBtn.setAttribute("aria-expanded", "false");
     });
+  });
+
+  // Close when clicking outside
+  document.addEventListener("click", (e) => {
+    if(!e.target.closest("nav")) {
+      navLinks.classList.remove("active");
+      toggleBtn.classList.remove("open");
+      toggleBtn.setAttribute("aria-expanded", "false");
+    }
+  });
 }
 </script>
 
