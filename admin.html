@@ -15,7 +15,7 @@
     table { width: 100%; border-collapse: collapse; margin-top: 10px; background: rgba(0,0,0,0.3); }
     th, td { padding: 12px; text-align: left; border-bottom: 1px solid rgba(0,245,255,0.1); color: #e8f4ff; }
     th { background: rgba(0,245,255,0.1); color: #00f5ff; }
-    input { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid rgba(0,245,255,0.3); border-radius: 4px; box-sizing: border-box; background: rgba(0,0,0,0.5); color: white; outline: none; }
+    input, textarea { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid rgba(0,245,255,0.3); border-radius: 4px; box-sizing: border-box; background: rgba(0,0,0,0.5); color: white; outline: none; font-family: inherit; }
     .metric-row { display: flex; gap: 10px; margin-bottom: 5px; }
     .action-btn { padding: 6px 12px; font-size: 12px; margin: 2px; width: auto;}
     .del-btn { background: #ff0080; color: white; }
@@ -48,12 +48,13 @@
       </table>
     </div>
 
-    <div style="display: flex; gap: 30px; flex-wrap: wrap;">
+    <div style="display: flex; gap: 30px; flex-wrap: wrap; margin-bottom: 40px;">
       
       <div style="flex: 1; min-width: 300px; background: rgba(0,0,0,0.3); padding: 20px; border-radius: 8px; border: 1px solid rgba(255,0,128,0.3);">
         <h3 id="form-title" style="color: #ff0080; margin-top: 0;">+ Add New Portfolio Item</h3>
         <form id="portfolio-form">
-          <input type="hidden" id="pf-id"> <div style="display: flex; gap: 10px;">
+          <input type="hidden" id="pf-id">
+          <div style="display: flex; gap: 10px;">
             <input type="text" id="pf-name" placeholder="Client Name" required style="flex: 2;">
             <input type="text" id="pf-icon" placeholder="Icon (e.g. 🏢)" required style="flex: 1;">
           </div>
@@ -69,7 +70,6 @@
             </div>
           </div>
           <button type="button" id="add-metric-btn" style="background: transparent; border: 1px dashed #00f5ff; color: #00f5ff; padding: 8px;">+ Add Another Metric</button>
-
           <button type="submit" id="save-pf-btn" style="background: #ff0080; color: white; margin-top: 20px;">SAVE PORTFOLIO</button>
         </form>
       </div>
@@ -84,24 +84,48 @@
         </div>
       </div>
     </div>
+
+    <h3 style="color: #00ff88; margin-top: 40px; border-top: 1px solid rgba(0,245,255,0.2); padding-top: 20px;">Manage Blog Posts</h3>
+    <div style="display: flex; gap: 30px; flex-wrap: wrap;">
+      
+      <div style="flex: 1; min-width: 300px; background: rgba(0,0,0,0.3); padding: 20px; border-radius: 8px; border: 1px solid rgba(0,255,136,0.3);">
+        <h3 id="blog-form-title" style="color: #00ff88; margin-top: 0;">+ Add New Blog Post</h3>
+        <form id="blog-form">
+          <input type="hidden" id="blog-id">
+          <input type="text" id="blog-title" placeholder="Post Title" required>
+          <input type="text" id="blog-author" placeholder="Author Name" required>
+          <input type="text" id="blog-thumb" placeholder="Thumbnail Image URL (e.g., https://.../image.jpg)" required>
+          <textarea id="blog-content" rows="8" placeholder="Write your blog content here... (You can use simple HTML like <b>bold</b> or <br> for new lines)" required></textarea>
+          
+          <button type="submit" id="save-blog-btn" style="background: #00ff88; color: black; margin-top: 20px;">PUBLISH POST</button>
+        </form>
+      </div>
+
+      <div style="flex: 1; min-width: 300px;">
+        <div style="overflow-x: auto;">
+          <table>
+            <thead><tr><th>Date</th><th>Title</th><th>Actions</th></tr></thead>
+            <tbody id="blog-list"><tr><td colspan="3">Loading...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+
   </div>
 
   <script type="module">
     import { auth, provider, db } from "./firebase-config.js";
     import { signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
-    // ADDED onSnapshot and doc to imports
     import { collection, getDocs, orderBy, query, addDoc, updateDoc, deleteDoc, doc, serverTimestamp, onSnapshot } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
     // Auth Logic
     document.getElementById('google-login-btn').addEventListener('click', async () => {
-      console.log("Login button clicked"); 
       document.getElementById('error-msg').textContent = "Authenticating...";
       try {
         await signInWithPopup(auth, provider);
-        console.log("Login successful");
       } catch (err) {
         document.getElementById('error-msg').textContent = "Login failed: " + err.message;
-        console.error("Auth Error:", err);
       }
     });
 
@@ -111,14 +135,14 @@
       if (user) {
         document.getElementById('login-section').classList.add('hidden');
         document.getElementById('admin-dashboard').classList.remove('hidden');
-        fetchData(); // Calls the function to load databases
+        fetchData();
       } else {
         document.getElementById('login-section').classList.remove('hidden');
         document.getElementById('admin-dashboard').classList.add('hidden');
       }
     });
 
-    // Dynamic Metrics UI
+    // Dynamic Metrics UI (Portfolio)
     document.getElementById('add-metric-btn').addEventListener('click', () => {
       const container = document.getElementById('metrics-container');
       const row = document.createElement('div');
@@ -127,18 +151,15 @@
       container.appendChild(row);
     });
 
-    // Data Fetching Function
+    // Data Fetching
     function fetchData() {
-      // 1. Real-time Enquiries Listener
+      // 1. Enquiries Listener
       const qE = query(collection(db, "enquiries"), orderBy("timestamp", "desc"));
-      
       onSnapshot(qE, (snapE) => {
         const listE = document.getElementById('enquiry-list');
         if(listE) {
           listE.innerHTML = '';
-          if (snapE.empty) {
-            listE.innerHTML = `<tr><td colspan="5" style="text-align: center;">No enquiries yet.</td></tr>`;
-          }
+          if (snapE.empty) listE.innerHTML = `<tr><td colspan="5" style="text-align: center;">No enquiries yet.</td></tr>`;
           snapE.forEach(d => {
             const data = d.data();
             listE.innerHTML += `<tr>
@@ -150,8 +171,6 @@
             </tr>`;
           });
         }
-      }, (error) => {
-        console.error("Enquiries Permission Error:", error);
       });
 
       // 2. Fetch Portfolio List
@@ -163,17 +182,13 @@
           snapP.forEach(d => {
             const data = d.data();
             const tr = document.createElement('tr');
-            tr.innerHTML = `
-              <td>${data.name}</td>
-              <td>${data.graphVolume}</td>
+            tr.innerHTML = `<td>${data.name}</td><td>${data.graphVolume}</td>
               <td>
                 <button class="action-btn edit-btn" data-id="${d.id}">Edit</button>
                 <button class="action-btn del-btn" data-id="${d.id}">Del</button>
-              </td>
-            `;
+              </td>`;
             listP.appendChild(tr);
 
-            // Edit Button Logic
             tr.querySelector('.edit-btn').addEventListener('click', () => {
               document.getElementById('pf-id').value = d.id;
               document.getElementById('pf-name').value = data.name;
@@ -183,44 +198,81 @@
               document.getElementById('pf-status').value = data.status;
               document.getElementById('form-title').textContent = "✏️ Edit Portfolio Item";
               document.getElementById('save-pf-btn').textContent = "UPDATE PORTFOLIO";
-              
-              // Load Metrics into form
               const container = document.getElementById('metrics-container');
               container.innerHTML = '';
-              data.metrics.forEach(m => {
-                const row = document.createElement('div');
-                row.className = 'metric-row';
-                row.innerHTML = `<input type="text" class="m-label" value="${m.label}" required> <input type="text" class="m-value" value="${m.value}" required> <button type="button" class="action-btn del-btn" onclick="this.parentElement.remove()">X</button>`;
-                container.appendChild(row);
-              });
+              if(data.metrics) {
+                data.metrics.forEach(m => {
+                  const row = document.createElement('div');
+                  row.className = 'metric-row';
+                  row.innerHTML = `<input type="text" class="m-label" value="${m.label}" required> <input type="text" class="m-value" value="${m.value}" required> <button type="button" class="action-btn del-btn" onclick="this.parentElement.remove()">X</button>`;
+                  container.appendChild(row);
+                });
+              }
             });
 
-            // Delete Button Logic
             tr.querySelector('.del-btn').addEventListener('click', async () => {
-              if(confirm("Are you sure you want to delete this project?")) {
+              if(confirm("Delete this portfolio project?")) {
                 await deleteDoc(doc(db, "portfolio", d.id));
                 fetchData();
               }
             });
           });
         }
-      }).catch((err) => console.error("Portfolio fetch error:", err));
+      });
+
+      // 3. Fetch Blog List
+      const qB = query(collection(db, "blog"), orderBy("timestamp", "desc"));
+      getDocs(qB).then((snapB) => {
+        const listB = document.getElementById('blog-list');
+        if(listB) {
+          listB.innerHTML = '';
+          if (snapB.empty) listB.innerHTML = `<tr><td colspan="3" style="text-align: center;">No blog posts yet.</td></tr>`;
+          snapB.forEach(d => {
+            const data = d.data();
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+              <td>${data.timestamp ? new Date(data.timestamp.toDate()).toLocaleDateString() : 'New'}</td>
+              <td>${data.title}</td>
+              <td>
+                <button class="action-btn edit-btn" data-id="${d.id}">Edit</button>
+                <button class="action-btn del-btn" data-id="${d.id}">Del</button>
+              </td>`;
+            listB.appendChild(tr);
+
+            // Edit Blog logic
+            tr.querySelector('.edit-btn').addEventListener('click', () => {
+              document.getElementById('blog-id').value = d.id;
+              document.getElementById('blog-title').value = data.title;
+              document.getElementById('blog-author').value = data.author;
+              document.getElementById('blog-thumb').value = data.thumbnail;
+              document.getElementById('blog-content').value = data.content;
+              document.getElementById('blog-form-title').textContent = "✏️ Edit Blog Post";
+              document.getElementById('save-blog-btn').textContent = "UPDATE POST";
+            });
+
+            // Delete Blog logic
+            tr.querySelector('.del-btn').addEventListener('click', async () => {
+              if(confirm("Are you sure you want to delete this blog post?")) {
+                await deleteDoc(doc(db, "blog", d.id));
+                fetchData();
+              }
+            });
+          });
+        }
+      });
     }
 
-    // Save/Update Portfolio Logic
+    // Save Portfolio Logic
     document.getElementById('portfolio-form').addEventListener('submit', async (e) => {
       e.preventDefault();
       const btn = document.getElementById('save-pf-btn');
       btn.textContent = "SAVING...";
-
-      // Gather dynamic metrics
       const metrics = [];
       document.querySelectorAll('.metric-row').forEach(row => {
         const label = row.querySelector('.m-label').value;
         const value = row.querySelector('.m-value').value;
         if (label && value) metrics.push({ label, value });
       });
-
       const portfolioData = {
         name: document.getElementById('pf-name').value,
         icon: document.getElementById('pf-icon').value,
@@ -229,29 +281,49 @@
         status: document.getElementById('pf-status').value.toUpperCase(),
         metrics: metrics
       };
-
       const editId = document.getElementById('pf-id').value;
-
       try {
-        if (editId) {
-          // Update existing
-          await updateDoc(doc(db, "portfolio", editId), portfolioData);
-        } else {
-          // Add new (Include timestamp ONLY when creating new)
-          portfolioData.timestamp = serverTimestamp();
-          await addDoc(collection(db, "portfolio"), portfolioData);
-        }
-        
+        if (editId) { await updateDoc(doc(db, "portfolio", editId), portfolioData); } 
+        else { portfolioData.timestamp = serverTimestamp(); await addDoc(collection(db, "portfolio"), portfolioData); }
         e.target.reset();
         document.getElementById('pf-id').value = '';
         document.getElementById('form-title').textContent = "+ Add New Portfolio Item";
         btn.textContent = "SAVE PORTFOLIO";
         document.getElementById('metrics-container').innerHTML = `<div class="metric-row"><input type="text" class="m-label" placeholder="Metric Label" required> <input type="text" class="m-value" placeholder="Metric Value" required></div>`;
-        
-        fetchData(); // Refresh list
-      } catch (err) {
-        alert("Error: " + err.message);
-        btn.textContent = "SAVE PORTFOLIO";
+        fetchData(); 
+      } catch (err) { alert("Error: " + err.message); btn.textContent = "SAVE PORTFOLIO"; }
+    });
+
+    // Save Blog Logic
+    document.getElementById('blog-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById('save-blog-btn');
+      btn.textContent = "PUBLISHING...";
+      
+      const blogData = {
+        title: document.getElementById('blog-title').value,
+        author: document.getElementById('blog-author').value,
+        thumbnail: document.getElementById('blog-thumb').value,
+        content: document.getElementById('blog-content').value
+      };
+      
+      const editId = document.getElementById('blog-id').value;
+
+      try {
+        if (editId) { 
+          await updateDoc(doc(db, "blog", editId), blogData); 
+        } else { 
+          blogData.timestamp = serverTimestamp(); 
+          await addDoc(collection(db, "blog"), blogData); 
+        }
+        e.target.reset();
+        document.getElementById('blog-id').value = '';
+        document.getElementById('blog-form-title').textContent = "+ Add New Blog Post";
+        btn.textContent = "PUBLISH POST";
+        fetchData(); 
+      } catch (err) { 
+        alert("Error: " + err.message); 
+        btn.textContent = "PUBLISH POST"; 
       }
     });
   </script>
