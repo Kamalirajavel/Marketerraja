@@ -81,20 +81,51 @@
     
     .m-cta { margin-top: 40px; padding-top: 30px; border-top: 1px dashed var(--border); text-align: center; }
     .m-cta a { background: #25D366; color: #fff; text-decoration: none; padding: 15px 30px; font-family: var(--font-d); font-size: 14px; font-weight: bold; border-radius: 4px; display: inline-block; }
+  
+  /* Navigation Links Styling for consistency */
+.nav-links { display: flex; gap: 28px; }
+.nav-links a {
+  font-family: var(--font-m); font-size: 14px; letter-spacing: 2px;
+  color: var(--muted); text-decoration: none; text-transform: uppercase;
+  transition: color .2s;
+}
+.nav-links a:hover { color: var(--cyan); text-shadow: 0 0 10px var(--cyan); }
+
+/* WhatsApp button styling */
+.nav-wa {
+  display: flex; align-items: center; gap: 8px;
+  background: rgba(37,211,102,0.1); border: 1px solid rgba(37,211,102,0.4);
+  color: #25D366; font-family: var(--font-d); font-size: 12px;
+  padding: 10px 20px; text-decoration: none;
+  clip-path: polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);
+}
+  
+  
   </style>
 </head>
 <body>
 
   
-<div class="nav-logo">
-  <img alt="Marketer Raja Logo" src="logo.jpeg" style="height:44px; width:44px; object-fit:contain; border-radius:6px; margin-right: 8px;" >
-</div>
+<nav>
+  <div class="nav-logo" style="display: flex; align-items: center; gap: 10px;">
+    <img alt="Marketer Raja Logo" src="logo.jpg" style="height:44px; width:44px; object-fit:contain; border-radius:6px;" />
+    <span style="font-family: var(--font-d); letter-spacing: 2px;">MARKETER <span>RAJA</span></span>
+  </div>
 
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="seo.html">SEO Services</a>
+    <a href="google_ads.html">Google Ads</a>
+    <a href="meta_ads.html">Meta Ads</a>
+    <a href="web.html">Web & App</a>
+    <a href="portfolio.html">Portfolio</a>
+    <a href="blog.html">Blog</a>
+  </div>
   
-  <nav>
-    <a href="index.html" class="nav-logo">MARKETER <span>RAJA</span></a>
-    <a href="index.html" class="back-btn">← BACK TO HOME</a>
-  </nav>
+  <a class="nav-wa" href="https://wa.me/+918489486025?text=Hi%2C+I+want+a+free+strategy+call" target="_blank">
+    <i class="fab fa-whatsapp"></i> FREE CALL
+  </a>
+</nav>
 
   <header class="blog-header">
     <h1>Growth <span>Insights</span></h1>
