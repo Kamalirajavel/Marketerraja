@@ -35,10 +35,31 @@
     }
 
     /* Simple Nav */
-    nav { padding: 20px 5vw; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); background: rgba(0,12,36,0.9); }
+    /*nav { padding: 20px 5vw; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); background: rgba(0,12,36,0.9); }
     .nav-logo { font-family: var(--font-d); font-size: 20px; font-weight: 900; color: var(--cyan); text-decoration: none; letter-spacing: 2px; }
     .nav-logo span { color: var(--pink); }
-    .back-btn { font-family: var(--font-m); color: var(--cyan); text-decoration: none; border: 1px solid var(--cyan); padding: 8px 16px; font-size: 12px; }
+    .back-btn { font-family: var(--font-m); color: var(--cyan); text-decoration: none; border: 1px solid var(--cyan); padding: 8px 16px; font-size: 12px; }*/
+
+    /* Increase size and spacing of navigation links */
+.nav-links { 
+  display: flex; 
+  gap: 35px; /* Added more space between links */
+}
+
+.nav-links a {
+  font-family: var(--font-d); /* Changed to your Orbitron font for better visibility */
+  font-size: 16px;          /* Increased from 14px to 16px */
+  letter-spacing: 2px;
+  color: var(--white);      /* Made links brighter white */
+  text-decoration: none;
+  text-transform: uppercase;
+  transition: color .3s, text-shadow .3s;
+}
+
+.nav-links a:hover { 
+  color: var(--cyan); 
+  text-shadow: 0 0 12px rgba(0, 245, 255, 0.6); 
+}
 
     /* Blog Header */
     .blog-header { text-align: center; padding: 100px 5vw 60px; }
@@ -108,8 +129,10 @@
   
 <nav>
   <div class="nav-logo" style="display: flex; align-items: center; gap: 10px;">
-    <img alt="Marketer Raja Logo" src="logo.jpeg" style="height:44px; width:44px; object-fit:contain; border-radius:6px;" />
-    <span style="font-family: var(--font-d); letter-spacing: 2px;">MARKETER <span>RAJA</span></span>
+    <img alt="Marketer Raja Logo" src="logo.jpg" style="height:44px; width:44px; object-fit:contain; border-radius:6px;" />
+    <span style="font-family: var(--font-d); letter-spacing: 2px; color: #00f5ff;">
+      MARKETER <span style="color: #ff0080;">RAJA</span>
+    </span>
   </div>
 
   <div class="nav-links">
@@ -123,7 +146,7 @@
   </div>
   
   <a class="nav-wa" href="https://wa.me/+918489486025?text=Hi%2C+I+want+a+free+strategy+call" target="_blank">
-    <i class="fab fa-whatsapp"></i> FREE STRATEGY CALL
+    <i class="fab fa-whatsapp"></i> FREE CALL
   </a>
 </nav>
 
