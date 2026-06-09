@@ -353,6 +353,111 @@
         btn.textContent = "PUBLISH POST"; 
       }
     });
+    
+    // Save Blog Logic & Brevo Email Trigger
+    const BREVO_API_KEY = "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";
+
+    document.getElementById('blog-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById('save-blog-btn');
+      btn.textContent = "PUBLISHING...";
+      
+      // Grab values using your EXACT HTML IDs
+      const titleInput = document.getElementById('blog-title').value;
+      const authorInput = document.getElementById('blog-author').value;
+      const thumbInput = document.getElementById('blog-thumb').value;
+      const contentInput = document.getElementById('blog-content').value;
+      const editId = document.getElementById('blog-id').value;
+
+      const blogData = {
+        title: titleInput,
+        author: authorInput,
+        thumbnail: thumbInput,
+        content: contentInput
+      };
+
+      try {
+        let isNewPost = false; // We use this to check if we should send emails
+
+        // 1. SAVE OR UPDATE THE BLOG POST IN FIREBASE
+        if (editId) { 
+          // If editing an old post, just update it (no emails)
+          await updateDoc(doc(db, "blog", editId), blogData); 
+        } else { 
+          // If brand new post, save it and trigger email flag
+          blogData.timestamp = serverTimestamp(); 
+          await addDoc(collection(db, "blog"), blogData); 
+          isNewPost = true;
+        }
+
+        // 2. TRIGGER EMAILS ONLY IF IT IS A BRAND NEW POST
+        if (isNewPost) {
+          const subSnapshot = await getDocs(collection(db, "subscribers"));
+          const bccList = [];
+          
+          subSnapshot.forEach((doc) => {
+            if (doc.data().email) {
+              bccList.push({ email: doc.data().email });
+            }
+          });
+
+          if (bccList.length > 0) {
+            const liveBlogUrl = "https://marketerraja.com/blog.html"; 
+
+            const emailPayload = {
+              sender: { name: "Marketer Raja", email: "marketerraja11@gmail.com" }, // Updated to your Gmail
+              to: [{ email: "marketerraja11@gmail.com", name: "Marketer Raja" }], // Updated to your Gmail
+              bcc: bccList, 
+              subject: `New Growth Insight: ${titleInput}`,
+              htmlContent: `
+                <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #000c24; color: #e8f4ff; padding: 30px; border: 1px solid #00f5ff; border-radius: 8px;">
+                  <h2 style="color: #00f5ff; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 20px;">Marketer Raja Intel</h2>
+                  <p style="font-size: 16px; line-height: 1.6;">We just dropped a brand new tactical breakdown on the blog:</p>
+                  <h3 style="color: #ff0080; font-size: 22px; margin: 20px 0;">${titleInput}</h3>
+                  <p style="font-size: 14px; color: #a0c0ff; margin-bottom: 30px;">Tap the link below to deploy these strategies in your business immediately.</p>
+                  <a href="${liveBlogUrl}" style="display: inline-block; background: #00f5ff; color: #000c24; padding: 14px 28px; text-decoration: none; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; border-radius: 4px;">Read the Protocol</a>
+                </div>
+              `
+            };
+
+            // Send to Brevo
+            const response = await fetch("https://api.brevo.com/v3/smtp/email", {
+              method: "POST",
+              headers: {
+                "accept": "application/json",
+                "api-key": BREVO_API_KEY,
+                "content-type": "application/json"
+              },
+              body: JSON.stringify(emailPayload)
+            });
+
+            if (response.ok) {
+              alert("Blog published and subscribers notified!");
+            } else {
+              const errData = await response.json();
+              console.error("Brevo Error:", errData);
+              alert("Blog saved, but email failed to send. Check console.");
+            }
+          } else {
+            alert("Blog published! (No subscribers to email yet).");
+          }
+        } else {
+          alert("Blog updated successfully! (No emails sent for edits).");
+        }
+
+        // 3. RESET THE FORM
+        e.target.reset();
+        document.getElementById('blog-id').value = '';
+        document.getElementById('blog-form-title').textContent = "+ Add New Blog Post";
+        btn.textContent = "PUBLISH POST";
+        fetchData(); 
+
+      } catch (err) { 
+        console.error(err);
+        alert("Error: " + err.message); 
+        btn.textContent = "PUBLISH POST"; 
+      }
+    });
   </script>
 </body>
 </html>
