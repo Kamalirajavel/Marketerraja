@@ -788,34 +788,37 @@ footer {
 
       let index = 0;
 
-      // Locate this section inside your loadBlog() function:
-snapshot.forEach((doc) => {
-  const data = doc.data();
-  window.blogPosts.push(data);
-  
-  const dateStr = data.timestamp ? new Date(data.timestamp.toDate()).toLocaleDateString() : 'Recent';
-  const plainText = data.content ? data.content.replace(/<[^>]*>?/gm, '') : '';
-  
-  // Dynamic lookup check for what category the post is
-  const category = data.category || 'Strategy'; 
+       if (snapshot.empty) {
+        container.innerHTML = '<p style="text-align:center; color:var(--pink); font-family: var(--font-m); grid-column: 1 / -1;">No transmissions found. Check back later.</p>';
+        return;
+      }
 
-  // Add data-category tag to the wrapper element
-  const cardHTML = `
-    <div class="blog-stub" data-category="${category.toLowerCase()}" onclick="openModal(${index})" style="display: flex;">
-      <img src="${data.thumbnail}" alt="Thumbnail" class="b-thumb" onerror="this.style.display='none'">
-      <div class="stub-category">${category}</div>
-      <h3>${data.title}</h3>
-      <p>${plainText}</p>
-      <div class="stub-footer">
-        <span class="stub-tag">${data.author}</span>
-        <span class="b-readmore">READ PROTOCOL →</span>
-      </div>
-    </div>
-  `;
-  container.insertAdjacentHTML('beforeend', cardHTML);
-  index++;
-});
-      
+      let index = 0;
+      snapshot.forEach((doc) => {
+        const data = doc.data();
+        window.blogPosts.push(data);
+        
+        const dateStr = data.timestamp ? new Date(data.timestamp.toDate()).toLocaleDateString() : 'Recent';
+        
+        // Plain text excerpt
+        const plainText = data.content ? data.content.replace(/<[^>]*>?/gm, '') : '';
+
+        const cardHTML = `
+          <div class="blog-stub" onclick="openModal(${index})">
+            <img src="${data.thumbnail}" alt="Thumbnail" class="b-thumb" onerror="this.style.display='none'">
+            <div class="stub-category">Update</div>
+            <h3>${data.title}</h3>
+            <p>${plainText}</p>
+            <div class="stub-footer">
+              <span class="stub-tag">${data.author}</span>
+              <span class="b-readmore">READ PROTOCOL →</span>
+            </div>
+          </div>
+        `;
+        container.insertAdjacentHTML('beforeend', cardHTML);
+        index++;
+      });
+
     } catch (err) {
       console.error("Error loading blog:", err);
       container.innerHTML = '<p style="text-align:center; color:red; grid-column: 1 / -1;">Database connection failed.</p>';
