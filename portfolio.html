@@ -576,6 +576,33 @@ footer{
   .privacy-popup.active{transform:translateX(-10%) translateY(0);}
 }
 
+/* ── POLICY POPUP — MOBILE BOTTOM SHEET ── */
+@media(max-width:768px){
+  /* Detach from parent, anchor to bottom of viewport */
+  .privacy-popup{
+    position:fixed !important;
+    bottom:0 !important;
+    left:0 !important;
+    right:0 !important;
+    top:auto !important;
+    width:100vw !important;
+    max-width:100% !important;
+    /* Slide up instead of floating above the link */
+    transform:translateY(12px) !important;
+    border-radius:18px 18px 0 0 !important;
+    border-bottom:none !important;
+    max-height:78vh;
+    overflow-y:auto;
+    -webkit-overflow-scrolling:touch;
+  }
+  .privacy-popup.active{
+    transform:translateY(0) !important;
+  }
+  /* Hide the upward-pointing arrow caret — irrelevant for bottom-sheet */
+  .privacy-popup::after{display:none !important;}
+}
+
+
 /* Call Float — mobile only */
 .call-float{
   position:fixed;
@@ -659,7 +686,7 @@ html{scroll-padding-top:var(--nav-h);}
 @media (max-width: 900px) {
   body {
     /* Overrides the 150px blank space at the end of the page */
-    padding-bottom: 70px !important; 
+    padding-bottom: 0px !important; 
   }
 }
 
