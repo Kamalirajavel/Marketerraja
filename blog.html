@@ -787,30 +787,35 @@ footer {
       }
 
       let index = 0;
-      snapshot.forEach((doc) => {
-        const data = doc.data();
-        window.blogPosts.push(data);
-        
-        const dateStr = data.timestamp ? new Date(data.timestamp.toDate()).toLocaleDateString() : 'Recent';
-        
-        // Plain text excerpt
-        const plainText = data.content ? data.content.replace(/<[^>]*>?/gm, '') : '';
 
-        const cardHTML = `
-          <div class="blog-stub" onclick="openModal(${index})">
-            <img src="${data.thumbnail}" alt="Thumbnail" class="b-thumb" onerror="this.style.display='none'">
-            <div class="stub-category">Update</div>
-            <h3>${data.title}</h3>
-            <p>${plainText}</p>
-            <div class="stub-footer">
-              <span class="stub-tag">${data.author}</span>
-              <span class="b-readmore">READ PROTOCOL →</span>
-            </div>
-          </div>
-        `;
-        container.insertAdjacentHTML('beforeend', cardHTML);
-        index++;
-      });
+      // Locate this section inside your loadBlog() function:
+snapshot.forEach((doc) => {
+  const data = doc.data();
+  window.blogPosts.push(data);
+  
+  const dateStr = data.timestamp ? new Date(data.timestamp.toDate()).toLocaleDateString() : 'Recent';
+  const plainText = data.content ? data.content.replace(/<[^>]*>?/gm, '') : '';
+  
+  // Dynamic lookup check for what category the post is
+  const category = data.category || 'Strategy'; 
+
+  // Add data-category tag to the wrapper element
+  const cardHTML = `
+    <div class="blog-stub" data-category="${category.toLowerCase()}" onclick="openModal(${index})" style="display: flex;">
+      <img src="${data.thumbnail}" alt="Thumbnail" class="b-thumb" onerror="this.style.display='none'">
+      <div class="stub-category">${category}</div>
+      <h3>${data.title}</h3>
+      <p>${plainText}</p>
+      <div class="stub-footer">
+        <span class="stub-tag">${data.author}</span>
+        <span class="b-readmore">READ PROTOCOL →</span>
+      </div>
+    </div>
+  `;
+  container.insertAdjacentHTML('beforeend', cardHTML);
+  index++;
+});
+      
     } catch (err) {
       console.error("Error loading blog:", err);
       container.innerHTML = '<p style="text-align:center; color:red; grid-column: 1 / -1;">Database connection failed.</p>';
@@ -925,11 +930,26 @@ document.querySelectorAll('a, button, .blog-stub, .cat-card, .featured-card, .to
   });
 });
 
-/* Topic Pills */
+/* Topic Pills Reactive Filtering Logic */
 document.querySelectorAll('.topic-pill').forEach(pill => {
   pill.addEventListener('click', () => {
+    // 1. Toggle Active CSS State
     document.querySelectorAll('.topic-pill').forEach(p => p.classList.remove('active'));
     pill.classList.add('active');
+
+    // 2. Extract Category Normalization Text
+    const chosenCategory = pill.textContent.replace(/[^a-zA-Z ]/g, "").trim().toLowerCase();
+    
+    // 3. Filter Dom Elements Instantly
+    document.querySelectorAll('.blog-stub').forEach(card => {
+      const cardCategory = card.getAttribute('data-category');
+      
+      if (chosenCategory === "all topics" || cardCategory === chosenCategory || (chosenCategory === "lead gen" && cardCategory === "lead gen")) {
+        card.style.display = 'flex';
+      } else {
+        card.style.display = 'none';
+      }
+    });
   });
 });
 
