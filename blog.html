@@ -1000,6 +1000,81 @@ document.querySelector('.nl-btn').addEventListener('click', () => {
     }, 3000);
   }
 });
+
+async function loadBlog() {
+    const liveContainer = document.getElementById('blog-container');
+    const queuedContainer = document.getElementById('queued-container');
+    
+    try {
+      const q = query(collection(db, "blog"), orderBy("timestamp", "desc"));
+      const snapshot = await getDocs(q);
+      
+      liveContainer.innerHTML = ''; 
+      if(queuedContainer) queuedContainer.innerHTML = '';
+      
+      let hasLive = false;
+      let hasQueued = false;
+      let index = 0;
+
+      snapshot.forEach((doc) => {
+        const data = doc.data();
+        window.blogPosts.push(data);
+        
+        const plainText = data.content ? data.content.replace(/<[^>]*>?/gm, '') : '';
+        
+        // Auto-assign colors based on Category selection
+        let catColor = "var(--pink)"; // Default
+        if(data.category === "SEO") catColor = "var(--cyan)";
+        if(data.category === "Lead Generation") catColor = "var(--green)";
+        if(data.category === "Google Ads") catColor = "var(--yellow)";
+        if(data.category === "Strategy") catColor = "var(--purple)";
+
+        // Build the HTML Card
+        if(data.status === "QUEUED") {
+            hasQueued = true;
+            const queuedHTML = `
+              <div class="blog-stub">
+                <div class="stub-category" style="color:${catColor};">${data.category || 'Update'}</div>
+                <h3>${data.title}</h3>
+                <p>${plainText}</p>
+                <div class="stub-footer">
+                  <span class="stub-tag">${data.tag || 'Pending'}</span>
+                  <span>// PENDING PUBLISH</span>
+                </div>
+              </div>
+            `;
+            if(queuedContainer) queuedContainer.insertAdjacentHTML('beforeend', queuedHTML);
+        } else {
+            hasLive = true;
+            const cardHTML = `
+              <div class="blog-stub" onclick="openModal(${index})" style="cursor:pointer;">
+                <img src="${data.thumbnail}" alt="Thumbnail" class="b-thumb" onerror="this.style.display='none'">
+                <div class="stub-inner">
+                  <div class="stub-category" style="color:${catColor};">${data.category || 'Update'}</div>
+                  <h3>${data.title}</h3>
+                  <p>${plainText}</p>
+                  <div class="stub-footer">
+                    <span class="stub-tag">${data.tag || data.author}</span>
+                    <span class="b-readmore">READ PROTOCOL →</span>
+                  </div>
+                </div>
+              </div>
+            `;
+            liveContainer.insertAdjacentHTML('beforeend', cardHTML);
+        }
+        index++;
+      });
+      
+      if(!hasLive) liveContainer.innerHTML = '<p style="text-align:center; color:var(--pink); font-family: var(--font-m); grid-column: 1 / -1;">No live transmissions found.</p>';
+      if(!hasQueued && queuedContainer) queuedContainer.innerHTML = '<p style="text-align:center; color:var(--muted); font-family: var(--font-m); grid-column: 1 / -1;">No queued topics currently.</p>';
+
+    } catch (err) {
+      console.error("Error loading blog:", err);
+      liveContainer.innerHTML = '<p style="text-align:center; color:red; grid-column: 1 / -1;">Database connection failed.</p>';
+    }
+  }
+
+  loadBlog();
 </script>
 
 </body>
