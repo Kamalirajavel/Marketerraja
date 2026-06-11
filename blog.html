@@ -4,7 +4,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="icon" type="image/jpeg" href="logo.jpeg">
+<link rel="icon" type="image/jpeg" href="logo.jpg">
 <title>Growth Insights | Marketer Raja Blog</title>
 <meta name="description" content="Digital marketing strategies, growth insights and expert tips on SEO, Meta Ads, and Google Ads from Marketer Raja.">
 <meta name="keywords" content="digital marketing blog, seo tips, meta ads guide, google ads strategy, lead generation tips, marketer raja">
@@ -62,8 +62,8 @@ body::before {
 nav {
   position:fixed; top:0; left:0; right:0; z-index:100;
   display:flex; align-items:center; justify-content:space-between;
-  padding:0 4vw; height:70px;
-  background:rgba(0,12,36,0.95);
+  padding:16px 5vw;
+  background:rgba(0,12,36,0.9);
   backdrop-filter:blur(20px);
   border-bottom:1px solid var(--border);
 }
@@ -72,17 +72,17 @@ nav::after {
   background: linear-gradient(135deg, #0064e0 0%, #9b00ff 50%, #ff0080 100%);
 }
 .nav-logo {
-  display:flex; align-items:center; gap:10px;
-  font-family:var(--font-d); font-size:clamp(16px,3vw,22px); font-weight:900;
-  letter-spacing:3px; color:var(--cyan); text-shadow:var(--glow-c);
-  text-decoration:none; flex-shrink:0;
+  display:flex; align-items:center; gap:12px;
+  font-family:var(--font-d); font-size:24px; font-weight:900;
+  letter-spacing:4px; color:var(--cyan); text-shadow:var(--glow-c);
+  text-decoration:none;
 }
 .nav-logo span { color:var(--pink); text-shadow:var(--glow-p); }
 .nav-links { display:flex; gap:20px; align-items:center; }
 .nav-links a {
-  font-family:var(--font-m); font-size:13px; letter-spacing:1.5px;
+  font-family:var(--font-m); font-size:14px; letter-spacing:2px;
   color:var(--muted); text-decoration:none; text-transform:uppercase;
-  transition:all .2s; white-space:nowrap;
+  transition:all .2s;
 }
 .nav-links a:hover, .nav-links a.active { color:var(--cyan); text-shadow:var(--glow-c); }
 .nav-wa {
@@ -90,17 +90,17 @@ nav::after {
   background:rgba(37,211,102,0.1);
   border:1px solid rgba(37,211,102,0.4);
   color:var(--wa);
-  font-family:var(--font-d); font-size:11px; letter-spacing:2px;
-  padding:8px 16px; text-decoration:none;
+  font-family:var(--font-d); font-size:12px; letter-spacing:2px;
+  padding:10px 20px; text-decoration:none;
   clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);
-  transition:all .2s; white-space:nowrap; flex-shrink:0;
+  transition:all .2s;
 }
 .nav-wa:hover { background:rgba(37,211,102,0.2); box-shadow:0 0 20px rgba(37,211,102,0.3); }
 
 /* ── HERO ── */
 .blog-hero {
   display:flex; flex-direction:column; align-items:center; justify-content:center;
-  text-align:center; padding:140px 5vw 40px; /* Reduced bottom padding */
+  text-align:center; padding:140px 5vw 80px;
   position:relative; z-index:1;
 }
 .hero-tag {
@@ -133,7 +133,7 @@ nav::after {
 .topics-ribbon {
   display:flex; gap:16px; overflow-x:auto; padding:0 5vw 10px;
   scrollbar-width:none; position:relative; z-index:1;
-  justify-content:center; flex-wrap:wrap; margin-bottom:30px; /* Reduced bottom margin */
+  justify-content:center; flex-wrap:wrap; margin-bottom:60px;
 }
 .topics-ribbon::-webkit-scrollbar { display:none; }
 .topic-pill {
@@ -153,7 +153,7 @@ nav::after {
 .topic-pill i { font-size:12px; }
 
 /* ── SECTION STRUCTURE ── */
-.sec { padding:40px 5vw 60px; position:relative; z-index:1; } /* Reduced padding */
+.sec { padding:80px 5vw 100px; position:relative; z-index:1; }
 .sec-alt { background:rgba(2,18,51,0.6); border-top:1px solid var(--border2); border-bottom:1px solid var(--border2); backdrop-filter:blur(10px); }
 .sec-tag {
   font-family:var(--font-m); font-size:11px; letter-spacing:4px;
@@ -173,62 +173,98 @@ h2 .g { color:var(--green); }
 h2 .pu { color:var(--purple); text-shadow:0 0 15px rgba(155,0,255,0.6); }
 p.section-subtext { font-size:18px; color:rgba(232,244,255,0.7); max-width:750px; line-height:1.6; margin-bottom:50px; }
 
-/* ── FIREBASE BLOG STUBS (Updated Layout) ── */
+/* ── FEATURED ARTICLE ── */
+.featured-wrap {
+  display:grid; grid-template-columns:1fr 1fr; gap:40px;
+  max-width:1200px; margin:0 auto 60px;
+  align-items:stretch;
+}
+.featured-card {
+  background:var(--glass);
+  border:1px solid var(--border);
+  position:relative; overflow:hidden;
+  transition:all .35s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+.featured-card::before {
+  content:''; position:absolute; top:0; left:0; right:0; height:3px;
+  background: linear-gradient(90deg, var(--cyan), var(--purple), var(--pink));
+}
+.featured-card:hover {
+  transform:translateY(-8px);
+  border-color:rgba(0,245,255,0.4);
+  box-shadow:0 20px 50px rgba(0,245,255,0.1);
+}
+.featured-img-box {
+  width:100%; height:280px; overflow:hidden; position:relative;
+  background: linear-gradient(135deg, #021233 0%, #041944 100%);
+  display:flex; align-items:center; justify-content:center;
+}
+.featured-img-icon { font-size:80px; opacity:0.12; color:var(--cyan); }
+.featured-img-label {
+  position:absolute; top:16px; left:16px;
+  font-family:var(--font-m); font-size:10px; letter-spacing:2px;
+  color:var(--cyan); background:rgba(0,0,0,0.6);
+  border:1px solid rgba(0,245,255,0.3); padding:4px 12px;
+}
+.featured-body { padding:30px; }
+.featured-meta {
+  font-family:var(--font-m); font-size:10px; letter-spacing:2px;
+  color:var(--green); text-transform:uppercase; margin-bottom:12px;
+  display:flex; gap:16px; align-items:center; flex-wrap:wrap;
+}
+.featured-body h3 {
+  font-family:var(--font-d); font-size:clamp(18px,2vw,24px);
+  color:var(--white); margin-bottom:14px; line-height:1.25; text-transform:uppercase;
+}
+.featured-body p { font-size:15px; color:var(--muted); line-height:1.65; margin-bottom:22px; }
+.read-link {
+  display:inline-flex; align-items:center; gap:8px;
+  font-family:var(--font-m); font-size:11px; letter-spacing:2px;
+  color:var(--cyan); text-decoration:none; text-transform:uppercase;
+  transition:gap .2s;
+}
+.read-link:hover { gap:14px; }
+
+/* ── COMING SOON CARD ── */
+.coming-soon-card {
+  background: linear-gradient(145deg, rgba(2,18,51,0.7) 0%, rgba(0,12,36,0.9) 100%);
+  border:1px dashed rgba(0,245,255,0.2);
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  text-align:center; padding:50px 30px; min-height:300px;
+  position:relative; overflow:hidden; gap:20px;
+}
+.coming-soon-card::after {
+  content:'LOADING_CONTENT...'; font-family:var(--font-m); font-size:9px;
+  letter-spacing:3px; color:rgba(0,245,255,0.15);
+  position:absolute; bottom:16px; right:20px;
+  animation: fadeLoop 2s ease-in-out infinite;
+}
+@keyframes fadeLoop { 0%,100%{opacity:0.3} 50%{opacity:0.8} }
+.coming-soon-icon { font-size:50px; color:var(--cyan); opacity:0.3; }
+.coming-soon-card h4 { font-family:var(--font-d); font-size:18px; color:var(--muted); text-transform:uppercase; }
+.coming-soon-card p { font-size:14px; color:rgba(232,244,255,0.35); line-height:1.6; max-width:260px; }
+
+/* ── BLOG GRID ── */
 .blog-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr); /* Forces exactly 2 columns */
-  gap: 10px; /* Reduced gap to remove spaces */
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 10px;
+  display:grid; grid-template-columns:repeat(auto-fit, minmax(320px, 1fr));
+  gap:30px; max-width:1200px; margin:0 auto;
 }
-
-/* Ensure it stacks to 1 column on smaller screens */
-@media (max-width: 768px) {
-  .blog-grid { 
-    grid-template-columns: 1fr; 
-    gap: 10px;
-  }
-}
-
-  
-/*.blog-stub {
+.blog-stub {
   background:rgba(2,18,51,0.4);
   border:1px solid var(--border);
-  padding:0; position:relative;
+  padding:32px 26px; position:relative;
   transition:all .3s ease;
   clip-path:polygon(0 0, 97% 0, 100% 16px, 100% 100%, 0 100%);
-  display:flex; flex-direction:column;
-}*/
-
-  .blog-stub {
-  background: rgba(2,18,51,0.4);
-  border: 1px solid var(--border);
-  padding: 0;
-  margin: 0; /* Add this to ensure no external margin */
-  position: relative;
-
-    
+}
 .blog-stub::before {
   content:''; position:absolute; top:0; left:0; width:4px; height:100%;
   background: linear-gradient(180deg, var(--cyan), transparent);
-  z-index:1;
 }
 .blog-stub:hover {
   transform:translateY(-6px);
   background:rgba(0,245,255,0.04);
   border-color:rgba(0,245,255,0.4);
   box-shadow:0 12px 35px rgba(0,245,255,0.1);
-}
-.b-thumb {
-  width:100%; height:180px; object-fit:cover;
-  display:block; border-bottom:1px solid var(--border);
-}
-.stub-inner {
-  padding:24px 22px; display:flex; flex-direction:column; flex:1;
-}
-.blog-stub p { font-size:14px; color:var(--muted); line-height:1.6; margin-bottom:20px; flex:1;
-  display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden;
 }
 .stub-category {
   font-family:var(--font-m); font-size:10px; letter-spacing:2px;
@@ -241,6 +277,7 @@ p.section-subtext { font-size:18px; color:rgba(232,244,255,0.7); max-width:750px
   color:var(--white); margin-bottom:12px;
   text-transform:uppercase; line-height:1.3;
 }
+.blog-stub p { font-size:14px; color:var(--muted); line-height:1.6; margin-bottom:20px; }
 .stub-footer {
   display:flex; align-items:center; justify-content:space-between;
   font-family:var(--font-m); font-size:11px; color:rgba(232,244,255,0.3);
@@ -251,46 +288,6 @@ p.section-subtext { font-size:18px; color:rgba(232,244,255,0.7); max-width:750px
   background:rgba(0,245,255,0.06); border:1px solid rgba(0,245,255,0.15);
   font-family:var(--font-m); font-size:10px; letter-spacing:1px;
   color:rgba(0,245,255,0.5); padding:3px 10px; text-transform:uppercase;
-}
-
-
-/* Modal Styles */
-.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.95); display: none; justify-content: center; align-items: flex-start; z-index: 1000; overflow-y: auto; padding: 40px 5vw; }
-.modal-content { background: var(--bg2); width: 100%; max-width: 800px; border: 1px solid var(--cyan); padding: 40px; position: relative; }
-.close-btn { position: absolute; top: 20px; right: 20px; color: var(--pink); font-size: 30px; cursor: pointer; border: none; background: none; }
-.m-title { font-family: var(--font-d); font-size: 32px; color: #fff; margin-bottom: 15px; }
-.m-meta { font-family: var(--font-m); color: var(--cyan); margin-bottom: 30px; font-size: 13px; }
-.m-body { font-size: 17px; line-height: 1.8; color: #ddd; margin-top: 20px; }
-
-/* ── CONTENT CATEGORIES GRID ── */
-.cat-grid {
-  display:grid; grid-template-columns:repeat(auto-fit, minmax(230px, 1fr));
-  gap:20px; margin-top:40px;
-}
-.cat-card {
-  background:rgba(2,18,51,0.4); border:1px solid var(--border);
-  padding:28px 22px; position:relative;
-  transition:all .3s ease; cursor:default;
-}
-.cat-card:hover {
-  background:rgba(0,245,255,0.04);
-  border-color:rgba(0,245,255,0.4);
-  transform:translateY(-4px);
-}
-.cat-icon {
-  width:46px; height:46px; display:flex; align-items:center; justify-content:center;
-  background:rgba(0,245,255,0.08); border:1px solid rgba(0,245,255,0.2);
-  font-size:20px; color:var(--cyan); margin-bottom:16px;
-  transition:all .3s;
-}
-.cat-card:hover .cat-icon { background:var(--cyan); color:#000c24; box-shadow:var(--glow-c); }
-.cat-card h4 { font-family:var(--font-d); font-size:16px; text-transform:uppercase; margin-bottom:8px; }
-.cat-card p { font-size:13px; color:var(--muted); line-height:1.55; }
-.cat-count {
-  position:absolute; top:16px; right:16px;
-  font-family:var(--font-m); font-size:10px; letter-spacing:2px;
-  color:rgba(0,245,255,0.35); background:rgba(0,245,255,0.05);
-  border:1px solid rgba(0,245,255,0.1); padding:2px 8px;
 }
 
 /* ── NEWSLETTER STRIP ── */
@@ -357,6 +354,37 @@ p.section-subtext { font-size:18px; color:rgba(232,244,255,0.7); max-width:750px
 .stat-label {
   font-family:var(--font-m); font-size:11px; letter-spacing:2px;
   color:var(--muted); text-transform:uppercase;
+}
+
+/* ── CONTENT CATEGORIES GRID ── */
+.cat-grid {
+  display:grid; grid-template-columns:repeat(auto-fit, minmax(230px, 1fr));
+  gap:20px; margin-top:40px;
+}
+.cat-card {
+  background:rgba(2,18,51,0.4); border:1px solid var(--border);
+  padding:28px 22px; position:relative;
+  transition:all .3s ease; cursor:default;
+}
+.cat-card:hover {
+  background:rgba(0,245,255,0.04);
+  border-color:rgba(0,245,255,0.4);
+  transform:translateY(-4px);
+}
+.cat-icon {
+  width:46px; height:46px; display:flex; align-items:center; justify-content:center;
+  background:rgba(0,245,255,0.08); border:1px solid rgba(0,245,255,0.2);
+  font-size:20px; color:var(--cyan); margin-bottom:16px;
+  transition:all .3s;
+}
+.cat-card:hover .cat-icon { background:var(--cyan); color:#000c24; box-shadow:var(--glow-c); }
+.cat-card h4 { font-family:var(--font-d); font-size:16px; text-transform:uppercase; margin-bottom:8px; }
+.cat-card p { font-size:13px; color:var(--muted); line-height:1.55; }
+.cat-count {
+  position:absolute; top:16px; right:16px;
+  font-family:var(--font-m); font-size:10px; letter-spacing:2px;
+  color:rgba(0,245,255,0.35); background:rgba(0,245,255,0.05);
+  border:1px solid rgba(0,245,255,0.1); padding:2px 8px;
 }
 
 /* ── FOOTER ── */
@@ -475,7 +503,7 @@ footer {
   .nav-wa { display:none !important; }
   .nav-logo { font-size:18px; gap:8px; }
   nav { padding:12px 4vw; }
-  .blog-hero { padding:110px 5vw 30px; }
+  .blog-hero { padding:110px 5vw 50px; }
   .featured-wrap { grid-template-columns:1fr; }
   .blog-grid { grid-template-columns:1fr; }
   .newsletter-input-row { flex-direction:column; }
@@ -509,9 +537,10 @@ footer {
 <div class="cur"></div>
 <div class="cur-ring"></div>
 
+<!-- ── NAV ── -->
 <nav>
   <a href="index.html" class="nav-logo">
-    <img src="logo.jpeg" alt="Marketer Raja Logo" style="height:44px;width:44px;object-fit:contain;border-radius:6px;" />
+    <img src="logo.jpg" alt="Marketer Raja Logo" style="height:44px;width:44px;object-fit:contain;border-radius:6px;" />
     MARKETER<span>RAJA</span>
   </a>
   <div class="nav-links">
@@ -524,13 +553,14 @@ footer {
     <a href="blog.html" class="active">Blog</a>
   </div>
   <a href="https://wa.me/918489486025" class="nav-wa" target="_blank">
-    <i class="fab fa-whatsapp"></i> FREE STRATEGY CALL
+    <i class="fab fa-whatsapp"></i> FREE CALL
   </a>
   <div class="hamburger" id="hamburger" onclick="toggleMenu()">
     <span></span><span></span><span></span>
   </div>
 </nav>
 
+<!-- Mobile Menu -->
 <div class="mobile-menu" id="mobileMenu">
   <a href="index.html" onclick="closeMenu()">Home</a>
   <a href="seo.html" onclick="closeMenu()">SEO Services</a>
@@ -542,6 +572,7 @@ footer {
   <a href="https://wa.me/918489486025" class="nav-wa-m" target="_blank"><i class="fab fa-whatsapp"></i> FREE CALL</a>
 </div>
 
+<!-- ── HERO ── -->
 <section class="blog-hero">
   <div class="hero-tag">
     <div class="tag-blink"></div> SIGNAL FEED ACTIVE • MARKETING INTELLIGENCE DISPATCHES
@@ -551,6 +582,7 @@ footer {
     Tactical breakdowns on Lead Generation, Meta Ads, Google Ads, SEO, and Web Strategy — decoded from real campaigns, real results.
   </p>
 
+  <!-- Topic Filters -->
   <div class="topics-ribbon">
     <div class="topic-pill active"><i class="fas fa-layer-group"></i> All Topics</div>
     <div class="topic-pill"><i class="fab fa-meta"></i> Meta Ads</div>
@@ -562,43 +594,126 @@ footer {
   </div>
 </section>
 
-<section class="sec sec-alt">
-  <div class="sec-tag">Signal Queue</div>
-  <h2>LATEST <span class="c">TRANSMISSIONS</span></h2>
-  <p class="section-subtext">Real-world campaign data and actionable playbooks, loaded directly from our intel feed.</p>
+<!-- ── FEATURED ARTICLE + COMING SOON ── -->
+<section class="sec" style="padding-top:20px;">
+  <div class="sec-tag">Featured Signal</div>
+  <h2>LATEST <span class="p">INTEL</span> DROP</h2>
+  <p class="section-subtext">New articles are added manually. Check back regularly for the latest campaign tactics and marketing intelligence.</p>
 
-  <div class="blog-grid" id="blog-container">
-    <p style="text-align: center; color: var(--cyan); grid-column: 1 / -1; font-family: var(--font-m);">Initializing Secure Connection... Loading Data...</p>
+  <div class="featured-wrap">
+    <!-- Placeholder for first article -->
+    <div class="featured-card">
+      <div class="featured-img-box">
+        <i class="fas fa-broadcast-tower featured-img-icon"></i>
+        <div class="featured-img-label">ARTICLE_01 // INCOMING</div>
+      </div>
+      <div class="featured-body">
+        <div class="featured-meta">
+          <span><i class="fas fa-circle" style="font-size:6px; color:var(--green);"></i> COMING SOON</span>
+          <span>// MARKETER RAJA</span>
+        </div>
+        <h3>First Article Loading Into The Feed</h3>
+        <p>
+          Our first deep-dive article is being written and will go live shortly. Expect tactical breakdowns, real numbers from live campaigns, and zero fluff — just what actually works.
+        </p>
+        <span class="read-link" style="opacity:0.4; cursor:default;">
+          <i class="fas fa-lock"></i> PUBLISHING SOON
+        </span>
+      </div>
+    </div>
+
+    <!-- Coming soon block -->
+    <div class="coming-soon-card">
+      <i class="fas fa-rss coming-soon-icon"></i>
+      <h4>More Articles On The Way</h4>
+      <p>New posts covering Meta Ads, SEO, and Lead Generation are being prepared for this feed.</p>
+      <div style="font-family:var(--font-m); font-size:10px; letter-spacing:2px; color:rgba(0,245,255,0.3); border:1px dashed rgba(0,245,255,0.1); padding:8px 16px;">FEED SLOT RESERVED</div>
+    </div>
   </div>
 </section>
 
-<div class="modal-overlay" id="post-modal">
-  <div class="modal-content">
-    <button class="close-btn" onclick="closeModal()">×</button>
-    <h2 class="m-title" id="m-title">Title</h2>
-    <div class="m-meta" id="m-meta">By Author | Date</div>
-    <img src="" id="m-thumb" style="width:100%; height:auto; margin-bottom:20px;">
-    <div class="m-body" id="m-body">Content goes here...</div>
-    
-    <div style="margin-top: 40px; padding-top: 30px; border-top: 1px dashed var(--border); text-align: center;">
-      <h3 style="font-family: var(--font-d); color: #fff; margin-bottom: 15px; font-size: 18px;">Want us to build this system for your business?</h3>
-      <a href="https://wa.me/918489486025?text=Hi,%20I%20read%20your%20blog%20and%20want%20to%20discuss%20a%20strategy." target="_blank" style="background: #25D366; color: #fff; text-decoration: none; padding: 15px 30px; font-family: var(--font-d); font-size: 14px; font-weight: bold; border-radius: 4px; display: inline-block;"><i class="fab fa-whatsapp"></i> DISCUSS ON WHATSAPP</a>
+<!-- ── UPCOMING BLOG STUBS ── -->
+<section class="sec sec-alt">
+  <div class="sec-tag">Signal Queue</div>
+  <h2>TOPICS <span class="c">QUEUED</span> FOR BROADCAST</h2>
+  <p class="section-subtext">These subjects are lined up for upcoming articles. Each one packed with real-world campaign data and actionable playbooks.</p>
+
+  <div class="blog-grid">
+    <div class="blog-stub">
+      <div class="stub-category">Meta Ads</div>
+      <h3>How to Stop Burning Money on Facebook Boosts</h3>
+      <p>The difference between boosting a post and running a proper lead generation campaign — and why one kills budgets while the other builds pipelines.</p>
+      <div class="stub-footer">
+        <span class="stub-tag">Ads Strategy</span>
+        <span>// PENDING PUBLISH</span>
+      </div>
+    </div>
+
+    <div class="blog-stub">
+      <div class="stub-category" style="color:var(--cyan);">SEO</div>
+      <h3>Local SEO Playbook for Tamil Nadu Businesses</h3>
+      <p>Step-by-step guide to ranking on Google Maps and local search results for businesses operating in Tamil Nadu and surrounding regions.</p>
+      <div class="stub-footer">
+        <span class="stub-tag">Local SEO</span>
+        <span>// PENDING PUBLISH</span>
+      </div>
+    </div>
+
+    <div class="blog-stub">
+      <div class="stub-category" style="color:var(--green);">Lead Generation</div>
+      <h3>Getting WhatsApp Enquiries from Instagram Reels</h3>
+      <p>How to set up a direct pipeline from Reels viewers to your WhatsApp business number using comment automation and direct message triggers.</p>
+      <div class="stub-footer">
+        <span class="stub-tag">Lead Gen</span>
+        <span>// PENDING PUBLISH</span>
+      </div>
+    </div>
+
+    <div class="blog-stub">
+      <div class="stub-category" style="color:var(--yellow);">Google Ads</div>
+      <h3>The Exact Google Ads Setup That Reduces Wasted Spend</h3>
+      <p>Why most small business Google campaigns bleed money into irrelevant clicks — and the exact negative keyword and match-type structure that stops it.</p>
+      <div class="stub-footer">
+        <span class="stub-tag">Google Ads</span>
+        <span>// PENDING PUBLISH</span>
+      </div>
+    </div>
+
+    <div class="blog-stub">
+      <div class="stub-category" style="color:var(--purple);">Strategy</div>
+      <h3>Building a $0 Organic Funnel Alongside Paid Ads</h3>
+      <p>How to build SEO and social content that feeds your paid ads with warm audiences — reducing cost per lead over time without cutting the budget.</p>
+      <div class="stub-footer">
+        <span class="stub-tag">Growth</span>
+        <span>// PENDING PUBLISH</span>
+      </div>
+    </div>
+
+    <div class="blog-stub">
+      <div class="stub-category" style="color:var(--pink);">Web &amp; App</div>
+      <h3>Why Your Landing Page is Killing Your Ad Performance</h3>
+      <p>The five most common landing page mistakes that inflate cost-per-click and destroy conversion rates — with exact fixes you can implement this week.</p>
+      <div class="stub-footer">
+        <span class="stub-tag">CRO</span>
+        <span>// PENDING PUBLISH</span>
+      </div>
     </div>
   </div>
-</div>
+</section>
 
+<!-- ── CONTENT CATEGORIES ── -->
 <section class="sec">
   <div class="sec-tag">Intel Categories</div>
   <h2>WHAT THIS <span class="g">FEED</span> COVERS</h2>
   <p class="section-subtext">Every article in this blog is tied to one of these core disciplines. Practical knowledge, no theory-only content.</p>
 
   <div class="cat-grid">
-    <!--<div class="cat-card">
+    <div class="cat-card">
       <div class="cat-count">ACTIVE</div>
       <div class="cat-icon"><i class="fab fa-meta"></i></div>
       <h4>Meta Ads</h4>
       <p>Facebook and Instagram campaign structure, audience setup, creative testing, and lead funnel optimization.</p>
-    </div>-->
+    </div>
     <div class="cat-card">
       <div class="cat-count">ACTIVE</div>
       <div class="cat-icon"><i class="fab fa-google" style="color:var(--yellow);"></i></div>
@@ -632,6 +747,7 @@ footer {
   </div>
 </section>
 
+<!-- ── STATS ── -->
 <section class="sec sec-alt" style="text-align:center;">
   <div style="display:flex; flex-direction:column; align-items:center;">
     <div class="sec-tag">Signal Strength</div>
@@ -658,18 +774,20 @@ footer {
   </div>
 </section>
 
+<!-- ── NEWSLETTER ── -->
 <section class="sec" style="display:flex; justify-content:center;">
   <div class="newsletter-strip">
     <h3>GET ARTICLES STRAIGHT TO <span style="color:var(--cyan);">YOUR INBOX</span></h3>
     <p>Drop your email and we'll notify you every time a new article goes live. No spam — just tactical marketing intelligence when it's ready.</p>
     <div class="newsletter-input-row">
-      <input type="email" id="nl-email-input" placeholder="YOUR_EMAIL@DOMAIN.COM" />
-      <button class="nl-btn" id="nl-submit-btn"><i class="fas fa-paper-plane"></i> SUBSCRIBE</button>
+      <input type="email" placeholder="YOUR_EMAIL@DOMAIN.COM" />
+      <button class="nl-btn"><i class="fas fa-paper-plane"></i> SUBSCRIBE</button>
     </div>
     <div class="nl-note">// ZERO SPAM PROTOCOL — UNSUBSCRIBE AT ANY TIME</div>
   </div>
 </section>
 
+<!-- ── FOOTER ── -->
 <footer>
   <div class="footer-container">
     <div class="footer-brand">
@@ -692,16 +810,11 @@ footer {
         <h4>Quick Links</h4>
         <ul>
           <li><a href="index.html">Home Base</a></li>
+          <li><a href="portfolio.html">Portfolio</a></li>
+          <li><a href="blog.html">Blog</a></li>
           <li><a href="https://wa.me/918489486025" target="_blank">Contact WhatsApp</a></li>
         </ul>
       </div>
-
-      <div class="footer-box">
-        <h4>Our Work</h4>
-        <ul>
-           <li><a href="portfolio.html">Portfolio</a></li>
-          <li><a href="blog.html">Blog</a></li>
-        </ul>
 
       <div class="footer-box">
         <h4>Our Office</h4>
@@ -788,200 +901,48 @@ footer {
   </div>
 </footer>
 
+<!-- ── FABs ── -->
 <div class="fab-container">
   <a href="tel:+918489486025" class="fab-btn fab-call" aria-label="Call us"><i class="fas fa-phone"></i></a>
   <a href="https://wa.me/918489486025" class="fab-btn fab-wa" target="_blank" rel="noopener" aria-label="WhatsApp us"><i class="fab fa-whatsapp"></i></a>
 </div>
 
-<script type="module">
-  import { db } from "./firebase-config.js";
-  import { collection, getDocs, orderBy, query, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
-
-  // --- BLOG LOADING SCRIPT ---
-  window.blogPosts = [];
-
-  async function loadBlog() {
-    const container = document.getElementById('blog-container');
-    try {
-      const q = query(collection(db, "blog"), orderBy("timestamp", "desc"));
-      const snapshot = await getDocs(q);
-      
-      container.innerHTML = ''; // Clear loading text
-      
-      if (snapshot.empty) {
-        container.innerHTML = '<p style="text-align:center; color:var(--pink); font-family: var(--font-m); grid-column: 1 / -1;">No transmissions found. Check back later.</p>';
-        return;
-      }
-
-      let index = 0;
-
-       /*if (snapshot.empty) {
-        container.innerHTML = '<p style="text-align:center; color:var(--pink); font-family: var(--font-m); grid-column: 1 / -1;">No transmissions found. Check back later.</p>';
-        return;
-      }
-
-      let index = 0;*/
-      snapshot.forEach((doc) => {
-        const data = doc.data();
-        window.blogPosts.push(data);
-        
-        const dateStr = data.timestamp ? new Date(data.timestamp.toDate()).toLocaleDateString() : 'Recent';
-        
-        // Plain text excerpt
-        const plainText = data.content ? data.content.replace(/<[^>]*>?/gm, '') : '';
-
-        const cardHTML = `
-          <div class="blog-stub" onclick="openModal(${index})">
-            <img src="${data.thumbnail}" alt="Thumbnail" class="b-thumb" onerror="this.style.display='none'">
-            <div class="stub-inner">
-              <div class="stub-category">Update</div>
-              <h3>${data.title}</h3>
-              <p>${plainText}</p>
-              <div class="stub-footer">
-                <span class="stub-tag">${data.author}</span>
-                <span class="b-readmore">READ PROTOCOL →</span>
-              </div>
-            </div>
-          </div>
-        `;
-        container.insertAdjacentHTML('beforeend', cardHTML);
-        index++;
-      });
-
-    } catch (err) {
-      console.error("Error loading blog:", err);
-      container.innerHTML = '<p style="text-align:center; color:red; grid-column: 1 / -1;">Database connection failed.</p>';
-    }
-  }
-
-  loadBlog();
-
-  // --- NEWSLETTER SUBSCRIPTION SCRIPT ---
-  document.getElementById('nl-submit-btn').addEventListener('click', async () => {
-    const emailInput = document.getElementById('nl-email-input');
-    const email = emailInput.value.trim();
-    const btn = document.getElementById('nl-submit-btn');
-
-    if (email.includes('@') && email.includes('.')) {
-      btn.innerHTML = 'PROCESSING...';
-      try {
-        await setDoc(doc(db, "subscribers", email), {
-          email: email,
-          subscribedAt: serverTimestamp()
-        });
-        
-        btn.innerHTML = '<i class="fas fa-check"></i> SUBSCRIBED';
-        btn.style.background = 'var(--green)';
-        emailInput.value = '';
-        
-        setTimeout(() => {
-          btn.innerHTML = '<i class="fas fa-paper-plane"></i> SUBSCRIBE';
-          btn.style.background = 'var(--cyan)';
-        }, 3000);
-      } catch (error) {
-        console.error("Subscription error:", error);
-        alert("Error saving subscription. Please try again.");
-        btn.innerHTML = '<i class="fas fa-paper-plane"></i> SUBSCRIBE';
-      }
-    } else {
-      alert("Please enter a valid email address.");
-    }
-  });
-
-</script>
-
 <script>
-  // Modal Interaction Script
-  function openModal(index) {
-    const post = window.blogPosts[index];
-    const dateStr = post.timestamp ? new Date(post.timestamp.toDate()).toLocaleDateString() : 'Recent';
-    
-    document.getElementById('m-title').textContent = post.title;
-    document.getElementById('m-meta').textContent = `By ${post.author}  |  ${dateStr}`;
-    
-    const thumb = document.getElementById('m-thumb');
-    if(post.thumbnail) {
-      thumb.src = post.thumbnail;
-      thumb.style.display = 'block';
-    } else {
-      thumb.style.display = 'none';
-    }
-    
-    document.getElementById('m-body').innerHTML = post.content;
-    
-    document.getElementById('post-modal').style.display = 'flex';
-    document.body.style.overflow = 'hidden';
-  }
-
-  function closeModal() {
-    document.getElementById('post-modal').style.display = 'none';
-    document.body.style.overflow = 'auto';
-  }
-
-  document.getElementById('post-modal').addEventListener('click', function(e) {
-    if(e.target === this) {
-      closeModal();
-    }
-  });
-
 /* Custom Cursor */
 const curEl = document.querySelector('.cur');
 const ringEl = document.querySelector('.cur-ring');
 let cmx = 0, cmy = 0, crx = 0, cry = 0;
 window.addEventListener('mousemove', (e) => {
   cmx = e.clientX; cmy = e.clientY;
-  if(curEl && ringEl) {
-    curEl.style.left = cmx + 'px';
-    curEl.style.top = cmy + 'px';
-  }
+  curEl.style.left = cmx + 'px';
+  curEl.style.top = cmy + 'px';
 });
 (function animCur(){
   crx += (cmx - crx) * 0.1;
   cry += (cmy - cry) * 0.1;
-  if(ringEl) {
-    ringEl.style.left = crx + 'px';
-    ringEl.style.top = cry + 'px';
-  }
+  ringEl.style.left = crx + 'px';
+  ringEl.style.top = cry + 'px';
   requestAnimationFrame(animCur);
 })();
 
 document.querySelectorAll('a, button, .blog-stub, .cat-card, .featured-card, .topic-pill').forEach(el => {
   el.addEventListener('mouseenter', () => {
-    if(curEl && ringEl) {
-      curEl.style.transform = 'translate(-50%,-50%) scale(2.5)';
-      ringEl.style.width = '52px'; ringEl.style.height = '52px';
-      ringEl.style.borderColor = 'var(--cyan)';
-    }
+    curEl.style.transform = 'translate(-50%,-50%) scale(2.5)';
+    ringEl.style.width = '52px'; ringEl.style.height = '52px';
+    ringEl.style.borderColor = 'var(--cyan)';
   });
   el.addEventListener('mouseleave', () => {
-    if(curEl && ringEl) {
-      curEl.style.transform = 'translate(-50%,-50%) scale(1)';
-      ringEl.style.width = '30px'; ringEl.style.height = '30px';
-      ringEl.style.borderColor = 'rgba(0,245,255,0.5)';
-    }
+    curEl.style.transform = 'translate(-50%,-50%) scale(1)';
+    ringEl.style.width = '30px'; ringEl.style.height = '30px';
+    ringEl.style.borderColor = 'rgba(0,245,255,0.5)';
   });
 });
 
-/* Topic Pills Reactive Filtering Logic */
+/* Topic Pills */
 document.querySelectorAll('.topic-pill').forEach(pill => {
   pill.addEventListener('click', () => {
-    // 1. Toggle Active CSS State
     document.querySelectorAll('.topic-pill').forEach(p => p.classList.remove('active'));
     pill.classList.add('active');
-
-    // 2. Extract Category Normalization Text
-    const chosenCategory = pill.textContent.replace(/[^a-zA-Z ]/g, "").trim().toLowerCase();
-    
-    // 3. Filter Dom Elements Instantly
-    document.querySelectorAll('.blog-stub').forEach(card => {
-      const cardCategory = card.getAttribute('data-category');
-      
-      if (chosenCategory === "all topics" || cardCategory === chosenCategory || (chosenCategory === "lead gen" && cardCategory === "lead gen")) {
-        card.style.display = 'flex';
-      } else {
-        card.style.display = 'none';
-      }
-    });
   });
 });
 
@@ -1025,6 +986,20 @@ document.addEventListener('click', e => {
     document.querySelectorAll('.privacy-popup.active').forEach(p => p.classList.remove('active'));
 });
 
+/* Newsletter button feedback */
+document.querySelector('.nl-btn').addEventListener('click', () => {
+  const input = document.querySelector('.newsletter-input-row input');
+  if(input.value.includes('@')) {
+    const btn = document.querySelector('.nl-btn');
+    btn.innerHTML = '<i class="fas fa-check"></i> SUBSCRIBED';
+    btn.style.background = 'var(--green)';
+    input.value = '';
+    setTimeout(() => {
+      btn.innerHTML = '<i class="fas fa-paper-plane"></i> SUBSCRIBE';
+      btn.style.background = 'var(--cyan)';
+    }, 3000);
+  }
+});
 </script>
 
 </body>
