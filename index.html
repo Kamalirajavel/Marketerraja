@@ -221,19 +221,20 @@ nav::after{
 .nav-logo span{color:var(--pink);text-shadow:var(--glow-p);}
 
 /* Desktop nav links */
-.nav-links{display:flex;gap:28px;align-items:center;}
-.nav-links a{
-  font-family:var(--font-m);font-size:14px;letter-spacing:2px;
-  color:var(--muted);text-decoration:none;text-transform:uppercase;
-  transition:color .2s, text-shadow .2s;position:relative;padding:4px 0;
+.nav-links{display:flex;gap:20px;align-items:center;}
+
+  .nav-links a {
+  font-family:var(--font-m); font-size:14px; letter-spacing:2px;
+  color:var(--muted); text-decoration:none; text-transform:uppercase;
+  transition:color .2s, text-shadow .2s; white-space:nowrap;
 }
-.nav-links a::after{
+/*.nav-links a::after{
   content:'';position:absolute;bottom:-2px;left:0;right:0;height:1px;
   background:var(--cyan);transform:scaleX(0);transform-origin:left;
   transition:transform .25s ease;
-}
+}*/
 .nav-links a:hover{color:#87CEEB;text-shadow:0 0 12px rgba(135,206,235,0.9), 0 0 30px rgba(135,206,235,0.5);}
-.nav-links a:hover::after{transform:scaleX(1);}
+/*.nav-links a:hover::after{transform:scaleX(1);}*/
 
 /* Nav right wrapper */
 .nav-right{display:flex;align-items:center;gap:16px;}
@@ -250,6 +251,8 @@ nav::after{
   transition:all .2s;white-space:nowrap;
 }
 .nav-wa:hover{background:rgba(37,211,102,0.2);box-shadow:0 0 20px rgba(37,211,102,0.3);}
+
+.nav-links a.active { color:var(--cyan); text-shadow:var(--glow-c); }
 
 /* ── HAMBURGER TOGGLE ── */
 .menu-toggle{
