@@ -175,16 +175,11 @@ p.section-subtext { font-size:18px; color:rgba(232,244,255,0.7); max-width:750px
 
 /* ── FIREBASE BLOG STUBS (Larger Boxes) ── */
 .blog-grid {
-  display:grid; grid-template-columns:repeat(3, 1fr);
+  display:grid; grid-template-columns:repeat(2, 1fr);
   gap:30px;
   max-width:1400px; margin:0 auto;
 }
-@media (max-width: 1024px) {
-  .blog-grid { grid-template-columns:repeat(2, 1fr); }
-}
-@media (max-width: 640px) {
-  .blog-grid { grid-template-columns:1fr; }
-}
+
 .blog-stub {
   background:rgba(2,18,51,0.4);
   border:1px solid var(--border);
