@@ -174,16 +174,9 @@ h2 .pu { color:var(--purple); text-shadow:0 0 15px rgba(155,0,255,0.6); }
 p.section-subtext { font-size:18px; color:rgba(232,244,255,0.7); max-width:750px; line-height:1.6; margin-bottom:50px; }
 
 /* ── FIREBASE BLOG STUBS (Larger Boxes) ── */
-/*.blog-grid {
-  display:grid; grid-template-columns:repeat(2, 1fr); /* Increased minmax width */
-  /*gap:40px; /* Increased gap */
-  /*max-width:1200px; margin:0 auto;
-}*/
-
-/* ── FIREBASE BLOG STUBS (Larger Boxes) ── */
 .blog-grid {
   display: grid; 
-  grid-template-columns: repeat(2, 1fr); /* Forces exactly 2 columns */
+  grid-template-columns: repeat(2, 1fr) !important; /* Forces exactly 2 columns */
   gap: 40px; 
   max-width: 1200px; 
   margin: 0 auto;
@@ -191,7 +184,9 @@ p.section-subtext { font-size:18px; color:rgba(232,244,255,0.7); max-width:750px
 
 /* Ensure it stacks to 1 column on mobile phones */
 @media(max-width: 768px) {
-  .blog-grid { grid-template-columns: 1fr; }
+  .blog-grid { 
+    grid-template-columns: 1fr !important; 
+  }
 }
 
   
