@@ -1251,7 +1251,7 @@ document.addEventListener('click', e => {
   import { collection, getDocs, orderBy, query } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
   async function loadPortfolioAndCharts() {
-    const grid = document.querySelector('.port-clients-grid');
+    const grid = document.getElementById('dynamic-portfolio-grid');
     const chartLabels = [];
     const chartVolumeData = [];
     const chartCplData = []; // Array for the Bar Chart
