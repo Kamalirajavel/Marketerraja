@@ -788,12 +788,12 @@ footer {
 
       let index = 0;
 
-       if (snapshot.empty) {
+      /* if (snapshot.empty) {
         container.innerHTML = '<p style="text-align:center; color:var(--pink); font-family: var(--font-m); grid-column: 1 / -1;">No transmissions found. Check back later.</p>';
         return;
-      }
+      }*/
 
-      let index = 0;
+    /*  let index = 0;*/
       snapshot.forEach((doc) => {
         const data = doc.data();
         window.blogPosts.push(data);
