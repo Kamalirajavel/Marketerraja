@@ -633,12 +633,12 @@ footer {
 </section>
 
 <!-- ── UPCOMING BLOG STUBS ── -->
-<section class="sec sec-alt">
+<!--<section class="sec sec-alt">
   <div class="sec-tag">Signal Queue</div>
   <h2>TOPICS <span class="c">QUEUED</span> FOR BROADCAST</h2>
-  <p class="section-subtext">These subjects are lined up for upcoming articles. Each one packed with real-world campaign data and actionable playbooks.</p>
+  <p class="section-subtext">These subjects are lined up for upcoming articles. Each one packed with real-world campaign data and actionable playbooks.</p>-->
 
-  <div class="blog-grid" id="queued-container">
+  <!--<div class="blog-grid" id="queued-container">
     <div class="blog-stub">
       <div class="stub-category">Meta Ads</div>
       <h3>How to Stop Burning Money on Facebook Boosts</h3>
@@ -698,8 +698,27 @@ footer {
         <span>// PENDING PUBLISH</span>
       </div>
     </div>
+  </div>-->
+
+  <section class="sec sec-alt">
+  <div class="sec-tag">Signal Queue</div>
+  <h2>TOPICS <span class="c">QUEUED</span> FOR BROADCAST</h2>
+  <p class="section-subtext">These subjects are lined up for upcoming articles. Each one packed with real-world campaign data and actionable playbooks.</p>
+
+  <div class="blog-grid" id="blog-container">
+    <p style="text-align: center; color: var(--cyan); grid-column: 1 / -1; font-family: var(--font-m);">Loading Live Transmissions from Database...</p>
   </div>
 </section>
+
+<div class="modal-overlay" id="post-modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.95); z-index:1000; padding:40px 5vw; overflow-y:auto;">
+  <div class="modal-content" style="background:var(--bg2); width:100%; max-width:800px; border:1px solid var(--cyan); padding:40px; position:relative; margin:auto;">
+    <button class="close-btn" onclick="closeModal()" style="position:absolute; top:20px; right:20px; background:none; border:none; color:var(--pink); font-size:30px; cursor:pointer;">&times;</button>
+    <h2 id="m-title" style="font-family:var(--font-d); font-size:32px; color:#fff; margin-bottom:15px;">Title</h2>
+    <div id="m-meta" style="font-family:var(--font-m); color:var(--cyan); margin-bottom:30px; font-size:13px;">By Author</div>
+    <img id="m-thumb" src="" style="width:100%; height:auto; margin-bottom:20px; display:none; border:1px solid var(--border);">
+    <div id="m-body" style="font-size:17px; line-height:1.8; color:#ddd; margin-top:20px;"></div>
+  </div>
+</div>
 
 <!-- ── CONTENT CATEGORIES ── -->
 <section class="sec">
@@ -1075,6 +1094,87 @@ async function loadBlog() {
   }
 
   loadBlog();
+</script>
+
+<script type="module">
+  // 1. Connect to your database
+  import { db } from "./firebase-config.js";
+  import { collection, getDocs, orderBy, query } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+
+  window.blogPosts = []; // Store posts for the modal
+
+  async function loadBlog() {
+    const container = document.getElementById('blog-container');
+    if(!container) return;
+
+    try {
+      // 2. Fetch data from the "blog" collection
+      const q = query(collection(db, "blog"), orderBy("timestamp", "desc"));
+      const snapshot = await getDocs(q);
+      
+      container.innerHTML = ''; // Clear loading text
+      
+      if (snapshot.empty) {
+        container.innerHTML = '<p style="text-align:center; color:var(--muted); grid-column: 1 / -1; font-family:var(--font-m);">No broadcasts found.</p>';
+        return;
+      }
+
+      let index = 0;
+      snapshot.forEach((doc) => {
+        const data = doc.data();
+        window.blogPosts.push(data); // Save to array
+        
+        // Strip HTML tags so the preview text looks clean on the card
+        const plainText = data.content ? data.content.replace(/<[^>]*>?/gm, '') : '';
+
+        // 3. Build the Visual Card
+        const cardHTML = `
+          <div class="blog-stub" onclick="openModal(${index})" style="cursor:pointer;">
+            <img src="${data.thumbnail || ''}" onerror="this.style.display='none'" style="width:100%; height:200px; object-fit:cover; margin-bottom:15px; border-bottom:1px solid var(--border); display: ${data.thumbnail ? 'block' : 'none'};">
+            <div class="stub-category">Intel Drop</div>
+            <h3 style="font-family:var(--font-d); font-size:18px; color:#fff; margin-bottom:10px;">${data.title}</h3>
+            <p style="font-size:14px; color:var(--muted); display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden;">${plainText}</p>
+            <div class="stub-footer" style="margin-top:15px;">
+              <span class="stub-tag">${data.author || 'Marketer Raja'}</span>
+              <span style="color:var(--cyan); font-family:var(--font-m); font-size:12px;">READ PROTOCOL →</span>
+            </div>
+          </div>
+        `;
+        container.insertAdjacentHTML('beforeend', cardHTML);
+        index++;
+      });
+    } catch (err) {
+      console.error("Error loading blog:", err);
+      container.innerHTML = '<p style="text-align:center; color:red; grid-column: 1 / -1;">Failed to load secure connection.</p>';
+    }
+  }
+
+  loadBlog();
+</script>
+
+<script>
+  // 4. Modal Logic (Opening and closing the reading window)
+  window.openModal = function(index) {
+    const post = window.blogPosts[index];
+    document.getElementById('m-title').textContent = post.title;
+    document.getElementById('m-meta').textContent = "Published By " + (post.author || 'Marketer Raja');
+    
+    if(post.thumbnail) {
+      document.getElementById('m-thumb').src = post.thumbnail;
+      document.getElementById('m-thumb').style.display = 'block';
+    } else {
+      document.getElementById('m-thumb').style.display = 'none';
+    }
+    
+    document.getElementById('m-body').innerHTML = post.content;
+    document.getElementById('post-modal').style.display = 'flex';
+    document.body.style.overflow = 'hidden'; // Stop background scrolling
+  }
+
+  window.closeModal = function() {
+    document.getElementById('post-modal').style.display = 'none';
+    document.body.style.overflow = 'auto'; // Restore scrolling
+  }
 </script>
 
 </body>
