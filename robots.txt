@@ -1,5 +1,7 @@
 User-agent: *
 Allow: /
 
-# Sitemap location
+# Prevent search engines from indexing your private admin dashboard
+Disallow: /admin.html
+
 Sitemap: https://www.marketerraja.com/sitemap.xml
