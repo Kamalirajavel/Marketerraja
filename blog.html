@@ -1063,7 +1063,8 @@ async function loadBlog() {
   }
 </script>
 
-<script>
+
+  <script>
   // Modal Logic (Opening and closing the reading window)
   window.openModal = function(index) {
     const post = window.blogPosts[index];
@@ -1077,7 +1078,20 @@ async function loadBlog() {
       document.getElementById('m-thumb').style.display = 'none';
     }
     
-    document.getElementById('m-body').innerHTML = post.content;
+    // ── AUTOMATIC WHATSAPP CTA HIGHLIGHT ──
+    const whatsappCTA = `
+      <div style="margin-top: 50px; padding: 40px 20px; background: linear-gradient(145deg, rgba(37,211,102,0.08) 0%, rgba(0,12,36,0.8) 100%); border: 1px dashed rgba(37,211,102,0.4); border-radius: 8px; text-align: center; box-shadow: 0 0 20px rgba(37,211,102,0.05);">
+        <h4 style="font-family: var(--font-d); font-size: 24px; color: #fff; margin-bottom: 12px; text-transform: uppercase;">Ready to Scale Your Business?</h4>
+        <p style="font-size: 16px; color: var(--muted); margin-bottom: 25px; max-width: 500px; margin-left: auto; margin-right: auto;">Stop guessing with your marketing budget. Let's build a profitable lead generation system together.</p>
+        <a href="https://wa.me/918489486025?text=Hi%2C+I+just+read+your+blog+and+want+a+free+strategy+call" target="_blank" style="display: inline-flex; align-items: center; gap: 10px; background: #25D366; color: #fff; font-family: var(--font-d); font-size: 14px; letter-spacing: 2px; padding: 18px 36px; text-decoration: none; clip-path: polygon(12px 0%, 100% 0%, calc(100% - 12px) 100%, 0% 100%); transition: all 0.25s; box-shadow: 0 6px 20px rgba(37,211,102,0.3);">
+          <i class="fab fa-whatsapp" style="font-size: 18px;"></i> FREE STRATEGY CALL
+        </a>
+      </div>
+    `;
+    
+    // Combine the blog content with the CTA button at the end
+    document.getElementById('m-body').innerHTML = post.content + whatsappCTA;
+    
     document.getElementById('post-modal').style.display = 'flex';
     document.body.style.overflow = 'hidden'; // Stop background scrolling
   }
