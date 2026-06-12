@@ -117,9 +117,14 @@ nav::after{
 
 .nav-links{display:flex;gap:24px;align-items:center;}
 .nav-links a{
-  font-family:var(--font-m);font-size:16px;letter-spacing:2px;
-  color:var(--muted);text-decoration:none;text-transform:uppercase;
+  font-family:var(--font-m);
+  font-size:16px;
+  letter-spacing:2px;
+  color:var(--muted);
+  text-decoration:none;
+  text-transform:uppercase;
   transition:all .2s;
+  white-space: nowrap; /* <--- This keeps it on one line */
 }
 .nav-links a:hover,.nav-links a.active{
   color:var(--cyan);text-shadow:var(--glow-c);
