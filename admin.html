@@ -178,16 +178,25 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
     document.getElementById('logout-btn').addEventListener('click', () => signOut(auth));
 
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        document.getElementById('login-section').classList.add('hidden');
-        document.getElementById('admin-dashboard').classList.remove('hidden');
-        fetchData();
-      } else {
-        document.getElementById('login-section').classList.remove('hidden');
-        document.getElementById('admin-dashboard').classList.add('hidden');
-      }
-    });
+
+    // Strict Frontend Enforcement
+onAuthStateChanged(auth, async (user) => {
+  if (user) {
+    if (user.email === 'marketerraja11@gmail.com') {
+      document.getElementById('login-section').classList.add('hidden');
+      document.getElementById('admin-dashboard').classList.remove('hidden');
+      fetchData();
+    } else {
+      document.getElementById('error-msg').textContent = "ACCESS DENIED: Unauthorized administrator email.";
+      await signOut(auth);
+    }
+  } else {
+    document.getElementById('login-section').classList.remove('hidden');
+    document.getElementById('admin-dashboard').classList.add('hidden');
+  }
+});
+
+    
 
     // Dynamic Metrics UI (Portfolio)
     document.getElementById('add-metric-btn').addEventListener('click', () => {
@@ -199,9 +208,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     });
 
     // Data Fetching Function
-    function fetchData() {
+   //function fetchData() {
       // 1. Fetch Enquiries
-      const qE = query(collection(db, "enquiries"), orderBy("timestamp", "desc"));
+     /* const qE = query(collection(db, "enquiries"), orderBy("timestamp", "desc"));
       onSnapshot(qE, (snapE) => {
         const listE = document.getElementById('enquiry-list');
         if(listE) {
@@ -497,7 +506,171 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         alert("Error: " + err.message); 
         btn.textContent = "PUBLISH POST"; 
       }
-    });
+    });*/
+
+
+    // Data Fetching Function
+    function fetchData() {
+      // 1. Fetch Enquiries with Dynamic Eviction Controls
+      const qE = query(collection(db, "enquiries"), orderBy("timestamp", "desc"));
+      onSnapshot(qE, (snapE) => {
+        const listE = document.getElementById('enquiry-list');
+        if(listE) {
+          listE.innerHTML = '';
+          if (snapE.empty) listE.innerHTML = `<tr><td colspan="6" style="text-align: center;">No enquiries yet.</td></tr>`;
+          snapE.forEach(d => {
+            const data = d.data();
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+              <td>${data.timestamp ? new Date(data.timestamp.toDate()).toLocaleDateString() : 'New'}</td>
+              <td>${data.name}</td>
+              <td>${data.contact}</td>
+              <td>${data.service}</td>
+              <td>${data.budget}</td>
+              <td>
+                <button class="action-btn del-btn" style="background: #ff0080; color: white; border: none; padding: 6px 12px; cursor: pointer; border-radius: 4px; font-weight: bold;">
+                  <i class="fas fa-trash-alt"></i> Delete
+                </button>
+              </td>
+            `;
+            listE.appendChild(tr);
+
+            // Active Database Purge Listener
+            tr.querySelector('.del-btn').addEventListener('click', async () => {
+              if(confirm(`Are you sure you want to permanently delete the enquiry from ${data.name}?`)) {
+                try {
+                  await deleteDoc(doc(db, "enquiries", d.id));
+                } catch (err) {
+                  alert("Security configuration error: " + err.message);
+                }
+              }
+            });
+          });
+        }
+      });
+
+      // 2. Fetch Portfolio List (Keep your exact portfolio code block here)
+      const qP = query(collection(db, "portfolio"), orderBy("timestamp", "desc"));
+      getDocs(qP).then((snapP) => {
+        const listP = document.getElementById('portfolio-list');
+        if(listP) {
+          listP.innerHTML = '';
+          if (snapP.empty) listP.innerHTML = `<tr><td colspan="3" style="text-align: center;">No portfolio items yet.</td></tr>`;
+          snapP.forEach(d => {
+            const data = d.data();
+            const tr = document.createElement('tr');
+            tr.innerHTML = `<td>${data.name}</td><td>${data.graphVolume}</td>
+              <td>
+                <button class="action-btn edit-btn" data-id="${d.id}">Edit</button>
+                <button class="action-btn del-btn" data-id="${d.id}">Del</button>
+              </td>`;
+            listP.appendChild(tr);
+
+            tr.querySelector('.edit-btn').addEventListener('click', () => {
+              document.getElementById('pf-id').value = d.id;
+              document.getElementById('pf-name').value = data.name;
+              document.getElementById('pf-icon').value = data.icon;
+              document.getElementById('pf-industry').value = data.industry;
+              document.getElementById('pf-graph').value = data.graphVolume;
+              document.getElementById('pf-status').value = data.status;
+              document.getElementById('form-title').textContent = "✏️ Edit Portfolio Item";
+              document.getElementById('save-pf-btn').textContent = "UPDATE PORTFOLIO";
+              const container = document.getElementById('metrics-container');
+              container.innerHTML = '';
+              if(data.metrics) {
+                data.metrics.forEach(m => {
+                  const row = document.createElement('div');
+                  row.className = 'metric-row';
+                  row.innerHTML = `<input type="text" class="m-label" value="${m.label}" required> <input type="text" class="m-value" value="${m.value}" required> <button type="button" class="action-btn del-btn" onclick="this.parentElement.remove()">X</button>`;
+                  container.appendChild(row);
+                });
+              }
+            });
+
+            tr.querySelector('.del-btn').addEventListener('click', async () => {
+              if(confirm("Delete this portfolio project?")) {
+                await deleteDoc(doc(db, "portfolio", d.id));
+                fetchData();
+              }
+            });
+          });
+        }
+      });
+
+      // 3. Fetch Blog List (Keep your exact blog code block here)
+      const qB = query(collection(db, "blog"), orderBy("timestamp", "desc"));
+      getDocs(qB).then((snapB) => {
+        const listB = document.getElementById('blog-list');
+        if(listB) {
+          listB.innerHTML = '';
+          if (snapB.empty) listB.innerHTML = `<tr><td colspan="3" style="text-align: center;">No blog posts yet.</td></tr>`;
+          snapB.forEach(d => {
+            const data = d.data();
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+              <td>${data.timestamp ? new Date(data.timestamp.toDate()).toLocaleDateString() : 'New'}</td>
+              <td>${data.title}</td>
+              <td>
+                <button class="action-btn edit-btn" data-id="${d.id}">Edit</button>
+                <button class="action-btn del-btn" data-id="${d.id}">Del</button>
+              </td>`;
+            listB.appendChild(tr);
+
+            tr.querySelector('.edit-btn').addEventListener('click', () => {
+              document.getElementById('blog-id').value = d.id;
+              document.getElementById('blog-title').value = data.title;
+              document.getElementById('blog-author').value = data.author;
+              document.getElementById('blog-thumb').value = data.thumbnail;
+              document.getElementById('blog-content').value = data.content;
+              document.getElementById('blog-form-title').textContent = "✏️ Edit Blog Post";
+              document.getElementById('save-blog-btn').textContent = "UPDATE POST";
+            });
+
+            tr.querySelector('.del-btn').addEventListener('click', async () => {
+              if(confirm("Are you sure you want to delete this blog post?")) {
+                await deleteDoc(doc(db, "blog", d.id));
+                fetchData();
+              }
+            });
+          });
+        }
+      });
+
+      // 4. Fetch Newsletter Subscribers with Dynamic Eviction Controls
+      const qS = query(collection(db, "subscribers"), orderBy("subscribedAt", "desc"));
+      onSnapshot(qS, (snapS) => {
+        const listS = document.getElementById('subscriber-list');
+        if(listS) {
+          listS.innerHTML = '';
+          if (snapS.empty) listS.innerHTML = `<tr><td colspan="3" style="text-align: center;">No subscribers yet.</td></tr>`;
+          snapS.forEach(d => {
+            const data = d.data();
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+              <td>${data.email}</td>
+              <td>${data.subscribedAt ? new Date(data.subscribedAt.toDate()).toLocaleDateString() : 'New'}</td>
+              <td>
+                <button class="action-btn del-btn" style="background: #ff0080; color: white; border: none; padding: 6px 12px; cursor: pointer; border-radius: 4px; font-weight: bold;">
+                  <i class="fas fa-trash-alt"></i> Delete
+                </button>
+              </td>
+            `;
+            listS.appendChild(tr);
+
+            // Active Database Purge Listener
+            tr.querySelector('.del-btn').addEventListener('click', async () => {
+              if(confirm(`Remove subscription records for ${data.email}?`)) {
+                try {
+                  await deleteDoc(doc(db, "subscribers", d.id));
+                } catch (err) {
+                  alert("Security configuration error: " + err.message);
+                }
+              }
+            });
+          });
+        }
+      });
+    }
   </script>
 </body>
 </html>
