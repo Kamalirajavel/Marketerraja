@@ -180,7 +180,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
 
     // Strict Frontend Enforcement
-onAuthStateChanged(auth, async (user) => {
+/*onAuthStateChanged(auth, async (user) => {
   if (user) {
     if (user.email === 'marketerraja11@gmail.com') {
       document.getElementById('login-section').classList.add('hidden');
@@ -194,7 +194,27 @@ onAuthStateChanged(auth, async (user) => {
     document.getElementById('login-section').classList.remove('hidden');
     document.getElementById('admin-dashboard').classList.add('hidden');
   }
-});
+});*/
+
+    // Secure Auth Logic with Email Verification
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        // Verify if the logged-in email matches your admin email exactly
+        if (user.email === 'marketerraja11@gmail.com') {
+          document.getElementById('error-msg').textContent = ""; // Clear any previous error messages
+          document.getElementById('login-section').classList.add('hidden');
+          document.getElementById('admin-dashboard').classList.remove('hidden');
+          fetchData();
+        } else {
+          // If any other email logs in, display an alert, reject access, and force a logout
+          document.getElementById('error-msg').textContent = "ACCESS DENIED: Unauthorized administrator email (" + user.email + ").";
+          await signOut(auth);
+        }
+      } else {
+        document.getElementById('login-section').classList.remove('hidden');
+        document.getElementById('admin-dashboard').classList.add('hidden');
+      }
+    });
 
     
 
