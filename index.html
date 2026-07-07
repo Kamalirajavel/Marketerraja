@@ -1952,7 +1952,7 @@ if(toggleBtn && navLinks){
 </a>
 
 
-<script type="module">
+<!--<script type="module">
   // 1. Import your config and Firestore functions
   import { db } from "./firebase-config.js";
   import { collection, getDocs, orderBy, query, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
@@ -2083,7 +2083,80 @@ if(toggleBtn && navLinks){
   
   // Execute portfolio load
   loadPortfolioAndCharts();
-</script>
+</script>-->
+
+    // ... (Keep your firebase imports at the very top of the script module) ...
+import { db } from "./firebase-config.js";
+import { collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+
+// 1. Paste the Make Webhook Function right here
+async function pushWhatsAppNotification(name, contact, service, budget) {
+  const WEBHOOK_URL = "https://hook.eu1.make.com/2r0f6hgm3eoywvzxzgaf2dgb2oq6uwbx";
+
+  const payload = {
+    name: name,
+    contact: contact,
+    service: service,
+    budget: budget,
+    pageSource: "Main Homepage Hub"
+  };
+
+  try {
+    await fetch(WEBHOOK_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
+  } catch (error) {
+    console.error("Webhook relay offline: ", error);
+  }
+}
+
+// 2. Update your form event submission block
+const enquiryForm = document.getElementById('enquiry-form');
+if (enquiryForm) {
+  enquiryForm.addEventListener('submit', async (e) => {
+    e.preventDefault(); 
+    
+    const btn = document.getElementById('eq-submit-btn');
+    const statusMsg = document.getElementById('eq-status');
+    
+    const leadName = document.getElementById('eq-name').value;
+    const leadContact = document.getElementById('eq-contact').value;
+    const leadService = document.getElementById('eq-service').value;
+    const leadBudget = document.getElementById('eq-budget').value;
+    
+    btn.textContent = "SENDING...";
+    statusMsg.style.display = "none";
+
+    try {
+      // Wrote to Firestore
+      await addDoc(collection(db, "enquiries"), {
+        name: leadName,
+        contact: leadContact,
+        service: leadService,
+        budget: leadBudget,
+        timestamp: serverTimestamp()
+      });
+
+      // Trigger your instant WhatsApp Make Relay alert
+      await pushWhatsAppNotification(leadName, leadContact, leadService, leadBudget);
+
+      statusMsg.style.color = "#00ff88";
+      statusMsg.textContent = "Enquiry sent successfully! We will contact you soon.";
+      statusMsg.style.display = "block";
+      enquiryForm.reset(); 
+      
+    } catch (error) {
+      console.error("Firebase Error: ", error);
+      statusMsg.style.color = "#ff0080";
+      statusMsg.textContent = "Error sending enquiry: " + error.message;
+      statusMsg.style.display = "block";
+    } finally {
+      btn.textContent = "SUBMIT ENQUIRY";
+    }
+  });
+}
 
   <script>
 /* ── POLICY POPUPS (universal) ── */
