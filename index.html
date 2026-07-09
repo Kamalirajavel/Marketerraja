@@ -1953,14 +1953,14 @@ if(toggleBtn && navLinks){
 
  <script type="module">
   // 1. Import your config and Firestore functions
-  import { db } from "./firebase-config.js";
+  //import { db } from "./firebase-config.js";
   //import { collection, getDocs, orderBy, query, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";//
 
      // Add serverTimestamp to the list of elements inside the brackets
-import { collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+//import { collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
      // Form Submission Listener Integration
-  const enquiryForm = document.getElementById('enquiry-form');
+  /*const enquiryForm = document.getElementById('enquiry-form');
   if (enquiryForm) {
     enquiryForm.addEventListener('submit', async (e) => {
       e.preventDefault(); 
@@ -1998,6 +1998,80 @@ import { collection, addDoc, serverTimestamp } from "https://www.gstatic.com/fir
         
       } catch (error) {
         console.error("Firebase Database Write Interrupted: ", error);
+        statusMsg.style.color = "#ff0080";
+        statusMsg.textContent = "Error sending enquiry. Please try again.";
+        statusMsg.style.display = "block";
+      } finally {
+        btn.textContent = "SUBMIT ENQUIRY";
+      }
+    });
+  }*/
+
+     // Connect to your database configs
+  import { db } from "./firebase-config.js";
+  import { collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+
+  // Automated Webhook Push Protocol
+  async function pushWhatsAppNotification(name, contact, service, budget) {
+    const WEBHOOK_URL = "https://hook.eu1.make.com/2r0f6hgm3eoywvzxzgaf2dgb2oq6uwbx";
+
+    const payload = {
+      name: name,
+      contact: contact,
+      service: service,
+      budget: budget,
+      source: "Homepage"
+    };
+
+    try {
+      await fetch(WEBHOOK_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+    } catch (error) {
+      console.error("Notification routing dropped: ", error);
+    }
+  }
+
+  // Active form listener setup
+  const enquiryForm = document.getElementById('enquiry-form');
+  if (enquiryForm) {
+    enquiryForm.addEventListener('submit', async (e) => {
+      e.preventDefault(); 
+      
+      const btn = document.getElementById('eq-submit-btn');
+      const statusMsg = document.getElementById('eq-status');
+      
+      const leadName = document.getElementById('eq-name').value;
+      const leadContact = document.getElementById('eq-contact').value;
+      const leadService = document.getElementById('eq-service').value;
+      const leadBudget = document.getElementById('eq-budget').value;
+      
+      btn.textContent = "SENDING...";
+      statusMsg.style.display = "none";
+
+      try {
+        // Write cleanly to Firestore with matching keys
+        await addDoc(collection(db, "enquiries"), {
+          name: leadName,
+          contact: leadContact,
+          service: leadService,
+          budget: leadBudget,
+          timestamp: serverTimestamp() // <-- This will now run perfectly without crashing
+        });
+
+        // Fire instant Make automation webhook
+        await pushWhatsAppNotification(leadName, leadContact, leadService, leadBudget);
+
+        // UI View State Modifications
+        statusMsg.style.color = "#00ff88";
+        statusMsg.textContent = "Enquiry sent successfully! We will contact you soon.";
+        statusMsg.style.display = "block";
+        enquiryForm.reset(); 
+        
+      } catch (error) {
+        console.error("Submission Failure Logged: ", error);
         statusMsg.style.color = "#ff0080";
         statusMsg.textContent = "Error sending enquiry. Please try again.";
         statusMsg.style.display = "block";
