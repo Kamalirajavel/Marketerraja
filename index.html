@@ -1951,55 +1951,60 @@ if(toggleBtn && navLinks){
 <i class="fab fa-whatsapp"></i>
 </a>
 
-
-<!--<script type="module">
+ <script type="module">
   // 1. Import your config and Firestore functions
   import { db } from "./firebase-config.js";
   import { collection, getDocs, orderBy, query, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
-  // 2. ENQUIRY FORM SUBMISSION SCRIPT
+     // Form Submission Listener Integration
   const enquiryForm = document.getElementById('enquiry-form');
   if (enquiryForm) {
     enquiryForm.addEventListener('submit', async (e) => {
-      e.preventDefault(); // Stop page reload
+      e.preventDefault(); 
       
       const btn = document.getElementById('eq-submit-btn');
       const statusMsg = document.getElementById('eq-status');
       
-      // Update UI while sending
+      // Grab direct element values from the inputs
+      const leadName = document.getElementById('eq-name').value;
+      const leadContact = document.getElementById('eq-contact').value;
+      const leadService = document.getElementById('eq-service').value;
+      const leadBudget = document.getElementById('eq-budget').value;
+      
       btn.textContent = "SENDING...";
       statusMsg.style.display = "none";
 
       try {
-        // Send data to Firestore "enquiries" collection
+        // A. Securely write data using the EXACT field keys your Admin Panel expects
         await addDoc(collection(db, "enquiries"), {
-          name: document.getElementById('eq-name').value,
-          contact: document.getElementById('eq-contact').value,
-          service: document.getElementById('eq-service').value,
-          budget: document.getElementById('eq-budget').value,
+          name: leadName,       // Matches data.name in admin.html
+          contact: leadContact, // Matches data.contact in admin.html
+          service: leadService, // Matches data.service in admin.html
+          budget: leadBudget,   // Matches data.budget in admin.html
           timestamp: serverTimestamp()
         });
 
-        // Show Success
+        // B. Instantly fire Make Webhook to alert your Gmail/WhatsApp line
+        await pushWhatsAppNotification(leadName, leadContact, leadService, leadBudget);
+
+        // Update UI View State
         statusMsg.style.color = "#00ff88";
         statusMsg.textContent = "Enquiry sent successfully! We will contact you soon.";
         statusMsg.style.display = "block";
-        enquiryForm.reset(); // Clear form fields
+        enquiryForm.reset(); 
         
       } catch (error) {
-        // Show Error
-        console.error("Firebase Error: ", error);
+        console.error("Firebase Database Write Interrupted: ", error);
         statusMsg.style.color = "#ff0080";
-        statusMsg.textContent = "Error sending enquiry: " + error.message;
+        statusMsg.textContent = "Error sending enquiry. Please try again.";
         statusMsg.style.display = "block";
       } finally {
-        // Reset button
         btn.textContent = "SUBMIT ENQUIRY";
       }
     });
   }
 
-  // 3. YOUR EXISTING PORTFOLIO SCRIPT 
+      // 3. YOUR EXISTING PORTFOLIO SCRIPT 
   async function loadPortfolioAndCharts() {
     const grid = document.querySelector('.port-clients-grid');
     const chartLabels = [];
@@ -2083,80 +2088,7 @@ if(toggleBtn && navLinks){
   
   // Execute portfolio load
   loadPortfolioAndCharts();
-</script>-->
-
-    // ... (Keep your firebase imports at the very top of the script module) ...
-import { db } from "./firebase-config.js";
-import { collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
-
-// 1. Paste the Make Webhook Function right here
-async function pushWhatsAppNotification(name, contact, service, budget) {
-  const WEBHOOK_URL = "https://hook.eu1.make.com/2r0f6hgm3eoywvzxzgaf2dgb2oq6uwbx";
-
-  const payload = {
-    name: name,
-    contact: contact,
-    service: service,
-    budget: budget,
-    pageSource: "Main Homepage Hub"
-  };
-
-  try {
-    await fetch(WEBHOOK_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload)
-    });
-  } catch (error) {
-    console.error("Webhook relay offline: ", error);
-  }
-}
-
-// 2. Update your form event submission block
-const enquiryForm = document.getElementById('enquiry-form');
-if (enquiryForm) {
-  enquiryForm.addEventListener('submit', async (e) => {
-    e.preventDefault(); 
-    
-    const btn = document.getElementById('eq-submit-btn');
-    const statusMsg = document.getElementById('eq-status');
-    
-    const leadName = document.getElementById('eq-name').value;
-    const leadContact = document.getElementById('eq-contact').value;
-    const leadService = document.getElementById('eq-service').value;
-    const leadBudget = document.getElementById('eq-budget').value;
-    
-    btn.textContent = "SENDING...";
-    statusMsg.style.display = "none";
-
-    try {
-      // Wrote to Firestore
-      await addDoc(collection(db, "enquiries"), {
-        name: leadName,
-        contact: leadContact,
-        service: leadService,
-        budget: leadBudget,
-        timestamp: serverTimestamp()
-      });
-
-      // Trigger your instant WhatsApp Make Relay alert
-      await pushWhatsAppNotification(leadName, leadContact, leadService, leadBudget);
-
-      statusMsg.style.color = "#00ff88";
-      statusMsg.textContent = "Enquiry sent successfully! We will contact you soon.";
-      statusMsg.style.display = "block";
-      enquiryForm.reset(); 
-      
-    } catch (error) {
-      console.error("Firebase Error: ", error);
-      statusMsg.style.color = "#ff0080";
-      statusMsg.textContent = "Error sending enquiry: " + error.message;
-      statusMsg.style.display = "block";
-    } finally {
-      btn.textContent = "SUBMIT ENQUIRY";
-    }
-  });
-}
+</script>
 
   <script>
 /* ── POLICY POPUPS (universal) ── */
@@ -2203,6 +2135,7 @@ document.addEventListener('click', e => {
     document.querySelectorAll('.privacy-popup.active').forEach(p => p.classList.remove('active'));
 });
 </script>
+
 
 </body>
 </html>
