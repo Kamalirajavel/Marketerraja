@@ -1954,7 +1954,10 @@ if(toggleBtn && navLinks){
  <script type="module">
   // 1. Import your config and Firestore functions
   import { db } from "./firebase-config.js";
-  import { collection, getDocs, orderBy, query, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+  //import { collection, getDocs, orderBy, query, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";//
+
+     // Add serverTimestamp to the list of elements inside the brackets
+import { collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
      // Form Submission Listener Integration
   const enquiryForm = document.getElementById('enquiry-form');
