@@ -40,11 +40,12 @@
   <div class="portal-box">
     <h2>PHONE VERIFICATION</h2>
     
-    <!-- Step 1: Input Phone Number -->
-    <div id="phone-step">
-      <input type="tel" id="user-phone" placeholder="Enter mobile number" maxlength="10" required>
-      <button id="send-otp-btn" class="btn-primary">SEND OTP</button>
-    </div>
+  <!-- Step 1: Input Phone Number -->
+    <div id="phone-step">
+      <input type="tel" id="phone-input" placeholder="Enter mobile number" maxlength="10" required>
+      <div id="recaptcha-container" style="margin-bottom: 15px;"></div>
+      <button id="send-otp-btn" class="btn-primary">SEND OTP</button>
+    </div>
 
     <!-- Step 2: Input OTP Code -->
     <div id="otp-step" style="display: none;">
