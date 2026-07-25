@@ -74,7 +74,7 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-const app = initializeApp(firebaseConfig);
+/*const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
 // 2. Setup reCAPTCHA verification when the page loads
@@ -110,10 +110,54 @@ document.getElementById("send-otp-btn").addEventListener("click", () => {
       console.error("Error sending OTP:", error);
       document.getElementById("error-message").innerText = "Failed to send OTP. Check console.";
     });
+});*/
+
+
+
+
+    // Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+// 1. Setup reCAPTCHA verification when the window loads
+window.addEventListener('DOMContentLoaded', () => {
+  window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
+    'size': 'normal',
+    'callback': (response) => {
+      // reCAPTCHA solved successfully
+    },
+    'expired-callback': () => {
+      // reCAPTCHA expired
+    }
+  });
+  
+  window.recaptchaVerifier.render();
 });
+
+// 2. Attach the click event to your "SEND OTP" button
+document.getElementById("send-otp-btn").addEventListener("click", () => {
+  const rawPhoneNumber = document.getElementById("phone-input").value;
+  const phoneNumber = "+91" + rawPhoneNumber; // Change +91 to your country code if needed
+  
+  const appVerifier = window.recaptchaVerifier;
+
+  signInWithPhoneNumber(auth, phoneNumber, appVerifier)
+    .then((confirmationResult) => {
+      // Save confirmation result globally to verify the code later
+      window.confirmationResult = confirmationResult;
+      alert("OTP sent successfully!");
+    })
+    .catch((error) => {
+      console.error("Error sending OTP:", error);
+      alert("Failed to send OTP. Check console for details.");
+    });
+});
+
+
+    
     const CUSTOMER_ID = "C-EFAF652FF33847B";
     // Paste your exact Message Central Auth Token string here directly
-    const AUTH_TOKEN = "PASTE_YOUR_AUTH_TOKEN_HERE"; 
+    const AUTH_TOKEN = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJDLUVGQUY2NTJGRjMzODQ3QiIsImlhdCI6MTc4NTAwMDUzNiwiZXhwIjoxOTQyNjgwNTM2fQ.-b51wgiDyhq8bHM_cjDGywpb-bViOlotOms3t8qKBmFahekB_H1js6a0IcFmrsnLrWsfOgilRf2w3fppqmA4JQ"; 
 
     let savedVerificationId = null;
     const statusMsg = document.getElementById('status-msg');
