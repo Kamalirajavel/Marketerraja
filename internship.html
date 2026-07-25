@@ -49,9 +49,16 @@
     <!-- Step 2: Input OTP Code -->
     <div id="otp-step" style="display: none;">
       <p style="text-align: center; color: #00ff88; font-size: 14px; margin-bottom: 15px;">OTP sent successfully!</p>
-      <input type="text" id="otp-input" placeholder="Enter 6-digit OTP" maxlength="6" required>
+      <input type="text" id="otp-input" placeholder="Enter 4-digit OTP" maxlength="4" required>
       <button id="verify-otp-btn" class="btn-secondary">VERIFY OTP</button>
     </div>
+
+
+    <!-- Add this below your Send OTP button and recaptcha container -->
+<div id="otp-section" style="margin-top: 20px;">
+    <input type="text" id="otp-input" placeholder="Enter 4-digit OTP">
+    <button id="verify-otp-btn">VERIFY OTP</button>
+</div>
 
     <div id="status-msg"></div>
   </div>
@@ -208,9 +215,9 @@ document.getElementById("send-otp-btn").addEventListener("click", () => {
       const code = document.getElementById('otp-input').value;
       const phone = document.getElementById('user-phone').value;
 
-      if (code.length !== 6) {
+      if (code.length !== 4) {
         statusMsg.style.color = "#ff0080";
-        statusMsg.innerText = "Please enter the 6-digit code.";
+        statusMsg.innerText = "Please enter the 4-digit code.";
         return;
       }
 
@@ -244,6 +251,30 @@ document.getElementById("send-otp-btn").addEventListener("click", () => {
         statusMsg.innerText = "Verification network error.";
       }
     });
+
+
+
+    // Attach click event to your "VERIFY OTP" button
+document.getElementById("verify-otp-btn").addEventListener("click", () => {
+  const code = document.getElementById("otp-input").value;
+
+  window.confirmationResult.confirm(code)
+    .then((result) => {
+      // User signed in successfully!
+      const user = result.user;
+      alert("Phone verification successful! User signed in.");
+      console.log("Verified user:", user);
+      
+      // Redirect or update UI for successful login here
+    })
+    .catch((error) => {
+      // User couldn't sign in (e.g., incorrect code)
+      console.error("Invalid OTP code:", error);
+      alert("Invalid OTP. Please try again.");
+    });
+});
+
+    
   </script>
 </body>
 </html>
