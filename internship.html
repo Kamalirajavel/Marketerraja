@@ -21,6 +21,22 @@
 </head>
 <body>
 
+
+  <!-- Inside your main card/container, right near your button -->
+<div class="card-body">
+    <h2>PHONE VERIFICATION</h2>
+    <input type="text" id="phone-input" placeholder="Enter phone number" value="9514060906">
+    
+    <!-- EXACT PLACE TO PUT THIS: reCAPTCHA container required by Firebase -->
+    <div id="recaptcha-container" style="margin: 15px 0;"></div>
+
+    <button id="send-otp-btn">SEND OTP</button>
+    <p id="error-message" style="color: red;"></p>
+</div>
+
+<!-- EXACT PLACE TO PUT THIS: Ensure your script is included as a module at the bottom of <body> -->
+<script type="module" src="./script.js"></script>
+
   <div class="portal-box">
     <h2>PHONE VERIFICATION</h2>
     
@@ -41,6 +57,60 @@
   </div>
 
   <script>
+
+
+    // Import Firebase modules at the very top of your JS file
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js";
+import { getAuth, RecaptchaVerifier, signInWithPhoneNumber } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-auth.js";
+
+// 1. Paste your Firebase configuration object here (from Firebase Project Settings)
+const firebaseConfig = {
+  apiKey: "",
+  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_PROJECT_ID.appspot.com",
+  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+  appId: "YOUR_APP_ID"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+// 2. Setup reCAPTCHA verification when the page loads
+window.addEventListener('DOMContentLoaded', () => {
+  window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
+    'size': 'normal',
+    'callback': (response) => {
+      // reCAPTCHA solved successfully
+    },
+    'expired-callback': () => {
+      // reCAPTCHA expired, user must solve it again
+    }
+  });
+  
+  // Render the reCAPTCHA widget
+  window.recaptchaVerifier.render();
+});
+
+// 3. Attach the event listener to your "SEND OTP" button
+document.getElementById("send-otp-btn").addEventListener("click", () => {
+  const rawPhoneNumber = document.getElementById("phone-input").value;
+  const phoneNumber = "+91" + rawPhoneNumber; // Change +91 to your country code if needed
+  
+  const appVerifier = window.recaptchaVerifier;
+
+  signInWithPhoneNumber(auth, phoneNumber, appVerifier)
+    .then((confirmationResult) => {
+      // Save confirmation result globally to verify the code in the next step
+      window.confirmationResult = confirmationResult;
+      alert("OTP sent successfully!");
+    })
+    .catch((error) => {
+      console.error("Error sending OTP:", error);
+      document.getElementById("error-message").innerText = "Failed to send OTP. Check console.";
+    });
+});
     const CUSTOMER_ID = "C-EFAF652FF33847B";
     // Paste your exact Message Central Auth Token string here directly
     const AUTH_TOKEN = "PASTE_YOUR_AUTH_TOKEN_HERE"; 
