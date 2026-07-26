@@ -1,14 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>OTP Verification | Marketer Raja</title>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Share+Tech+Mono&family=Rajdhani:wght@500&display=swap" rel="stylesheet">
-  <style>
-
-
-      body { font-family: 'Rajdhani', sans-serif; background: #000c24; color: #e8f4ff; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OTP Verification | Marketer Raja</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Share+Tech+Mono&family=Rajdhani:wght@500&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Rajdhani', sans-serif; background: #000c24; color: #e8f4ff; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
     .portal-box { background: rgba(2, 18, 51, 0.9); padding: 40px; border: 1px solid #00f5ff; border-radius: 8px; box-shadow: 0 0 30px rgba(0, 245, 255, 0.15); width: 100%; max-width: 400px; }
     h2 { font-family: 'Orbitron', monospace; color: #00f5ff; text-align: center; margin-bottom: 25px; letter-spacing: 2px; }
     input { width: 100%; padding: 14px; margin-bottom: 15px; background: rgba(0,0,0,0.5); border: 1px solid rgba(0,245,255,0.3); color: #fff; border-radius: 4px; box-sizing: border-box; outline: none; font-family: 'Share Tech Mono', monospace; }
@@ -18,266 +16,149 @@
     .btn-primary:hover { background: #20b958; transform: translateY(-2px); }
     .btn-secondary { background: #00f5ff; color: #000; box-shadow: 0 4px 15px rgba(0,245,255,0.3); }
     .btn-secondary:hover { background: #00c2cc; transform: translateY(-2px); }
-
-</style>
+    #status-msg { text-align: center; min-height: 20px; font-size: 14px; }
+  </style>
 </head>
 <body>
 
+  <div class="portal-box">
+    <h2>PHONE VERIFICATION</h2>
 
-  <!-- Inside your main card/container, right near your button -->
-<!--<div class="card-body">
-    <h2>PHONE VERIFICATION</h2>
-    <input type="text" id="phone-input" placeholder="Enter phone number" value="9514060906">
-    
-    <!-- EXACT PLACE TO PUT THIS: reCAPTCHA container required by Firebase -->
-    <!--<div id="recaptcha-container" style="margin: 15px 0;"></div>
-
-    <button id="send-otp-btn">SEND OTP</button>
-    <p id="error-message" style="color: red;"></p>
-</div>-->
-
-<!-- EXACT PLACE TO PUT THIS: Ensure your script is included as a module at the bottom of <body> -->
-<script type="module" src="./script.js"></script>
-
-  <div class="portal-box">
-    <h2>PHONE VERIFICATION</h2>
-    
-  <!-- Step 1: Input Phone Number -->
+    <!-- Step 1: Input Phone Number -->
     <div id="phone-step">
       <input type="tel" id="phone-input" placeholder="Enter mobile number" maxlength="10" required>
-      <div id="recaptcha-container" style="margin-bottom: 15px;"></div>
       <button id="send-otp-btn" class="btn-primary">SEND OTP</button>
     </div>
 
-    <!-- Step 2: Input OTP Code -->
-    <div id="otp-step" style="display: none;">
-      <p style="text-align: center; color: #00ff88; font-size: 14px; margin-bottom: 15px;">OTP sent successfully!</p>
-      <input type="text" id="otp-input" placeholder="Enter 4-digit OTP" maxlength="4" required>
-      <button id="verify-otp-btn" class="btn-secondary">VERIFY OTP</button>
-    </div>
+    <!-- Step 2: Input OTP Code -->
+    <div id="otp-step" style="display: none;">
+      <p style="text-align: center; color: #00ff88; font-size: 14px; margin-bottom: 15px;">OTP sent successfully!</p>
+      <input type="text" id="otp-input" placeholder="Enter OTP" maxlength="6" required>
+      <button id="verify-otp-btn" class="btn-secondary">VERIFY OTP</button>
+    </div>
 
+    <div id="status-msg"></div>
+  </div>
 
-    <!-- Add this below your Send OTP button and recaptcha container -->
-<div id="otp-section" style="margin-top: 20px;">
-    <input type="text" id="otp-input" placeholder="Enter 4-digit OTP">
-    <button id="verify-otp-btn">VERIFY OTP</button>
-</div>
+  <script>
+    // NOTE: This token is currently hardcoded in client-side JS, which means anyone
+    // viewing your page source can see and reuse it. Please rotate this token in your
+    // Message Central dashboard and, ideally, move this call to a small backend/serverless
+    // endpoint so the token is never exposed to the browser.
+    const CUSTOMER_ID = "C-EFAF652FF33847B";
+    const AUTH_TOKEN = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJDLUVGQUY2NTJGRjMzODQ3QiIsImlhdCI6MTc4NTAwMDUzNiwiZXhwIjoxOTQyNjgwNTM2fQ.-b51wgiDyhq8bHM_cjDGywpb-bViOlotOms3t8qKBmFahekB_H1js6a0IcFmrsnLrWsfOgilRf2w3fppqmA4JQ";
 
-    <div id="status-msg"></div>
-  </div>
+    let savedVerificationId = null;
+    const statusMsg = document.getElementById('status-msg');
+    const phoneInput = document.getElementById('phone-input');
+    const otpInput = document.getElementById('otp-input');
+    const phoneStep = document.getElementById('phone-step');
+    const otpStep = document.getElementById('otp-step');
 
-  <script>
+    function setStatus(message, color) {
+      statusMsg.style.color = color;
+      statusMsg.innerText = message;
+    }
 
+    // 1. Send OTP Request
+    document.getElementById('send-otp-btn').addEventListener('click', async () => {
+      const phone = phoneInput.value.trim();
+      if (phone.length !== 10 || !/^\d{10}$/.test(phone)) {
+        setStatus("Please enter a valid 10-digit mobile number.", "#ff0080");
+        return;
+      }
 
-    // Import Firebase modules at the very top of your JS file
-import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js";
-import { getAuth, RecaptchaVerifier, signInWithPhoneNumber } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-auth.js";
+      setStatus("Sending OTP...", "#00f5ff");
 
-// 1. Paste your Firebase configuration object here (from Firebase Project Settings)
-const firebaseConfig = {
- apiKey: "AIzaSyA0JCQDUZ9slUeA3REIPN0poCuMWy55uFc",
-  authDomain: "marketerraja-d4054.firebaseapp.com",
-  projectId: "marketerraja-d4054",
-  storageBucket: "marketerraja-d4054.firebasestorage.app",
-  messagingSenderId: "1089812986562",
-  appId: "1:1089812986562:web:964fbb3cda2b0ee4aad95b"
-};
+      try {
+        const sendUrl = `https://cpaas.messagecentral.com/verification/v3/send?countryCode=91&flowType=SMS&mobileNumber=${phone}&customerId=${CUSTOMER_ID}&otpLength=6`;
 
-// Initialize Firebase
-/*const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
+        const response = await fetch(sendUrl, {
+          method: 'POST',
+          headers: {
+            'authToken': AUTH_TOKEN,
+            'accept': '*/*'
+          }
+        });
 
-// 2. Setup reCAPTCHA verification when the page loads
-window.addEventListener('DOMContentLoaded', () => {
-  window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
-    'size': 'normal',
-    'callback': (response) => {
-      // reCAPTCHA solved successfully
-    },
-    'expired-callback': () => {
-      // reCAPTCHA expired, user must solve it again
-    }
-  });
-  
-  // Render the reCAPTCHA widget
-  window.recaptchaVerifier.render();
-});
+        if (response.status === 401) {
+          setStatus("Auth failed (401). Your AUTH_TOKEN is missing, invalid, or expired — generate a fresh one from your Message Central dashboard.", "#ff0080");
+          return;
+        }
 
-// 3. Attach the event listener to your "SEND OTP" button
-document.getElementById("send-otp-btn").addEventListener("click", () => {
-  const rawPhoneNumber = document.getElementById("phone-input").value;
-  const phoneNumber = "+91" + rawPhoneNumber; // Change +91 to your country code if needed
-  
-  const appVerifier = window.recaptchaVerifier;
+        const rawText = await response.text();
+        let result;
+        try {
+          result = JSON.parse(rawText);
+        } catch {
+          setStatus(`Unexpected response from server (status ${response.status}). Check console.`, "#ff0080");
+          console.error("Non-JSON response body:", rawText);
+          return;
+        }
 
-  signInWithPhoneNumber(auth, phoneNumber, appVerifier)
-    .then((confirmationResult) => {
-      // Save confirmation result globally to verify the code in the next step
-      window.confirmationResult = confirmationResult;
-      alert("OTP sent successfully!");
-    })
-    .catch((error) => {
-      console.error("Error sending OTP:", error);
-      document.getElementById("error-message").innerText = "Failed to send OTP. Check console.";
-    });
-});*/
+        if (result.responseCode === 200 || result.status === "SUCCESS") {
+          savedVerificationId = result.data.verificationId;
+          phoneStep.style.display = 'none';
+          otpStep.style.display = 'block';
+          setStatus("", "#00f5ff");
+        } else {
+          setStatus(result.message || "Failed to send OTP. Check token or credits.", "#ff0080");
+        }
+      } catch (err) {
+        console.error(err);
+        setStatus("Network request failed. Check console for details.", "#ff0080");
+      }
+    });
 
+    // 2. Validate OTP Request
+    document.getElementById('verify-otp-btn').addEventListener('click', async () => {
+      const code = otpInput.value.trim();
+      const phone = phoneInput.value.trim();
 
+      if (code.length < 4) {
+        setStatus("Please enter the OTP code.", "#ff0080");
+        return;
+      }
 
+      setStatus("Verifying code...", "#00f5ff");
 
-    // Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
+      try {
+        const validateUrl = `https://cpaas.messagecentral.com/verification/v3/validateOtp?countryCode=91&mobileNumber=${phone}&verificationId=${savedVerificationId}&code=${code}`;
 
-// 1. Setup reCAPTCHA verification when the window loads
-window.addEventListener('DOMContentLoaded', () => {
-  window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
-    'size': 'normal',
-    'callback': (response) => {
-      // reCAPTCHA solved successfully
-    },
-    'expired-callback': () => {
-      // reCAPTCHA expired
-    }
-  });
-  
-  window.recaptchaVerifier.render();
-});
+        const response = await fetch(validateUrl, {
+          method: 'GET',
+          headers: {
+            'authToken': AUTH_TOKEN,
+            'accept': '*/*'
+          }
+        });
 
-// 2. Attach the click event to your "SEND OTP" button
-document.getElementById("send-otp-btn").addEventListener("click", () => {
-  const rawPhoneNumber = document.getElementById("phone-input").value;
-  const phoneNumber = "+91" + rawPhoneNumber; // Change +91 to your country code if needed
-  
-  const appVerifier = window.recaptchaVerifier;
+        if (response.status === 401) {
+          setStatus("Auth failed (401). Your AUTH_TOKEN is missing, invalid, or expired — generate a fresh one from your Message Central dashboard.", "#ff0080");
+          return;
+        }
 
-  signInWithPhoneNumber(auth, phoneNumber, appVerifier)
-    .then((confirmationResult) => {
-      // Save confirmation result globally to verify the code later
-      window.confirmationResult = confirmationResult;
-      alert("OTP sent successfully!");
-    })
-    .catch((error) => {
-      console.error("Error sending OTP:", error);
-      alert("Failed to send OTP. Check console for details.");
-    });
-});
+        const rawText = await response.text();
+        let result;
+        try {
+          result = JSON.parse(rawText);
+        } catch {
+          setStatus(`Unexpected response from server (status ${response.status}). Check console.`, "#ff0080");
+          console.error("Non-JSON response body:", rawText);
+          return;
+        }
 
-
-    
-    const CUSTOMER_ID = "C-EFAF652FF33847B";
-    // Paste your exact Message Central Auth Token string here directly
-    const AUTH_TOKEN = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJDLUVGQUY2NTJGRjMzODQ3QiIsImlhdCI6MTc4NTAwMDUzNiwiZXhwIjoxOTQyNjgwNTM2fQ.-b51wgiDyhq8bHM_cjDGywpb-bViOlotOms3t8qKBmFahekB_H1js6a0IcFmrsnLrWsfOgilRf2w3fppqmA4JQ"; 
-
-    let savedVerificationId = null;
-    const statusMsg = document.getElementById('status-msg');
-
-    // 1. Send OTP Request (Direct Call)
-    document.getElementById('send-otp-btn').addEventListener('click', async () => {
-      const phone = document.getElementById('user-phone').value;
-      if (phone.length !== 10) {
-        statusMsg.style.color = "#ff0080";
-        statusMsg.innerText = "Please enter a valid 10-digit mobile number.";
-        return;
-      }
-
-      statusMsg.style.color = "#00f5ff";
-      statusMsg.innerText = "Sending OTP...";
-
-      try {
-        const sendUrl = `https://cpaas.messagecentral.com/verification/v3/send?country=91&flowType=SMS&mobileNumber=${phone}&customerId=${CUSTOMER_ID}&otpLength=6`;
-        
-        const response = await fetch(sendUrl, {
-          method: 'POST',
-          headers: { 
-            'authToken': AUTH_TOKEN,
-            'accept': '*/*' 
-          }
-        });
-        
-        const result = await response.json();
-
-        if (result.responseCode === 200 || result.status === "SUCCESS") {
-          savedVerificationId = result.data.verificationId;
-          document.getElementById('phone-step').style.display = 'none';
-          document.getElementById('otp-step').style.display = 'block';
-          statusMsg.innerText = "";
-        } else {
-          statusMsg.style.color = "#ff0080";
-          statusMsg.innerText = result.message || "Failed to send OTP. Check token or credits.";
-        }
-      } catch (err) {
-        console.error(err);
-        statusMsg.style.color = "#ff0080";
-        statusMsg.innerText = "Network request failed. Browser blocked direct call.";
-      }
-    });
-
-    // 2. Validate OTP Request
-    document.getElementById('verify-otp-btn').addEventListener('click', async () => {
-      const code = document.getElementById('otp-input').value;
-      const phone = document.getElementById('user-phone').value;
-
-      if (code.length !== 4) {
-        statusMsg.style.color = "#ff0080";
-        statusMsg.innerText = "Please enter the 4-digit code.";
-        return;
-      }
-
-      statusMsg.style.color = "#00f5ff";
-      statusMsg.innerText = "Verifying code...";
-
-      try {
-        const validateUrl = `https://cpaas.messagecentral.com/verification/v3/validateOtp?country=91&mobileNumber=${phone}&verificationId=${savedVerificationId}&code=${code}`;
-        
-        const response = await fetch(validateUrl, {
-          method: 'GET',
-          headers: { 
-            'authToken': AUTH_TOKEN,
-            'accept': '*/*' 
-          }
-        });
-        
-        const result = await response.json();
-
-        if (result.responseCode === 200 && result.data.verificationStatus === "VERIFICATION_COMPLETED") {
-          document.getElementById('otp-step').style.display = 'none';
-          statusMsg.style.color = "#00ff88";
-          statusMsg.innerText = "SUCCESS! Phone number verified.";
-        } else {
-          statusMsg.style.color = "#ff0080";
-          statusMsg.innerText = "Invalid OTP. Please try again.";
-        }
-      } catch (err) {
-        console.error(err);
-        statusMsg.style.color = "#ff0080";
-        statusMsg.innerText = "Verification network error.";
-      }
-    });
-
-
-
-    // Attach click event to your "VERIFY OTP" button
-document.getElementById("verify-otp-btn").addEventListener("click", () => {
-  const code = document.getElementById("otp-input").value;
-
-  window.confirmationResult.confirm(code)
-    .then((result) => {
-      // User signed in successfully!
-      const user = result.user;
-      alert("Phone verification successful! User signed in.");
-      console.log("Verified user:", user);
-      
-      // Redirect or update UI for successful login here
-    })
-    .catch((error) => {
-      // User couldn't sign in (e.g., incorrect code)
-      console.error("Invalid OTP code:", error);
-      alert("Invalid OTP. Please try again.");
-    });
-});
-
-    
-  </script>
+        if (result.responseCode === 200 && result.data.verificationStatus === "VERIFICATION_COMPLETED") {
+          otpStep.style.display = 'none';
+          setStatus("SUCCESS! Phone number verified.", "#00ff88");
+        } else {
+          setStatus("Invalid OTP. Please try again.", "#ff0080");
+        }
+      } catch (err) {
+        console.error(err);
+        setStatus("Verification network error.", "#ff0080");
+      }
+    });
+  </script>
 </body>
 </html>
