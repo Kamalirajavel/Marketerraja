@@ -16,7 +16,7 @@
     .btn-primary:hover { background: #20b958; transform: translateY(-2px); }
     .btn-secondary { background: #00f5ff; color: #000; box-shadow: 0 4px 15px rgba(0,245,255,0.3); }
     .btn-secondary:hover { background: #00c2cc; transform: translateY(-2px); }
-    #status-msg { text-align: center; min-height: 20px; font-size: 14px; }
+    #status-msg { text-align: center; min-height: 20px; font-size: 14px; word-break: break-word; }
   </style>
 </head>
 <body>
@@ -24,13 +24,11 @@
   <div class="portal-box">
     <h2>PHONE VERIFICATION</h2>
 
-    <!-- Step 1: Input Phone Number -->
     <div id="phone-step">
       <input type="tel" id="phone-input" placeholder="Enter mobile number" maxlength="10" required>
       <button id="send-otp-btn" class="btn-primary">SEND OTP</button>
     </div>
 
-    <!-- Step 2: Input OTP Code -->
     <div id="otp-step" style="display: none;">
       <p style="text-align: center; color: #00ff88; font-size: 14px; margin-bottom: 15px;">OTP sent successfully!</p>
       <input type="text" id="otp-input" placeholder="Enter OTP" maxlength="6" required>
@@ -41,8 +39,8 @@
   </div>
 
   <script>
-    // OTP handling is now proxied through our own backend (Vercel).
-    // No Message Central credentials live in this file anymore.
+    // OTP handling is fully proxied through our own backend (Vercel).
+    // No Message Central credentials live in this file.
     const SEND_OTP_ENDPOINT = "https://marketerraja-backend.vercel.app/api/send-otp";
     const VERIFY_OTP_ENDPOINT = "https://marketerraja-backend.vercel.app/api/verify-otp";
 
@@ -58,7 +56,23 @@
       statusMsg.innerText = message;
     }
 
-    // 1. Send OTP Request
+    async function callApi(endpoint, payload) {
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const rawText = await response.text();
+      let result;
+      try {
+        result = JSON.parse(rawText);
+      } catch {
+        throw new Error(`Non-JSON response (status ${response.status}): ${rawText.slice(0, 200)}`);
+      }
+      return { response, result };
+    }
+
+    // 1. Send OTP
     document.getElementById('send-otp-btn').addEventListener('click', async () => {
       const phone = phoneInput.value.trim();
       if (phone.length !== 10 || !/^\d{10}$/.test(phone)) {
@@ -69,23 +83,7 @@
       setStatus("Sending OTP...", "#00f5ff");
 
       try {
-        const response = await fetch(SEND_OTP_ENDPOINT, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ phone })
-        });
-
-        const rawText = await response.text();
-        let result;
-        try {
-          result = JSON.parse(rawText);
-        } catch {
-          setStatus(`Unexpected response from server (status ${response.status}). Check console.`, "#ff0080");
-          console.error("Non-JSON response body:", rawText);
-          return;
-        }
+        const { result } = await callApi(SEND_OTP_ENDPOINT, { phone });
 
         if (result.success) {
           savedVerificationId = result.verificationId;
@@ -93,17 +91,17 @@
           otpStep.style.display = 'block';
           setStatus("", "#00f5ff");
         } else {
-          const debugInfo = result.rawSnippet ? ` [Provider said: ${result.rawSnippet}]` : '';
-          setStatus((result.error || "Failed to send OTP.") + debugInfo, "#ff0080");
+          const hint = result.hint ? ` (${result.hint})` : '';
+          setStatus((result.error || "Failed to send OTP.") + hint, "#ff0080");
           console.error("Full error response:", result);
         }
       } catch (err) {
         console.error(err);
-        setStatus("Network request failed. Check console for details.", "#ff0080");
+        setStatus(err.message || "Network request failed.", "#ff0080");
       }
     });
 
-    // 2. Validate OTP Request
+    // 2. Verify OTP
     document.getElementById('verify-otp-btn').addEventListener('click', async () => {
       const code = otpInput.value.trim();
       const phone = phoneInput.value.trim();
@@ -116,33 +114,22 @@
       setStatus("Verifying code...", "#00f5ff");
 
       try {
-        const response = await fetch(VERIFY_OTP_ENDPOINT, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ phone, code, verificationId: savedVerificationId })
+        const { result } = await callApi(VERIFY_OTP_ENDPOINT, {
+          phone,
+          code,
+          verificationId: savedVerificationId
         });
-
-        const rawText = await response.text();
-        let result;
-        try {
-          result = JSON.parse(rawText);
-        } catch {
-          setStatus(`Unexpected response from server (status ${response.status}). Check console.`, "#ff0080");
-          console.error("Non-JSON response body:", rawText);
-          return;
-        }
 
         if (result.success) {
           otpStep.style.display = 'none';
           setStatus("SUCCESS! Phone number verified.", "#00ff88");
         } else {
           setStatus(result.error || "Invalid OTP. Please try again.", "#ff0080");
+          console.error("Full error response:", result);
         }
       } catch (err) {
         console.error(err);
-        setStatus("Verification network error.", "#ff0080");
+        setStatus(err.message || "Verification network error.", "#ff0080");
       }
     });
   </script>
