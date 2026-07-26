@@ -93,7 +93,9 @@
           otpStep.style.display = 'block';
           setStatus("", "#00f5ff");
         } else {
-          setStatus(result.error || "Failed to send OTP.", "#ff0080");
+          const debugInfo = result.rawSnippet ? ` [Provider said: ${result.rawSnippet}]` : '';
+          setStatus((result.error || "Failed to send OTP.") + debugInfo, "#ff0080");
+          console.error("Full error response:", result);
         }
       } catch (err) {
         console.error(err);
