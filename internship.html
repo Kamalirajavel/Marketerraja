@@ -41,12 +41,10 @@
   </div>
 
   <script>
-    // NOTE: This token is currently hardcoded in client-side JS, which means anyone
-    // viewing your page source can see and reuse it. Please rotate this token in your
-    // Message Central dashboard and, ideally, move this call to a small backend/serverless
-    // endpoint so the token is never exposed to the browser.
-    const CUSTOMER_ID = "C-EFAF652FF33847B";
-    const AUTH_TOKEN = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJDLUVGQUY2NTJGRjMzODQ3QiIsImlhdCI6MTc4NTAwMDUzNiwiZXhwIjoxOTQyNjgwNTM2fQ.-b51wgiDyhq8bHM_cjDGywpb-bViOlotOms3t8qKBmFahekB_H1js6a0IcFmrsnLrWsfOgilRf2w3fppqmA4JQ";
+    // OTP handling is now proxied through our own backend (Vercel).
+    // No Message Central credentials live in this file anymore.
+    const SEND_OTP_ENDPOINT = "https://marketerraja-backend.vercel.app/api/send-otp";
+    const VERIFY_OTP_ENDPOINT = "https://marketerraja-backend.vercel.app/api/verify-otp";
 
     let savedVerificationId = null;
     const statusMsg = document.getElementById('status-msg');
@@ -71,20 +69,13 @@
       setStatus("Sending OTP...", "#00f5ff");
 
       try {
-        const sendUrl = `https://cpaas.messagecentral.com/verification/v3/send?countryCode=91&flowType=SMS&mobileNumber=${phone}&customerId=${CUSTOMER_ID}&otpLength=6`;
-
-        const response = await fetch(sendUrl, {
+        const response = await fetch(SEND_OTP_ENDPOINT, {
           method: 'POST',
           headers: {
-            'authToken': AUTH_TOKEN,
-            'accept': '*/*'
-          }
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ phone })
         });
-
-        if (response.status === 401) {
-          setStatus("Auth failed (401). Your AUTH_TOKEN is missing, invalid, or expired — generate a fresh one from your Message Central dashboard.", "#ff0080");
-          return;
-        }
 
         const rawText = await response.text();
         let result;
@@ -96,13 +87,13 @@
           return;
         }
 
-        if (result.responseCode === 200 || result.status === "SUCCESS") {
-          savedVerificationId = result.data.verificationId;
+        if (result.success) {
+          savedVerificationId = result.verificationId;
           phoneStep.style.display = 'none';
           otpStep.style.display = 'block';
           setStatus("", "#00f5ff");
         } else {
-          setStatus(result.message || "Failed to send OTP. Check token or credits.", "#ff0080");
+          setStatus(result.error || "Failed to send OTP.", "#ff0080");
         }
       } catch (err) {
         console.error(err);
@@ -123,20 +114,13 @@
       setStatus("Verifying code...", "#00f5ff");
 
       try {
-        const validateUrl = `https://cpaas.messagecentral.com/verification/v3/validateOtp?countryCode=91&mobileNumber=${phone}&verificationId=${savedVerificationId}&code=${code}`;
-
-        const response = await fetch(validateUrl, {
-          method: 'GET',
+        const response = await fetch(VERIFY_OTP_ENDPOINT, {
+          method: 'POST',
           headers: {
-            'authToken': AUTH_TOKEN,
-            'accept': '*/*'
-          }
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ phone, code, verificationId: savedVerificationId })
         });
-
-        if (response.status === 401) {
-          setStatus("Auth failed (401). Your AUTH_TOKEN is missing, invalid, or expired — generate a fresh one from your Message Central dashboard.", "#ff0080");
-          return;
-        }
 
         const rawText = await response.text();
         let result;
@@ -148,11 +132,11 @@
           return;
         }
 
-        if (result.responseCode === 200 && result.data.verificationStatus === "VERIFICATION_COMPLETED") {
+        if (result.success) {
           otpStep.style.display = 'none';
           setStatus("SUCCESS! Phone number verified.", "#00ff88");
         } else {
-          setStatus("Invalid OTP. Please try again.", "#ff0080");
+          setStatus(result.error || "Invalid OTP. Please try again.", "#ff0080");
         }
       } catch (err) {
         console.error(err);
