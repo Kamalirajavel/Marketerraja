@@ -478,7 +478,7 @@ p.section-subtext { font-size:18px; color:rgba(232,244,255,0.7); max-width:750px
 /* ── FOOTER ── */
 footer {
   background:rgba(0,12,36,0.95); backdrop-filter:blur(20px);
-  border-top:1px solid var(--border); padding:clamp(30px,5vw,15px);
+  border-top:1px solid var(--border); padding:clamp(30px,5vw,50px);
   position:relative; z-index:10;
 }
 .footer-container {
@@ -863,6 +863,7 @@ footer {
           <li><a href="portfolio.html">Portfolio</a></li>
           <li><a href="blog.html">Blog</a></li>
         </ul>
+      </div>
 
       <div class="footer-box">
         <h4>Our Office</h4>
@@ -1024,80 +1025,7 @@ document.addEventListener('click', e => {
     document.querySelectorAll('.privacy-popup.active').forEach(p => p.classList.remove('active'));
 });
 
-async function loadBlog() {
-    const liveContainer = document.getElementById('blog-container');
-    const queuedContainer = document.getElementById('queued-container');
-    
-    try {
-      const q = query(collection(db, "blog"), orderBy("timestamp", "desc"));
-      const snapshot = await getDocs(q);
-      
-      liveContainer.innerHTML = ''; 
-      if(queuedContainer) queuedContainer.innerHTML = '';
-      
-      let hasLive = false;
-      let hasQueued = false;
-      let index = 0;
 
-      snapshot.forEach((doc) => {
-        const data = doc.data();
-        window.blogPosts.push(data);
-        
-        const plainText = data.content ? data.content.replace(/<[^>]*>?/gm, '') : '';
-        
-        // Auto-assign colors based on Category selection
-        let catColor = "var(--pink)"; // Default
-        if(data.category === "SEO") catColor = "var(--cyan)";
-        if(data.category === "Lead Generation") catColor = "var(--green)";
-        if(data.category === "Google Ads") catColor = "var(--yellow)";
-        if(data.category === "Strategy") catColor = "var(--purple)";
-
-        // Build the HTML Card
-        if(data.status === "QUEUED") {
-            hasQueued = true;
-            const queuedHTML = `
-              <div class="blog-stub">
-                <div class="stub-category" style="color:${catColor};">${data.category || 'Update'}</div>
-                <h3>${data.title}</h3>
-                <p>${plainText}</p>
-                <div class="stub-footer">
-                  <span class="stub-tag">${data.tag || 'Pending'}</span>
-                  <span>// PENDING PUBLISH</span>
-                </div>
-              </div>
-            `;
-            if(queuedContainer) queuedContainer.insertAdjacentHTML('beforeend', queuedHTML);
-        } else {
-            hasLive = true;
-            const cardHTML = `
-              <div class="blog-stub" onclick="openModal(${index})" style="cursor:pointer;">
-                <img src="${data.thumbnail}" alt="Thumbnail" class="b-thumb" onerror="this.style.display='none'">
-                <div class="stub-inner">
-                  <div class="stub-category" style="color:${catColor};">${data.category || 'Update'}</div>
-                  <h3>${data.title}</h3>
-                  <p>${plainText}</p>
-                  <div class="stub-footer">
-                    <span class="stub-tag">${data.tag || data.author}</span>
-                    <span class="b-readmore">READ PROTOCOL →</span>
-                  </div>
-                </div>
-              </div>
-            `;
-            liveContainer.insertAdjacentHTML('beforeend', cardHTML);
-        }
-        index++;
-      });
-      
-      if(!hasLive) liveContainer.innerHTML = '<p style="text-align:center; color:var(--pink); font-family: var(--font-m); grid-column: 1 / -1;">No live transmissions found.</p>';
-      if(!hasQueued && queuedContainer) queuedContainer.innerHTML = '<p style="text-align:center; color:var(--muted); font-family: var(--font-m); grid-column: 1 / -1;">No queued topics currently.</p>';
-
-    } catch (err) {
-      console.error("Error loading blog:", err);
-      liveContainer.innerHTML = '<p style="text-align:center; color:red; grid-column: 1 / -1;">Database connection failed.</p>';
-    }
-  }
-
-  loadBlog();
 </script>
 
 <script type="module">
@@ -1204,6 +1132,10 @@ async function loadBlog() {
   // Modal Logic (Opening and closing the reading window)
   window.openModal = function(index) {
     const post = window.blogPosts[index];
+    if (!post) {
+      console.error('Blog post not found for index:', index);
+      return;
+    }
     document.getElementById('m-title').textContent = post.title;
     document.getElementById('m-meta').textContent = "Published By " + (post.author || 'Marketer Raja');
     
@@ -1265,6 +1197,17 @@ if(toggleBtn && navLinks){
     }
   });
 }
+});
+</script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const modal = document.getElementById('post-modal');
+  if (modal) {
+    modal.addEventListener('click', function (e) {
+      if (e.target === modal) window.closeModal();
+    });
+  }
 });
 </script>
 
