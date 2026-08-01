@@ -669,36 +669,59 @@ footer{
   .privacy-popup::after{display:none !important;}
 }
 
-/* ── HAMBURGER MENU ── */
-.hamburger{
+/* ── SERVICES DROPDOWN (desktop) ── */
+.nav-dropdown{position:relative;}
+.nav-dropdown summary{
+  list-style:none;cursor:pointer;
+  display:flex;align-items:center;gap:6px;
+  font-family:var(--font-m);font-size:14px;letter-spacing:2px;
+  color:var(--muted);text-transform:uppercase;
+}
+.nav-dropdown summary::-webkit-details-marker{display:none;}
+.nav-dropdown summary::after{content:'▾';font-size:9px;transition:transform .2s;}
+.nav-dropdown[open] summary::after{transform:rotate(180deg);}
+.nav-dropdown summary:hover{color:var(--cyan);text-shadow:var(--glow-c);}
+.nav-dropdown-menu{
+  position:absolute;top:calc(100% + 18px);left:50%;transform:translateX(-50%);
+  display:flex;flex-direction:column;min-width:190px;
+  background:rgba(0,8,28,0.97);backdrop-filter:blur(20px);
+  border:1px solid var(--border);z-index:200;padding:8px 0;
+}
+.nav-dropdown-menu a{
+  padding:10px 22px;font-size:12px;letter-spacing:1px;
+  color:var(--muted);text-transform:uppercase;white-space:nowrap;text-decoration:none;
+}
+.nav-dropdown-menu a:hover{color:var(--cyan);background:rgba(0,245,255,0.06);text-shadow:none;}
+.nav-links a.nav-mobile-wa { display:none; }
+
+/* ── HAMBURGER TOGGLE ── */
+.nav-toggle{
   display:none;
-  flex-direction:column;
-  gap:5px;cursor:pointer;padding:6px;z-index:200;
-  background:none;border:none;outline:none;
-  -webkit-tap-highlight-color:transparent;
+  flex-direction:column;justify-content:center;align-items:center;
+  width:44px;height:44px;
+  background:rgba(0,245,255,0.05);
+  border:1px solid rgba(0,245,255,0.3);
+  border-radius:6px;cursor:pointer;
+  position:relative;z-index:200;
+  transition:background .2s,box-shadow .2s,border-color .2s;
+  flex-shrink:0;
 }
-.hamburger span{display:block;width:24px;height:2px;background:var(--cyan);transition:all .3s;}
-.hamburger.open span:nth-child(1){transform:rotate(45deg) translate(5px,5px);}
-.hamburger.open span:nth-child(2){opacity:0;}
-.hamburger.open span:nth-child(3){transform:rotate(-45deg) translate(5px,-5px);}
-.mobile-menu{
-  display:none;position:fixed;top:0;left:0;right:0;bottom:0;
-  background:rgba(0,12,36,0.97);z-index:150;
-  flex-direction:column;align-items:center;justify-content:center;gap:32px;
-  backdrop-filter:blur(20px);
+.nav-toggle:hover{
+  background:rgba(0,245,255,0.12);
+  border-color:var(--cyan);
+  box-shadow:0 0 14px rgba(0,245,255,0.35);
 }
-.mobile-menu.open{display:flex;}
-.mobile-menu a{
-  font-family:var(--font-d);font-size:20px;letter-spacing:3px;
-  color:var(--muted);text-decoration:none;text-transform:uppercase;transition:color .2s;
+.hamburger-icon{display:flex;flex-direction:column;gap:5px;width:20px;}
+.hamburger-icon span{
+  display:block;height:2px;width:100%;
+  background:var(--cyan);border-radius:2px;
+  transition:transform .35s cubic-bezier(.77,0,.175,1),opacity .25s ease,width .3s ease;
+  transform-origin:center;
 }
-.mobile-menu a:hover,.mobile-menu a.active{color:var(--cyan);text-shadow:var(--glow-c);}
-.mobile-menu .nav-wa-m{
-  display:flex;align-items:center;gap:8px;margin-top:10px;
-  background:rgba(37,211,102,0.1);border:1px solid rgba(37,211,102,0.4);
-  color:var(--wa);font-family:var(--font-d);font-size:13px;letter-spacing:2px;
-  padding:12px 24px;text-decoration:none;
-}
+.nav-toggle.open .hamburger-icon span:nth-child(1){transform:translateY(7px) rotate(45deg);}
+.nav-toggle.open .hamburger-icon span:nth-child(2){opacity:0;width:0;}
+.nav-toggle.open .hamburger-icon span:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
+.nav-toggle.open{background:rgba(0,245,255,0.15);border-color:var(--cyan);box-shadow:0 0 20px rgba(0,245,255,0.4);}
 
 @media(max-width:900px){
   .platform-showcase{grid-template-columns:1fr;}
@@ -707,12 +730,85 @@ footer{
 @media(max-width:768px){
   body{cursor:auto;}
   .cur,.cur-ring{display:none;}
-  .hamburger{display:flex !important;}
-  .nav-links{display:none !important;}
+  .nav-toggle{display:flex;}
+  .nav-links a.nav-mobile-wa{display:flex;}
   .nav-wa{display:none !important;}
   .nav-logo{font-size:18px;gap:8px;}
   .nav-logo img{height:36px;width:36px;}
   nav{padding:12px 4vw;}
+
+  /* ── SERVICES DROPDOWN (mobile) ── */
+  .nav-dropdown { width:100%; border-bottom:1px solid rgba(0,245,255,0.07); }
+  .nav-dropdown summary {
+    padding:16px 6vw; width:100%;
+    font-size:13px !important; letter-spacing:2px !important;
+    color:rgba(232,244,255,0.7);
+    display:flex; align-items:center; justify-content:space-between;
+    cursor:pointer;
+  }
+  .nav-dropdown[open] summary { color:#fff; background:rgba(0,245,255,0.07); }
+  .nav-dropdown-menu {
+    position:static; transform:none;
+    background:rgba(0,245,255,0.03); border:none; padding:0; min-width:unset;
+  }
+  .nav-dropdown-menu a {
+    padding:14px 6vw 14px 12vw !important;
+    font-size:12px !important;
+    border-bottom:1px solid rgba(0,245,255,0.05);
+  }
+
+  /* Dropdown nav-links panel */
+  .nav-links{
+    display:flex!important;
+    flex-direction:column;
+    gap:0;
+    position:absolute;
+    top:100%;
+    left:0;
+    right:0;
+    background:rgba(0,8,28,0.97);
+    backdrop-filter:blur(24px);
+    -webkit-backdrop-filter:blur(24px);
+    border-bottom:1px solid rgba(0,245,255,0.2);
+    border-top:1px solid rgba(0,245,255,0.1);
+    overflow:hidden;
+    max-height:0;
+    opacity:0;
+    pointer-events:none;
+    transition:max-height .45s cubic-bezier(.77,0,.175,1), opacity .3s ease;
+    z-index:150;
+  }
+  .nav-links.active{
+    max-height:480px;
+    opacity:1;
+    pointer-events:auto;
+  }
+  .nav-links a{
+    font-size:13px !important;
+    letter-spacing:2px !important;
+    padding:16px 6vw;
+    border-bottom:1px solid rgba(0,245,255,0.07);
+    display:flex;align-items:center;gap:10px;
+    width:100%;
+    color:rgba(232,244,255,0.7);
+    transition:background .2s,color .2s,padding-left .2s;
+  }
+  .nav-links a::before{
+    content:'›';
+    color:var(--cyan);
+    font-size:16px;
+    opacity:0;
+    transform:translateX(-6px);
+    transition:opacity .2s,transform .2s;
+  }
+  .nav-links a:hover{
+    background:rgba(0,245,255,0.07);
+    color:#fff;
+    padding-left:8vw;
+    text-shadow:none;
+  }
+  .nav-links a:hover::before{opacity:1;transform:translateX(0);}
+  .nav-links a:last-child{border-bottom:none;}
   #hero{padding:110px 5vw 60px;}
   h1{font-size:clamp(26px,7vw,48px);}
   .hero-sub{font-size:16px;text-align:center;border-left:none;padding-left:0;}
@@ -794,39 +890,47 @@ footer{
 
 <nav id="main-nav">
   <div class="nav-logo">
-    <img alt="Marketer Raja Logo" src="logo.jpeg" style="height:44px; width:44px; object-fit:contain; border-radius:6px; margin-right: 8px;"/> 
+    <img alt="Marketer Raja Logo" src="logo.jpeg" style="height:44px; width:44px; object-fit:contain; border-radius:6px; margin-right: 8px;" />
     MARKETER <span>RAJA</span>
   </div>
 
-  <div class="nav-links" id="nav-links">
-    <a href="/index.html">Home</a>
-    <a href="/seo.html">SEO Services</a>
-    <a href="/google_ads.html">Google Ads</a> 
-    <a href="/meta_ads.html" class="active">Meta Ads</a>
-    <a href="/web.html">Web & App</a>   
-    <a href="/portfolio.html">Portfolio</a>
-    <a href="/blog.html">Blog</a>
-    
-    
-  </div>
-  <a href="https://wa.me/918489486025" class="nav-wa" target="_blank">
-    <i class="fab fa-whatsapp"></i> LIVE STRATEGY
+
+  <div class="nav-links" id="nav-links">  
+<a href="/index.html">Home</a>
+<details class="nav-dropdown">
+<summary>Our Services</summary>
+<div class="nav-dropdown-menu">
+<a href="/seo.html">SEO Services</a>
+<a href="/google_ads.html">Google Ads</a>
+<a href="/meta_ads.html">Meta Ads</a>
+<a href="/web.html">Web &amp; App</a>
+<a href="/blog.html">Blog</a>
+</div>
+</details>
+<a href="/portfolio.html">Portfolio</a>
+<a class="nav-mobile-wa" href="https://wa.me/+918489486025?text=Hi%2C+I+want+a+free+strategy+call" target="_blank">
+  <svg fill="currentColor" height="14" viewbox="0 0 24 24" width="14"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"></path></svg>
+  FREE STRATEGY CALL
+</a>
+</div>
+
+  
+
+<div class="nav-right" style="display:flex;align-items:center;gap:16px;">
+  <a class="nav-wa" href="https://wa.me/+918489486025?text=Hi%2C+I+want+a+free+strategy+call" target="_blank">
+    <svg fill="currentColor" height="14" viewbox="0 0 24 24" width="14"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"></path></svg>
+    FREE STRATEGY CALL
   </a>
-  <div class="hamburger" id="hamburger" onclick="toggleMenu()">
-    <span></span><span></span><span></span>
-  </div>
+  <button aria-label="Toggle Navigation" aria-expanded="false" class="nav-toggle" id="nav-toggle">
+    <span class="hamburger-icon">
+      <span></span>
+      <span></span>
+      <span></span>
+    </span>
+  </button>
+</div>
 </nav>
 
-<div class="mobile-menu" id="mobileMenu">
-  <a href="index.html" onclick="closeMenu()">Home</a>
-  <a href="seo.html" onclick="closeMenu()">SEO Services</a>
-  <a href="google_ads.html" onclick="closeMenu()">Google Ads</a>
-  <a href="meta_ads.html" class="active" onclick="closeMenu()">Meta Ads</a>
-  <a href="web.html" onclick="closeMenu()">Web &amp; App</a>
-  <a href="portfolio.html" onclick="closeMenu()">Portfolio</a>
-  <a href="blog.html" onclick="closeMenu()">Blog</a>
-  <a href="https://wa.me/918489486025" class="nav-wa-m" target="_blank"><i class="fab fa-whatsapp"></i> LIVE STRATEGY</a>
-</div>
 
 <div id="hero">
   <div class="hero-inner">
@@ -1188,8 +1292,6 @@ document.querySelectorAll('a, button, .radar-card, .metric-output-card, .lifecyc
   });
 });
 
-function toggleMenu(){var h=document.getElementById("hamburger");var m=document.getElementById("mobileMenu");h.classList.toggle("open");m.classList.toggle("open");}
-function closeMenu(){document.getElementById("hamburger").classList.remove("open");document.getElementById("mobileMenu").classList.remove("open");}
 </script>
 
 <!-- Floating Action Buttons -->
@@ -1238,6 +1340,36 @@ document.querySelectorAll('.privacy-popup-close').forEach(btn => {
 document.addEventListener('click', e => {
   if (!e.target.closest('.policy-link-wrap'))
     document.querySelectorAll('.privacy-popup.active').forEach(p => p.classList.remove('active'));
+});
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function(){
+const toggleBtn = document.getElementById('nav-toggle');
+const navLinks = document.getElementById('nav-links');
+
+if(toggleBtn && navLinks){
+  toggleBtn.addEventListener('click', function(){
+    const isOpen = navLinks.classList.toggle('active');
+    toggleBtn.classList.toggle('open', isOpen);
+    toggleBtn.setAttribute('aria-expanded', isOpen);
+  });
+
+  document.querySelectorAll('.nav-links a').forEach(link=>{
+    link.addEventListener('click', function(){
+      navLinks.classList.remove('active');
+      toggleBtn.classList.remove('open');
+      toggleBtn.setAttribute('aria-expanded', 'false');
+    });
+  });
+
+  document.addEventListener('click', function(e){
+    if(!e.target.closest('nav')){
+      navLinks.classList.remove('active');
+      toggleBtn.classList.remove('open');
+      toggleBtn.setAttribute('aria-expanded', 'false');
+    }
+  });
+}
 });
 </script>
 </body>
