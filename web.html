@@ -122,76 +122,210 @@ body::after {
 .cur-ring.expanded{width:54px;height:54px;border-color:rgba(255,0,128,0.5);}
 
 /* ── NAVIGATION ── */
-nav {
-  position:fixed; top:0; left:0; right:0; z-index:100;
-  display:flex; align-items:center; justify-content:space-between;
+/* ═══════════════════════════════════════
+   SECTION 1 — NAV
+═══════════════════════════════════════ */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  display:flex;align-items:center;justify-content:space-between;
   padding:16px 5vw;
   background:rgba(0,12,36,0.9);
   backdrop-filter:blur(20px);
   border-bottom:1px solid var(--border);
 }
-nav::after {
-  content:''; position:absolute; bottom:0; left:0; right:0; height:1px;
-  background: linear-gradient(135deg, #0064e0 0%, #9b00ff 50%, #ff0080 100%);
+nav::after{
+  content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--cyan),var(--pink),transparent);
+  animation:scan 4s linear infinite;
 }
-.nav-logo {
-  display:flex; align-items:center; gap:12px;
-  font-family:var(--font-d); font-size:24px; font-weight:900;
-  letter-spacing:4px; color:var(--cyan); text-shadow:var(--glow-c);
-  text-decoration:none;
+@keyframes scan{0%{background-position:-200% 0}100%{background-position:200% 0}}
+
+.nav-logo{display:flex;align-items:center;gap:10px;
+  font-family:var(--font-d);font-size:24px;font-weight:900;
+  letter-spacing:4px;color:var(--cyan);text-shadow:var(--glow-c);
+  flex-shrink:0;
 }
-.nav-logo span { color:var(--pink); text-shadow:var(--glow-p); }
-.nav-logo img{height:40px;width:40px;object-fit:contain;border-radius:6px;}
-.nav-links { display:flex; gap:20px; align-items:center; }
+.nav-logo span{color:var(--pink);text-shadow:var(--glow-p);}
+
+/* Desktop nav links */
+.nav-links{display:flex;gap:20px;align-items:center;}
+
 .nav-links a {
-  font-family:var(--font-m);
-  font-size:14px;
-  letter-spacing:2px;
-  color:var(--muted); 
-  text-decoration:none;
-  text-transform:uppercase;
-  transition:all .2s;
-  white-space: nowrap; /* <--- This keeps it on one line */
+  font-family:var(--font-m); font-size:14px; letter-spacing:2px;
+  color:var(--muted); text-decoration:none; text-transform:uppercase;
+  transition:color .2s, text-shadow .2s; white-space:nowrap;
 }
-.nav-links a:hover, .nav-links a.active { color:var(--cyan); text-shadow:var(--glow-c); }
-.nav-wa {
-  display:flex; align-items:center; gap:8px;
+.nav-links a:hover{color:#87CEEB;text-shadow:0 0 12px rgba(135,206,235,0.9), 0 0 30px rgba(135,206,235,0.5);}
+.nav-links a.active { color:var(--cyan); text-shadow:var(--glow-c); }
+
+  /* ── SERVICES DROPDOWN (desktop) ── */
+.nav-dropdown{position:relative;}
+.nav-dropdown summary{
+  list-style:none;cursor:pointer;
+  display:flex;align-items:center;gap:6px;
+  font-family:var(--font-m);font-size:14px;letter-spacing:2px;
+  color:var(--muted);text-transform:uppercase;
+}
+.nav-dropdown summary::-webkit-details-marker{display:none;}
+.nav-dropdown summary::after{content:'▾';font-size:9px;transition:transform .2s;}
+.nav-dropdown[open] summary::after{transform:rotate(180deg);}
+.nav-dropdown summary:hover{color:#87CEEB;text-shadow:0 0 12px rgba(135,206,235,0.9);}
+.nav-dropdown-menu{
+  position:absolute;top:calc(100% + 18px);left:50%;transform:translateX(-50%);
+  display:flex;flex-direction:column;min-width:190px;
+  background:rgba(0,8,28,0.97);backdrop-filter:blur(20px);
+  border:1px solid var(--border);z-index:200;padding:8px 0;
+}
+.nav-dropdown-menu a{
+  padding:10px 22px;font-size:12px;letter-spacing:1px;
+  color:var(--muted);text-transform:uppercase;white-space:nowrap;text-decoration:none;
+}
+.nav-dropdown-menu a:hover{color:var(--cyan);background:rgba(0,245,255,0.06);text-shadow:none;}
+.nav-links a.nav-mobile-wa { display:none; }
+
+/* Nav right wrapper */
+.nav-right{display:flex;align-items:center;gap:16px;}
+
+.nav-wa{
+  display:flex;align-items:center;gap:8px;
   background:rgba(37,211,102,0.1);
   border:1px solid rgba(37,211,102,0.4);
   color:var(--wa);
-  font-family:var(--font-d); font-size:12px; letter-spacing:2px;
-  padding:10px 20px; text-decoration:none;
+  font-family:var(--font-d);font-size:12px;letter-spacing:2px;
+  padding:10px 20px;
+  text-decoration:none;
   clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);
-  transition:all .2s;
+  transition:all .2s;white-space:nowrap;
 }
-.nav-wa:hover { background:rgba(37,211,102,0.2); box-shadow:0 0 20px rgba(37,211,102,0.3); }
+.nav-wa:hover{background:rgba(37,211,102,0.2);box-shadow:0 0 20px rgba(37,211,102,0.3);}
 
-/* Mobile Nav */
-.hamburger {
-  display:none; flex-direction:column; gap:5px; cursor:pointer; padding:6px;
-  z-index:200; background:none; border:none; outline:none; -webkit-tap-highlight-color:transparent;
+/* ── HAMBURGER TOGGLE ── */
+.nav-toggle{
+  display:none;
+  flex-direction:column;justify-content:center;align-items:center;
+  width:44px;height:44px;
+  background:rgba(0,245,255,0.05);
+  border:1px solid rgba(0,245,255,0.3);
+  border-radius:6px;cursor:pointer;
+  position:relative;z-index:200;
+  transition:background .2s,box-shadow .2s,border-color .2s;
+  flex-shrink:0;
 }
-.hamburger span { display:block; width:24px; height:2px; background:var(--cyan); transition:all .3s; }
-.hamburger.open span:nth-child(1) { transform:rotate(45deg) translate(5px,5px); }
-.hamburger.open span:nth-child(2) { opacity:0; }
-.hamburger.open span:nth-child(3) { transform:rotate(-45deg) translate(5px,-5px); }
-.mobile-menu {
-  display:none; position:fixed; top:0; left:0; right:0; bottom:0;
-  background:rgba(0,12,36,0.97); z-index:150;
-  flex-direction:column; align-items:center; justify-content:center; gap:32px;
-  backdrop-filter:blur(20px);
+.nav-toggle:hover{
+  background:rgba(0,245,255,0.12);
+  border-color:var(--cyan);
+  box-shadow:0 0 14px rgba(0,245,255,0.35);
 }
-.mobile-menu.open { display:flex; }
-.mobile-menu a {
-  font-family:var(--font-d); font-size:20px; letter-spacing:3px;
-  color:var(--muted); text-decoration:none; text-transform:uppercase; transition:color .2s;
+.hamburger-icon{display:flex;flex-direction:column;gap:5px;width:20px;}
+.hamburger-icon span{
+  display:block;height:2px;width:100%;
+  background:var(--cyan);border-radius:2px;
+  transition:transform .35s cubic-bezier(.77,0,.175,1),opacity .25s ease,width .3s ease;
+  transform-origin:center;
 }
-.mobile-menu a:hover, .mobile-menu a.active { color:var(--cyan); text-shadow:var(--glow-c); }
-.mobile-menu .nav-wa-m {
-  display:flex; align-items:center; gap:8px; margin-top:10px;
-  background:rgba(37,211,102,0.1); border:1px solid rgba(37,211,102,0.4);
-  color:var(--wa); font-family:var(--font-d); font-size:13px; letter-spacing:2px;
-  padding:12px 24px; text-decoration:none;
+/* X animation when open */
+.nav-toggle.open .hamburger-icon span:nth-child(1){transform:translateY(7px) rotate(45deg);}
+.nav-toggle.open .hamburger-icon span:nth-child(2){opacity:0;width:0;}
+.nav-toggle.open .hamburger-icon span:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
+.nav-toggle.open{background:rgba(0,245,255,0.15);border-color:var(--cyan);box-shadow:0 0 20px rgba(0,245,255,0.4);}
+
+@media(max-width:768px){
+  /* Nav layout */
+  nav{
+    flex-wrap:nowrap;
+    justify-content:space-between;
+    align-items:center;
+    padding:12px 4vw;
+    gap:0;
+  }
+  .nav-logo{
+    font-size:13px;
+    letter-spacing:3px;
+    gap:4px;
+    flex:1;
+    overflow:hidden;
+    white-space:nowrap;
+    min-width:0;
+  }
+  .nav-logo img{width:30px!important;height:30px!important;}
+
+  /* Right side: hide WA button, show toggle */
+  .nav-right{gap:8px;}
+  .nav-wa{display:none;}
+  .nav-toggle{display:flex;}
+  .nav-links a.nav-mobile-wa { display: flex; }
+
+  /* ── SERVICES DROPDOWN (mobile) ── */
+  .nav-dropdown { width:100%; border-bottom:1px solid rgba(0,245,255,0.07); }
+  .nav-dropdown summary {
+    padding:16px 6vw; width:100%;
+    font-size:13px !important; letter-spacing:2px !important;
+    color:rgba(232,244,255,0.7);
+    display:flex; align-items:center; justify-content:space-between;
+    cursor:pointer;
+  }
+  .nav-dropdown[open] summary { color:#fff; background:rgba(0,245,255,0.07); }
+  .nav-dropdown-menu {
+    position:static; transform:none;
+    background:rgba(0,245,255,0.03); border:none; padding:0; min-width:unset;
+  }
+  .nav-dropdown-menu a {
+    padding:14px 6vw 14px 12vw !important;
+    font-size:12px !important;
+    border-bottom:1px solid rgba(0,245,255,0.05);
+  }
+
+  /* Dropdown nav-links panel */
+  .nav-links{
+    display:flex!important; 
+    flex-direction:column;
+    gap:0;
+    position:absolute;
+    top:100%;
+    left:0;
+    right:0;
+    background:rgba(0,8,28,0.97);
+    backdrop-filter:blur(24px);
+    -webkit-backdrop-filter:blur(24px);
+    border-bottom:1px solid rgba(0,245,255,0.2);
+    border-top:1px solid rgba(0,245,255,0.1);
+    overflow:hidden;
+    max-height:0;
+    opacity:0;
+    pointer-events:none;
+    transition:max-height .45s cubic-bezier(.77,0,.175,1), opacity .3s ease;
+    z-index:150;
+  }
+  .nav-links.active{
+    max-height:480px;
+    opacity:1;
+    pointer-events:auto;
+  }
+  .nav-links a{
+    font-size:13px;
+    letter-spacing:2px;
+    padding:16px 6vw;
+    border-bottom:1px solid rgba(0,245,255,0.07);
+    display:flex;align-items:center;gap:10px;
+    color:rgba(232,244,255,0.7);
+    transition:background .2s,color .2s,padding-left .2s;
+  }
+  .nav-links a::before{
+    content:'›';
+    color:var(--cyan);
+    font-size:16px;
+    opacity:0;
+    transform:translateX(-6px);
+    transition:opacity .2s,transform .2s;
+  }
+  .nav-links a:hover{
+    background:rgba(0,245,255,0.07);
+    color:#fff;
+    padding-left:8vw;
+    text-shadow:none;
+  }
+  .nav-links a:hover::before{opacity:1;transform:translateX(0);}
+  .nav-links a:last-child{border-bottom:none;}
 }
 
 /* ── HERO ── */
@@ -606,11 +740,6 @@ footer{
   .pricing-grid{grid-template-columns:1fr;}
 }
 @media(max-width:768px){
-  .nav-links{display:none !important;}
-  .hamburger{display:flex !important;}
-  .nav-wa{display:none !important;}
-  .nav-logo{font-size:17px;letter-spacing:1.5px;gap:7px;}
-  .nav-logo img{height:30px;width:30px;}
   .hero-sub{text-align:center;border-left:none;padding-left:0;}
   .hero-stats{gap:24px;}
   .lifecycle-row{flex-direction:column;align-items:flex-start;gap:14px;clip-path:none;}
@@ -624,7 +753,7 @@ footer{
   .estimator-title-bar{flex-direction:column;align-items:flex-start;}
 }
 @media(max-width:400px){
-  .nav-logo{font-size:14px;letter-spacing:1px;gap:6px;}
+  .nav-logo{font-size:12px;letter-spacing:1px;gap:6px;}
   .nav-logo img{height:26px;width:26px;}
 }
 @media(max-width:480px){
@@ -689,38 +818,45 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <div class="cur"></div>
 <div class="cur-ring"></div>
 
-<nav>
-  <a href="index.html" class="nav-logo">
-    <img src="logo.jpeg" alt="Marketer Raja Logo" style="height:44px;width:44px;object-fit:contain;border-radius:6px;" />
-    MARKETER<span>RAJA</span>
-  </a>
-  <div class="nav-links">
-    <a href="/index.html">Home</a>
-    <a href="/seo.html">SEO Services</a>
-    <a href="/google_ads.html">Google Ads</a>
-    <a href="/meta_ads.html">Meta Ads</a>
-    <a href="/web.html" class="active">Web &amp; App</a>
-    <a href="/portfolio.html">Portfolio</a>
-    <a href="/blog.html">Blog</a>
+<nav id="main-nav">
+  <div class="nav-logo">
+    <img alt="Marketer Raja Logo" src="logo.jpeg" style="height:44px; width:44px; object-fit:contain; border-radius:6px; margin-right: 8px;" />
+    MARKETER <span>RAJA</span>
   </div>
-  <a href="https://wa.me/918489486025" class="nav-wa" target="_blank">
-    <i class="fab fa-whatsapp"></i> GET A QUOTE
-  </a>
-  <div class="hamburger" id="hamburger" onclick="toggleMenu()">
-    <span></span><span></span><span></span>
-  </div>
-</nav>
 
-<div class="mobile-menu" id="mobileMenu">
-  <a href="index.html" onclick="closeMenu()">Home</a>
-  <a href="seo.html" onclick="closeMenu()">SEO Services</a>
-  <a href="google_ads.html" onclick="closeMenu()">Google Ads</a>
-  <a href="meta_ads.html" onclick="closeMenu()">Meta Ads</a>
-  <a href="web.html" class="active" onclick="closeMenu()">Web &amp; App</a>
-  <a href="portfolio.html" onclick="closeMenu()">Portfolio</a>
-  <a href="blog.html" onclick="closeMenu()">Blog</a>
-  <a href="https://wa.me/918489486025" class="nav-wa-m" target="_blank"><i class="fab fa-whatsapp"></i> GET A QUOTE</a>
+  <div class="nav-links" id="nav-links">
+<a href="/index.html">Home</a>
+<details class="nav-dropdown">
+<summary>Our Services</summary>
+<div class="nav-dropdown-menu">
+<a href="/seo.html">SEO Services</a>
+<a href="/google_ads.html">Google Ads</a>
+<a href="/meta_ads.html">Meta Ads</a>
+<a href="/web.html" class="active">Web &amp; App</a>
+<a href="/blog.html">Blog</a>
 </div>
+</details>
+<a href="/portfolio.html">Portfolio</a>
+<a class="nav-mobile-wa" href="https://wa.me/918489486025" target="_blank">
+  <i class="fab fa-whatsapp"></i>
+  GET A QUOTE
+</a>
+</div>
+
+<div class="nav-right" style="display:flex;align-items:center;gap:16px;">
+  <a class="nav-wa" href="https://wa.me/918489486025" target="_blank">
+    <i class="fab fa-whatsapp"></i>
+    GET A QUOTE
+  </a>
+  <button aria-label="Toggle Navigation" aria-expanded="false" class="nav-toggle" id="nav-toggle">
+    <span class="hamburger-icon">
+      <span></span>
+      <span></span>
+      <span></span>
+    </span>
+  </button>
+</div>
+</nav>
 
 <!-- ── HERO ── -->
 <div id="hero">
@@ -1250,14 +1386,34 @@ document.querySelectorAll('a, button, .radar-card, .tech-card, .pricing-card, .f
 });
 
 // ── MOBILE NAV ──
-function toggleMenu(){
-  document.getElementById('hamburger').classList.toggle('open');
-  document.getElementById('mobileMenu').classList.toggle('open');
+document.addEventListener('DOMContentLoaded', function(){
+const toggleBtn = document.getElementById('nav-toggle');
+const navLinks = document.getElementById('nav-links');
+
+if(toggleBtn && navLinks){
+  toggleBtn.addEventListener('click', function(){
+    const isOpen = navLinks.classList.toggle('active');
+    toggleBtn.classList.toggle('open', isOpen);
+    toggleBtn.setAttribute('aria-expanded', isOpen);
+  });
+
+  document.querySelectorAll('.nav-links a').forEach(link=>{
+    link.addEventListener('click', function(){
+      navLinks.classList.remove('active');
+      toggleBtn.classList.remove('open');
+      toggleBtn.setAttribute('aria-expanded', 'false');
+    });
+  });
+
+  document.addEventListener('click', function(e){
+    if(!e.target.closest('nav')){
+      navLinks.classList.remove('active');
+      toggleBtn.classList.remove('open');
+      toggleBtn.setAttribute('aria-expanded', 'false');
+    }
+  });
 }
-function closeMenu(){
-  document.getElementById('hamburger').classList.remove('open');
-  document.getElementById('mobileMenu').classList.remove('open');
-}
+});
 
 // ── PROJECT ESTIMATOR ──
 const websiteFeatures = [
