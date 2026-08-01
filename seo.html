@@ -708,6 +708,47 @@ h1 .p{color:var(--pink);text-shadow:var(--glow-p);}
 }
 .phase-tag:hover { color: var(--cyan); border-color: var(--border); background: rgba(0,245,255,0.08); }
 
+/* ── SEO COVERAGE MATRIX (scoped overrides, doesn't affect other phase-grid sections) ── */
+.coverage-grid {
+  grid-template-columns: repeat(3, 1fr) !important;
+}
+.coverage-card {
+  background: rgba(4, 25, 68, 0.6);
+}
+.coverage-card::before {
+  background: linear-gradient(90deg, var(--bright-accent), var(--cyan));
+}
+.coverage-card:hover {
+  border-color: rgba(255, 234, 0, 0.4);
+  box-shadow: 0 15px 40px rgba(255, 234, 0, 0.12);
+}
+.coverage-card .phase-title {
+  font-size: 20px;
+  color: var(--bright-accent);
+  text-shadow: var(--glow-b);
+  margin-bottom: 18px;
+}
+.coverage-grid .phase-tags {
+  gap: 10px;
+}
+.coverage-grid .phase-tag {
+  font-size: 14px;
+  padding: 9px 16px;
+  color: var(--white);
+  background: rgba(255, 234, 0, 0.06);
+  border: 1px solid rgba(255, 234, 0, 0.2);
+}
+.coverage-grid .phase-tag:hover {
+  color: var(--bright-accent);
+  border-color: var(--bright-accent);
+  background: rgba(255, 234, 0, 0.12);
+}
+@media (max-width: 1024px) {
+  .coverage-grid { grid-template-columns: 1fr !important; }
+  .coverage-card .phase-title { font-size: 16px; }
+  .coverage-grid .phase-tag { font-size: 12px; padding: 7px 13px; }
+}
+
 /* ── PRE-EXISTING PROBLEM SECTIONS ── */
 section{position:relative;z-index:1;}
 .sec{padding:100px 5vw;}
@@ -1652,8 +1693,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <div class="sec-tag">Coverage Matrix</div>
 <h2>SEO Services We Provide <span class="c">Across India</span> &amp; <span class="p">Every Industry</span></h2>
 <p class="sec-desc">A complete look at the SEO packages, business types, industries, and locations Marketer Raja serves — so you know exactly where you fit.</p>
-<div class="phase-grid">
-<div class="phase-card">
+<div class="phase-grid coverage-grid">
+<div class="phase-card coverage-card">
 <div class="phase-title">🎯 Core SEO Solutions</div>
 <div class="phase-tags">
 <span class="phase-tag">SEO services India</span>
@@ -1668,7 +1709,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <span class="phase-tag">SEO consultants India</span>
 </div>
 </div>
-<div class="phase-card">
+<div class="phase-card coverage-card">
 <div class="phase-title">💰 SEO Packages &amp; Pricing</div>
 <div class="phase-tags">
 <span class="phase-tag">SEO packages India</span>
@@ -1683,7 +1724,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <span class="phase-tag">SEO retainer plans</span>
 </div>
 </div>
-<div class="phase-card">
+<div class="phase-card coverage-card">
 <div class="phase-title">🏢 Businesses We Serve</div>
 <div class="phase-tags">
 <span class="phase-tag">SEO for small business India</span>
@@ -1698,7 +1739,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <span class="phase-tag">SEO for B2B companies</span>
 </div>
 </div>
-<div class="phase-card">
+<div class="phase-card coverage-card">
 <div class="phase-title">🏭 Industries We Optimize</div>
 <div class="phase-tags">
 <span class="phase-tag">SEO for retail stores</span>
@@ -1710,12 +1751,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <span class="phase-tag">SEO for education institutes</span>
 <span class="phase-tag">SEO for law firms</span>
 <span class="phase-tag">SEO for interior designers</span>
-<span class="phase-tag">SEO for travel businesses</span>
 <span class="phase-tag">SEO for jewellery stores</span>
-<span class="phase-tag">SEO for automobile dealers</span>
 </div>
 </div>
-<div class="phase-card">
+<div class="phase-card coverage-card">
 <div class="phase-title">📍 SEO Services By Location</div>
 <div class="phase-tags">
 <span class="phase-tag">SEO services Salem</span>
@@ -1728,11 +1767,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <span class="phase-tag">SEO services Coimbatore</span>
 <span class="phase-tag">SEO services Hyderabad</span>
 <span class="phase-tag">SEO services Mumbai</span>
-<span class="phase-tag">SEO services Delhi</span>
-<span class="phase-tag">SEO agency South India</span>
 </div>
 </div>
-<div class="phase-card">
+<div class="phase-card coverage-card">
 <div class="phase-title">🛡️ Trust &amp; Results</div>
 <div class="phase-tags">
 <span class="phase-tag">Best SEO company India</span>
@@ -1747,7 +1784,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <span class="phase-tag">Performance-driven SEO agency</span>
 </div>
 </div>
-<div class="phase-card">
+<div class="phase-card coverage-card">
 <div class="phase-title">⚙️ Advanced Technical SEO</div>
 <div class="phase-tags">
 <span class="phase-tag">Voice search SEO optimization</span>
@@ -1760,11 +1797,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <span class="phase-tag">Hreflang implementation</span>
 <span class="phase-tag">Structured data markup</span>
 <span class="phase-tag">Page speed optimization</span>
-<span class="phase-tag">Google Business Profile optimization</span>
-<span class="phase-tag">Local pack ranking optimization</span>
 </div>
 </div>
-<div class="phase-card">
+<div class="phase-card coverage-card">
 <div class="phase-title">📊 SEO Deliverables &amp; Reporting</div>
 <div class="phase-tags">
 <span class="phase-tag">Monthly SEO performance reports</span>
@@ -1775,9 +1810,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <span class="phase-tag">ROI tracking for SEO</span>
 <span class="phase-tag">Google Analytics setup</span>
 <span class="phase-tag">Search Console monitoring</span>
+<span class="phase-tag">Traffic quality analysis</span>
+<span class="phase-tag">Lead-to-ranking correlation reports</span>
 </div>
 </div>
-<div class="phase-card">
+<div class="phase-card coverage-card">
 <div class="phase-title">✍️ Content &amp; Growth</div>
 <div class="phase-tags">
 <span class="phase-tag">SEO blog writing services</span>
@@ -1788,9 +1825,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <span class="phase-tag">FAQ schema content</span>
 <span class="phase-tag">Product page SEO</span>
 <span class="phase-tag">Category page SEO</span>
+<span class="phase-tag">Service page copywriting</span>
+<span class="phase-tag">Location page content strategy</span>
 </div>
 </div>
-<div class="phase-card">
+<div class="phase-card coverage-card">
 <div class="phase-title">❓ Common Questions We Answer</div>
 <div class="phase-tags">
 <span class="phase-tag">How to rank on Google</span>
@@ -1801,6 +1840,38 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <span class="phase-tag">How much does SEO cost in India</span>
 <span class="phase-tag">How long does SEO take to work</span>
 <span class="phase-tag">Is Local SEO worth it</span>
+<span class="phase-tag">Which SEO agency is best for me</span>
+<span class="phase-tag">Do you serve businesses outside Tamil Nadu</span>
+</div>
+</div>
+<div class="phase-card coverage-card">
+<div class="phase-title">🌐 Global &amp; International SEO</div>
+<div class="phase-tags">
+<span class="phase-tag">International SEO strategy</span>
+<span class="phase-tag">Multi-country SEO targeting</span>
+<span class="phase-tag">Cross-border e-commerce SEO</span>
+<span class="phase-tag">Global keyword research</span>
+<span class="phase-tag">English-market SEO services</span>
+<span class="phase-tag">Multilingual SEO services</span>
+<span class="phase-tag">Global backlink building</span>
+<span class="phase-tag">International Google ranking</span>
+<span class="phase-tag">Export business SEO</span>
+<span class="phase-tag">SEO for overseas clients</span>
+</div>
+</div>
+<div class="phase-card coverage-card">
+<div class="phase-title">🔗 Off-Page SEO &amp; Authority</div>
+<div class="phase-tags">
+<span class="phase-tag">Guest posting services</span>
+<span class="phase-tag">Directory submission SEO</span>
+<span class="phase-tag">Social bookmarking SEO</span>
+<span class="phase-tag">Press release distribution</span>
+<span class="phase-tag">Influencer outreach SEO</span>
+<span class="phase-tag">Brand mention building</span>
+<span class="phase-tag">High-DA backlink building</span>
+<span class="phase-tag">Niche edit backlinks</span>
+<span class="phase-tag">Off-page SEO audit</span>
+<span class="phase-tag">Forum profile backlinks</span>
 </div>
 </div>
 </div>
