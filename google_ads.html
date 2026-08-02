@@ -686,6 +686,15 @@ footer{
 .footer-box ul li a{font-size:14px;color:var(--muted);text-decoration:none;transition:color .2s;}
 .footer-box ul li a:hover{color:var(--cyan);}
 .footer-box p{font-size:14px;color:var(--muted);line-height:1.6;}
+.footer-locations{border:none;}
+.footer-locations summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:6px;font-family:var(--font-d);font-size:13px;letter-spacing:2px;color:var(--white);text-transform:uppercase;transition:color .2s;}
+.footer-locations summary::-webkit-details-marker{display:none;}
+.footer-locations summary::after{content:'▾';font-size:10px;transition:transform .2s;color:var(--cyan);}
+.footer-locations[open] summary::after{transform:rotate(180deg);}
+.footer-locations summary:hover{color:var(--cyan);}
+.footer-locations-menu{display:flex;flex-direction:column;gap:12px;margin-top:16px;}
+.footer-locations-menu a{font-size:14px;color:var(--muted);text-decoration:none;transition:color .2s;}
+.footer-locations-menu a:hover{color:var(--cyan);}
 .footer-bottom{
   text-align:center;margin-top:44px;padding-top:22px;
   border-top:1px solid rgba(0,245,255,0.05);
@@ -1229,6 +1238,17 @@ footer{
           <li><a href="portfolio.html">Our portfolio</a></li>
           <li><a href="blog.html">Blog</a></li>
         </ul>
+      </div>
+
+      <div class="footer-box">
+        <details class="footer-locations">
+          <summary>Locations</summary>
+          <div class="footer-locations-menu">
+            <a href="digital-marketing-agency-salem.html">Salem</a>
+            <a href="digital-marketing-agency-sankagiri.html">Sankagiri</a>
+            <a href="digital-marketing-agency-ellampillai.html">Ellampillai</a>
+          </div>
+        </details>
       </div>
 
       <div class="footer-box">
