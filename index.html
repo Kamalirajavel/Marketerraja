@@ -915,6 +915,15 @@ footer::before{
 .footer-links{display:flex;flex-direction:column;gap:12px;}
 .footer-links a{font-family:var(--font-m);font-size:12px;letter-spacing:1px;color:rgba(232,244,255,0.6);text-decoration:none;transition:all .2s;text-transform:uppercase;}
 .footer-links a:hover{color:var(--cyan);padding-left:5px;}
+.footer-locations{border:none;}
+.footer-locations summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:6px;font-family:var(--font-m);font-size:12px;letter-spacing:1px;color:rgba(232,244,255,0.6);text-transform:uppercase;transition:color .2s;}
+.footer-locations summary::-webkit-details-marker{display:none;}
+.footer-locations summary::after{content:'▾';font-size:9px;transition:transform .2s;}
+.footer-locations[open] summary::after{transform:rotate(180deg);}
+.footer-locations summary:hover{color:var(--cyan);}
+.footer-locations-menu{display:flex;flex-direction:column;gap:12px;margin-top:14px;padding-left:2px;}
+.footer-locations-menu a{font-family:var(--font-m);font-size:12px;letter-spacing:1px;color:rgba(232,244,255,0.6);text-decoration:none;transition:all .2s;text-transform:uppercase;}
+.footer-locations-menu a:hover{color:var(--cyan);padding-left:5px;}
 .footer-contact-item{display:flex;align-items:center;gap:10px;font-family:var(--font-m);font-size:12px;letter-spacing:1px;color:rgba(232,244,255,0.6);margin-bottom:12px;}
 .footer-contact-item span{color:var(--cyan);}
 .footer-wa-link{display:inline-flex;align-items:center;gap:10px;border:1px solid rgba(37,211,102,0.4);background:rgba(37,211,102,0.06);color:var(--wa);font-family:var(--font-d);font-size:11px;letter-spacing:2px;padding:16px 28px;text-decoration:none;clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);transition:all .3s;margin-top:12px;display:inline-flex;}
@@ -1922,7 +1931,7 @@ As a <strong style="color:#00f5ff;">result-driven digital marketing agency in Sa
 </div>
 <div class="footer-col">
 <h4>Quick Links</h4>
-<div style="display:flex;gap:40px;flex-wrap:wrap;align-items:flex-start;"><div class="footer-links"><a href="#hero">Home</a><a href= "internship.html">Internship</a><a href="#problem">The Problem</a><a href="#solution">Our Solution</a><a href="#salem-marketing">Salem Marketing</a><a href="#faq">FAQ</a><a href="#contact">Contact</a><a href="seo">SEO Optimisation</a></div><div class="footer-links"><a href="google_ads.html">Google Ads</a><a href="meta_ads.html">Meta Ads</a><a href="web.html">Web &amp; App</a><a href="portfolio.html">Portfolio</a><a href="blog.html">Blog</a></div><div class="footer-links"><a href="digital-marketing-agency-salem.html">Salem (Industrial)</a><a href="digital-marketing-agency-sankagiri.html">Sankagiri</a><a href="digital-marketing-agency-ellampillai.html">Ellampillai</a></div></div>
+<div style="display:flex;gap:40px;flex-wrap:wrap;align-items:flex-start;"><div class="footer-links"><a href="#hero">Home</a><a href= "internship.html">Internship</a><a href="#problem">The Problem</a><a href="#solution">Our Solution</a><a href="#salem-marketing">Salem Marketing</a><a href="#faq">FAQ</a><a href="#contact">Contact</a><a href="seo">SEO Optimisation</a></div><div class="footer-links"><a href="google_ads.html">Google Ads</a><a href="meta_ads.html">Meta Ads</a><a href="web.html">Web &amp; App</a><a href="portfolio.html">Portfolio</a><a href="blog.html">Blog</a></div><div class="footer-links"><details class="footer-locations"><summary>Locations</summary><div class="footer-locations-menu"><a href="digital-marketing-agency-salem.html">Salem</a><a href="digital-marketing-agency-sankagiri.html">Sankagiri</a><a href="digital-marketing-agency-ellampillai.html">Ellampillai</a></div></details></div></div>
 </div>
   
 <div class="footer-col">
