@@ -83,8 +83,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     <h3 style="color: #ffd700;">Recent Client Enquiries</h3>
     <div style="overflow-x: auto; margin-bottom: 40px;">
       <table>
-        <thead><tr><th>Date</th><th>Name</th><th>Contact</th><th>Service</th><th>Budget</th></tr></thead>
-        <tbody id="enquiry-list"><tr><td colspan="5" style="text-align: center;">Loading data...</td></tr></tbody>
+        <thead><tr><th>Date</th><th>Name</th><th>Contact</th><th>Service</th><th>Budget</th><th>Source</th><th>How Found Us</th><th>Purpose</th><th>Action</th></tr></thead>
+        <tbody id="enquiry-list"><tr><td colspan="9" style="text-align: center;">Loading data...</td></tr></tbody>
       </table>
     </div>
 
@@ -517,6 +517,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     });*/
 
 
+    // Escape user-submitted text before putting it into the page
+    const esc = (v) => String(v ?? '-').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
     // Data Fetching Function
     function fetchData() {
       // 1. Fetch Enquiries with Dynamic Eviction Controls
@@ -525,16 +528,19 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         const listE = document.getElementById('enquiry-list');
         if(listE) {
           listE.innerHTML = '';
-          if (snapE.empty) listE.innerHTML = `<tr><td colspan="6" style="text-align: center;">No enquiries yet.</td></tr>`;
+          if (snapE.empty) listE.innerHTML = `<tr><td colspan="9" style="text-align: center;">No enquiries yet.</td></tr>`;
           snapE.forEach(d => {
             const data = d.data();
             const tr = document.createElement('tr');
             tr.innerHTML = `
               <td>${data.timestamp ? new Date(data.timestamp.toDate()).toLocaleDateString() : 'New'}</td>
-              <td>${data.name}</td>
-              <td>${data.contact}</td>
-              <td>${data.service}</td>
-              <td>${data.budget}</td>
+              <td>${esc(data.name)}</td>
+              <td>${esc(data.contact)}</td>
+              <td>${esc(data.service)}</td>
+              <td>${esc(data.budget)}</td>
+              <td>${esc(data.source || 'Homepage Form')}</td>
+              <td>${esc(data.heardFrom)}</td>
+              <td>${esc(data.purpose)}</td>
               <td>
                 <button class="action-btn del-btn" style="background: #ff0080; color: white; border: none; padding: 6px 12px; cursor: pointer; border-radius: 4px; font-weight: bold;">
                   <i class="fas fa-trash-alt"></i> Delete
