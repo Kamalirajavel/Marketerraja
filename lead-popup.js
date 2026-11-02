@@ -147,8 +147,10 @@ function showPopup(onDismiss, onSuccess) {
         <form class="mr-lp-form" novalidate>
           <div class="mr-lp-field"><label for="mr-lp-name">Your Name <i>*</i></label>
             <input id="mr-lp-name" type="text" placeholder="e.g., Raja Kumar" autocomplete="name"></div>
-          <div class="mr-lp-field"><label for="mr-lp-contact">Phone or Email <i>*</i></label>
-            <input id="mr-lp-contact" type="text" placeholder="Phone / WhatsApp number or email" autocomplete="off"></div>
+          <div class="mr-lp-field"><label for="mr-lp-contact">WhatsApp Number <i>*</i></label>
+            <input id="mr-lp-contact" type="tel" placeholder="e.g., 98765 43210" autocomplete="tel"></div>
+          <div class="mr-lp-field"><label for="mr-lp-email">Email (optional)</label>
+            <input id="mr-lp-email" type="email" placeholder="you@example.com" autocomplete="email"></div>
           <div class="mr-lp-field"><label for="mr-lp-heard">How did you find our website? <i>*</i></label>
             <select id="mr-lp-heard">${opts(HEARD_FROM, 'Select an option')}</select></div>
           <div class="mr-lp-field"><label for="mr-lp-purpose">Purpose of your visit <i>*</i></label>
@@ -206,10 +208,13 @@ function showPopup(onDismiss, onSuccess) {
     if (!name || !contact || !heardFrom || !purpose || !service) {
       return say('Please fill in all the fields.', '#ff0080');
     }
-    const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contact);
+    const email = $('mr-lp-email').value.trim();
     const isPhone = contact.replace(/\D/g, '').length >= 10 && /^[+\d\s()-]+$/.test(contact);
-    if (!isEmail && !isPhone) {
-      return say('Enter a valid phone number (10+ digits) or email address.', '#ff0080');
+    if (!isPhone) {
+      return say('Enter a valid WhatsApp number (10+ digits).', '#ff0080');
+    }
+    if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      return say('Enter a valid email address or leave it empty.', '#ff0080');
     }
 
     submitBtn.disabled = true;
@@ -217,7 +222,7 @@ function showPopup(onDismiss, onSuccess) {
     status.style.display = 'none';
 
     // keys name / contact / service / budget are what the admin panel already reads
-    const data = { name, contact, service, budget: '-', heardFrom, purpose };
+    const data = { name, contact, email, service, budget: '-', heardFrom, purpose };
 
     try {
       const { db } = await import('./firebase-config.js');
