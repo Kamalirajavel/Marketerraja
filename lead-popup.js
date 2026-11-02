@@ -14,6 +14,7 @@ const REPEAT_DELAY_MS = 5 * 60 * 1000;   // reappear every: 5 minutes
 const NEW_VISIT_GAP   = 30 * 60 * 1000;  // away >30 min = treated as a new visit
 const STORAGE_KEY     = 'mr_lead_popup_v1';
 const WEBHOOK_URL     = 'https://hook.eu1.make.com/2r0f6hgm3eoywvzxzgaf2dgb2oq6uwbx';
+const waFields = (c) => { let d = String(c || '').replace(/\D/g, ''); if (d.length === 10) d = '91' + d; const ok = d.length >= 11 && !/@/.test(String(c)); return { whatsapp: ok ? d : '', whatsapp_link: ok ? 'https://wa.me/' + d : '' }; };
 const FIRESTORE_SDK   = 'https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js';
 
 /* ── safe storage ── */
@@ -226,7 +227,7 @@ function showPopup(onDismiss, onSuccess) {
       });
       fetch(WEBHOOK_URL, {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...data, source: 'Popup', page: location.pathname })
+        body: JSON.stringify({ ...data, ...waFields(data.contact), source: 'Popup', page: location.pathname })
       }).catch(err => console.error('Notification routing dropped:', err));
 
       if (typeof fbq === 'function') fbq('track', 'Lead');
