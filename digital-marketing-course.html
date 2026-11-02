@@ -1940,7 +1940,7 @@ if(toggleBtn && navLinks){
       show("Enquiry sent successfully! We will contact you within 24 hours.", "#00ff88");
       form.reset();
       if (typeof fbq === 'function') fbq('track', 'Lead');
-      if (typeof gtag === 'function') gtag('event', 'generate_lead', { event_category: 'course_form' });
+      window.dataLayer.push({ event: 'generate_lead', form_name: 'course', form_location: location.pathname });
     } catch (err) {
       console.error("Submission Failure Logged: ", err);
       show("Error sending enquiry. Please try again or WhatsApp us directly.", "#ff0080");
