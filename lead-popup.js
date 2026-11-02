@@ -236,7 +236,11 @@ function showPopup(onDismiss, onSuccess) {
       }).catch(err => console.error('Notification routing dropped:', err));
 
       if (typeof fbq === 'function') fbq('track', 'Lead');
-      if (typeof gtag === 'function') gtag('event', 'generate_lead', { event_category: 'popup' });
+
+      if (typeof fbq === 'function') fbq('track', 'Lead');
+      window.dataLayer = window.dataLayer || [];
+      window.dataLayer.push({ event: 'generate_lead', form_name: 'popup', form_location: location.pathname });
+     
 
       $('mr-lp-main').innerHTML = `
         <div class="mr-lp-thanks"><span class="mr-ico">✅</span>
