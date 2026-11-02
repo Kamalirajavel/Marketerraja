@@ -1940,11 +1940,15 @@ if(toggleBtn && navLinks){
         await addDoc(collection(db, "enquiries"), { ...data, source: "Contact Page", timestamp: serverTimestamp() });
         await pushWhatsAppNotification(data);
 
+       
+
         showStatus("Enquiry sent successfully! We will contact you within 24 hours.", "#00ff88");
         form.reset();
         if (typeof fbq === 'function') fbq('track', 'Lead');
-        if (typeof gtag === 'function') gtag('event', 'generate_lead', { event_category: 'contact_form' });
+        window.dataLayer = window.dataLayer || [];
+        window.dataLayer.push({ event: 'generate_lead', form_name: 'contact', form_location: location.pathname });
       } catch (err) {
+
         console.error("Submission Failure Logged: ", err);
         showStatus("Error sending enquiry. Please try again or WhatsApp us directly.", "#ff0080");
       } finally {
