@@ -1,6 +1,6 @@
 /* ═══════════════════════════════════════════════════════════
    Marketer Raja — Lead Capture Popup
-   • First popup appears after 3 minutes on the site
+   • First popup appears 3 seconds after the visitor enters the site
    • If ignored / closed, it comes back every 5 minutes
    • Once the visitor submits, it never shows again
    • Leads are saved to Firestore "enquiries" (shows in admin panel)
@@ -9,7 +9,7 @@
    across pages so navigating does not reset it.
 ═══════════════════════════════════════════════════════════ */
 
-const FIRST_DELAY_MS  = 3 * 60 * 1000;   // first popup: 3 minutes
+const FIRST_DELAY_MS  = 3 * 1000;         // first popup: 3 seconds
 const REPEAT_DELAY_MS = 5 * 60 * 1000;   // reappear every: 5 minutes
 const NEW_VISIT_GAP   = 30 * 60 * 1000;  // away >30 min = treated as a new visit
 const STORAGE_KEY     = 'mr_lead_popup_v1';
@@ -59,7 +59,7 @@ function start() {
 
     state.lastSeen = now;
     if (now - lastWrite > 5000) { writeState(state); lastWrite = now; }
-  }, 1000);
+  }, 500);
 
   function onDismiss() {
     open = false;
