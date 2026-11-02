@@ -1929,7 +1929,8 @@ if(toggleBtn && navLinks){
       show("Application sent successfully! We will contact you within 24 hours.", "#00ff88");
       form.reset();
       if (typeof fbq === 'function') fbq('track', 'Lead');
-      if (typeof gtag === 'function') gtag('event', 'generate_lead', { event_category: 'internship_form' });
+      window.dataLayer = window.dataLayer || [];
+      window.dataLayer.push({ event: 'generate_lead', form_name: 'internship', form_location: location.pathname });
     } catch (err) {
       console.error("Submission Failure Logged: ", err);
       show("Error sending application. Please try again or WhatsApp us directly.", "#ff0080");
