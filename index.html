@@ -1686,7 +1686,7 @@ body{
     
     <input type="text" id="eq-name" placeholder="Your Name" required style="padding: 12px; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.2); color: white; border-radius: 4px; font-family: 'Share Tech Mono', monospace; outline: none;">
     
-    <input type="text" id="eq-contact" placeholder="Email or Phone Number" required style="padding: 12px; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.2); color: white; border-radius: 4px; font-family: 'Share Tech Mono', monospace; outline: none;">
+    <input type="tel" id="eq-contact" placeholder="WhatsApp / Phone Number (e.g., 98765 43210)" autocomplete="tel" required style="padding: 12px; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.2); color: white; border-radius: 4px; font-family: 'Share Tech Mono', monospace; outline: none;">
     
     <select id="eq-service" required style="padding: 12px; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.2); color: white; border-radius: 4px; font-family: 'Share Tech Mono', monospace; outline: none; appearance: auto;">
       <option value="" disabled selected>Select a Service</option>
@@ -2170,6 +2170,14 @@ if(toggleBtn && navLinks){
       const leadContact = document.getElementById('eq-contact').value;
       const leadService = document.getElementById('eq-service').value;
       const leadBudget = document.getElementById('eq-budget').value;
+
+      // WhatsApp follow-up needs a real phone number
+      if (leadContact.replace(/\D/g, '').length < 10) {
+        statusMsg.style.color = "#ff0080";
+        statusMsg.textContent = "Please enter a valid WhatsApp / phone number (at least 10 digits).";
+        statusMsg.style.display = "block";
+        return;
+      }
       
       btn.textContent = "SENDING...";
       statusMsg.style.display = "none";
